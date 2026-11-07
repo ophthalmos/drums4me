@@ -1,5 +1,4 @@
 using System.IO.Pipes;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Drums4me.Classes;
@@ -33,9 +32,9 @@ internal sealed class SingleInstance : IDisposable
             client.Connect(ConnectTimeoutMs);
 
             // Windows lässt ein Hintergrundprogramm sonst nicht in den Vordergrund.
-            if (GetNamedPipeServerProcessId(client.SafePipeHandle, out var serverProcessId))
+            if (NativeMethods.GetNamedPipeServerProcessId(client.SafePipeHandle, out var serverProcessId))
             {
-                AllowSetForegroundWindow(serverProcessId);
+                NativeMethods.AllowSetForegroundWindow(serverProcessId);
             }
 
             var bytes = Encoding.UTF8.GetBytes(path ?? string.Empty);
@@ -88,10 +87,4 @@ internal sealed class SingleInstance : IDisposable
         }
         _mutex.Dispose();
     }
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool GetNamedPipeServerProcessId(SafeHandle pipe, out uint serverProcessId);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool AllowSetForegroundWindow(uint processId);
 }

@@ -6,7 +6,7 @@ namespace Drums4me.Classes;
 /// Der Verlauf für Rückgängig und Wiederholen. Er hält vollständige Projektstände und vergleicht sie mit dem
 /// aktuellen Stand, sodass nur echte Änderungen einen Schritt ergeben.
 /// </summary>
-internal sealed class UndoHistory
+internal sealed class UndoHistory(Project start)
 {
     public const int MaxSteps = 100;
 
@@ -17,11 +17,9 @@ internal sealed class UndoHistory
 
     private readonly List<Project> _undo = [];
     private readonly List<Project> _redo = [];
-    private Project _current;
+    private Project _current = start.Snapshot();
     private string? _lastMergeKey;
     private long _lastCommit;
-
-    public UndoHistory(Project start) => _current = start.Snapshot();
 
     public bool CanUndo => _undo.Count > 0;
 

@@ -8,6 +8,8 @@ namespace Drums4me.Controls;
 /// Zeichnet das Raster mit Spurnamen, Schritten und den Reglern für Lautstärke, Panorama und Tonhöhe.
 /// Klicken schaltet einen Schritt um, Ziehen überträgt diesen Zustand auf weitere Schritte.
 /// Ein Doppelklick auf einen Regler stellt seinen Standardwert wieder her.
+/// Mit gedrückter Strg-Taste wirken Volume und Pitch auf alle Spuren gemeinsam, ihre Abstände bleiben dabei erhalten.
+/// Klicks auf einen Spurnamen meldet das Raster nur, was daraus folgt, entscheidet das Formular.
 /// </summary>
 public sealed class StepGrid : Control
 {
@@ -16,14 +18,25 @@ public sealed class StepGrid : Control
     private const int PanFader = 1;
     private const int PitchFader = 2;
     private static readonly string[] FaderTitles = ["Volume", "Pan", "Pitch"];
+    private const string AllTracksHint = "Strg + Ziehen: alle Spuren gemeinsam. Doppelklick: Standardwert, mit Strg für alle Spuren.";
+    private const string TrackNameHint = "Klick: Klang anhören. Rechtsklick: weitere Möglichkeiten.";
+    private const string StepHint = "Klick: Schritt ein- oder ausschalten. Ziehen: mehrere Schritte auf einmal.";
+    private static readonly string[] FaderHints =
+    [
+        $"Lautstärke der Spur. {AllTracksHint}",
+        "Panorama der Spur. Doppelklick: Mitte.",
+        $"Tonhöhe der Spur. {AllTracksHint}",
+    ];
 
-    private static readonly Color CellOffA = Color.FromArgb(232, 234, 238);
-    private static readonly Color CellOffB = Color.FromArgb(218, 221, 227);
-    private static readonly Color CellOn = Color.FromArgb(38, 110, 190);
-    private static readonly Color PlayheadOff = Color.FromArgb(255, 222, 176);
-    private static readonly Color PlayheadOn = Color.FromArgb(226, 106, 26);
-    private static readonly Color FaderLine = Color.FromArgb(200, 203, 209);
-    private static readonly Color BarFlashColor = Color.FromArgb(255, 176, 96);
+    // Die Darstellung steht beim Programmstart fest, bevor das erste Raster entsteht.
+    private static readonly bool Dark = Application.IsDarkModeEnabled;
+    private static readonly Color CellOffA = Dark ? Color.FromArgb(52, 55, 62) : Color.FromArgb(232, 234, 238);
+    private static readonly Color CellOffB = Dark ? Color.FromArgb(66, 70, 78) : Color.FromArgb(218, 221, 227);
+    private static readonly Color CellOn = Dark ? Color.FromArgb(74, 146, 222) : Color.FromArgb(38, 110, 190);
+    private static readonly Color PlayheadOff = Dark ? Color.FromArgb(112, 84, 48) : Color.FromArgb(255, 222, 176);
+    private static readonly Color PlayheadOn = Dark ? Color.FromArgb(240, 138, 54) : Color.FromArgb(226, 106, 26);
+    private static readonly Color FaderLine = Dark ? Color.FromArgb(96, 100, 108) : Color.FromArgb(200, 203, 209);
+    private static readonly Color BarFlashColor = Dark ? Color.FromArgb(122, 74, 26) : Color.FromArgb(255, 176, 96);
 
     private string[] _trackNames = new string[Project.TrackCount];
     private TrackSettings[] _tracks = Project.CreateDefaultTracks();
@@ -38,6 +51,8 @@ public sealed class StepGrid : Control
     private bool _paintValue;
     private int _dragTrack;
     private int _dragFader;
+    private bool _dragAll;
+    private readonly float[] _dragStart = new float[Project.TrackCount];
 
     public StepGrid()
     {
@@ -49,6 +64,9 @@ public sealed class StepGrid : Control
 
     /// <summary>Wird am Ende eines Zugs mit der Maus ausgelöst. Ein ganzer Zug zählt als eine Änderung.</summary>
     public event EventHandler? EditCompleted;
+
+    /// <summary>Links beim Drücken, rechts beim Loslassen der Maustaste, passend zum üblichen Kontextmenü.</summary>
+    public event EventHandler<TrackNameEventArgs>? TrackNameClicked;
 
     /// <summary>Läuft gerade ein Zug mit der Maus?</summary>
     internal bool IsEditing => _dragMode != DragMode.None;
@@ -153,6 +171,10 @@ public sealed class StepGrid : Control
         if (_barFlash)
         {
             graphics.Clear(BarFlashColor);
+        }
+        else if (Dark)
+        {
+            graphics.Clear(SystemColors.Control);   // Window wäre im Dunkelmodus heller als die Zellen
         }
         DrawHeader(graphics);
 
@@ -344,6 +366,14 @@ public sealed class StepGrid : Control
         return false;
     }
 
+    private bool HitName(Point point, out int track)
+    {
+        track = (int)((point.Y - HeaderHeight) / RowHeight);
+        return point.Y >= HeaderHeight && track < Project.TrackCount
+            && point.X >= Padding8 && point.X < GridLeft
+            && !string.IsNullOrEmpty(_trackNames[track]) && _trackNames[track] != DrumKit.NoTrackName;
+    }
+
     private void SetStep(int track, int step, bool value)
     {
         if (_steps[track][step] != value)
@@ -358,9 +388,45 @@ public sealed class StepGrid : Control
     {
         var slide = FaderSlide(_dragTrack, _dragFader);
         var value = Math.Clamp((x - slide.Left) / (float)Math.Max(1, slide.Width), 0f, 1f);
-        SetFaderValue(_dragTrack, _dragFader, value);
-        Invalidate(FaderColumn(_dragTrack, _dragFader));
+        if (_dragAll)
+        {
+            // Vom Stand zu Beginn des Zugs aus gerechnet: Wer am Rand anstößt, findet beim Zurückziehen seinen Abstand wieder.
+            var change = value - _dragStart[_dragTrack];
+            for (var track = 0; track < Project.TrackCount; track++)
+            {
+                SetFaderValue(track, _dragFader, Math.Clamp(_dragStart[track] + change, 0f, 1f));
+                Invalidate(FaderColumn(track, _dragFader));
+            }
+        }
+        else
+        {
+            SetFaderValue(_dragTrack, _dragFader, value);
+            Invalidate(FaderColumn(_dragTrack, _dragFader));
+        }
         Edited?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Was an dieser Stelle möglich ist, für die Statuszeile. Während eines Zugs gibt es nichts zu erklären.</summary>
+    internal string? HintAt(Point point)
+    {
+        if (_dragMode != DragMode.None)
+        {
+            return null;
+        }
+        if (HitName(point, out _))
+        {
+            return TrackNameHint;
+        }
+
+        for (var fader = 0; fader < FaderCount; fader++)
+        {
+            var column = FaderColumn(0, fader);
+            if (point.X >= column.Left && point.X < column.Right)
+            {
+                return FaderHints[fader];
+            }
+        }
+        return HitStep(point, out _, out _) ? StepHint : null;
     }
 
     protected override void OnMouseDown(MouseEventArgs e)
@@ -380,10 +446,17 @@ public sealed class StepGrid : Control
         }
         else if (HitFader(e.Location, out track, out var fader))
         {
+            var allTracks = fader != PanFader && (ModifierKeys & Keys.Control) != 0;
             if (e.Clicks == 2)
             {
-                ResetFader(track, fader);
-                Invalidate(FaderColumn(track, fader));
+                for (var other = 0; other < Project.TrackCount; other++)
+                {
+                    if (allTracks || other == track)
+                    {
+                        ResetFader(other, fader);
+                        Invalidate(FaderColumn(other, fader));
+                    }
+                }
                 Edited?.Invoke(this, EventArgs.Empty);
                 return;
             }
@@ -391,7 +464,16 @@ public sealed class StepGrid : Control
             _dragMode = DragMode.Fader;
             _dragTrack = track;
             _dragFader = fader;
+            _dragAll = allTracks;
+            for (var other = 0; other < Project.TrackCount; other++)
+            {
+                _dragStart[other] = GetFaderValue(other, fader);
+            }
             DragFaderTo(e.X);
+        }
+        else if (HitName(e.Location, out track))
+        {
+            TrackNameClicked?.Invoke(this, new TrackNameEventArgs(track, e.Button, e.Location));
         }
     }
 
@@ -406,12 +488,22 @@ public sealed class StepGrid : Control
         {
             DragFaderTo(e.X);
         }
+
+        var cursor = _dragMode == DragMode.None && HitName(e.Location, out _) ? Cursors.Hand : Cursors.Default;
+        if (Cursor != cursor)
+        {
+            Cursor = cursor;
+        }
     }
 
     protected override void OnMouseUp(MouseEventArgs e)
     {
         base.OnMouseUp(e);
         EndEdit();
+        if (e.Button == MouseButtons.Right && HitName(e.Location, out var track))
+        {
+            TrackNameClicked?.Invoke(this, new TrackNameEventArgs(track, e.Button, e.Location));
+        }
     }
 
     protected override void OnMouseCaptureChanged(EventArgs e)
@@ -428,4 +520,14 @@ public sealed class StepGrid : Control
             EditCompleted?.Invoke(this, EventArgs.Empty);
         }
     }
+}
+
+public sealed class TrackNameEventArgs(int track, MouseButtons button, Point location) : EventArgs
+{
+    public int Track { get; } = track;
+
+    public MouseButtons Button { get; } = button;
+
+    /// <summary>Die Mausposition im Raster.</summary>
+    public Point Location { get; } = location;
 }

@@ -47,17 +47,49 @@ internal static class Dialogs
         {
             Caption = $"Über {AppSettings.AppName}",
             Heading = $"{AppSettings.AppName} {version}",
-            Text = $"Step-Sequencer und Metronom für deine Instrumenten-Übungen.\n\n{copyright}\n\n"
-                + $"Freie Software unter der <a href=\"{LicenseUrl}\">GNU General Public License, Version 3</a>. "
+            Text = $"Step-Sequencer und Metronom\n\n{copyright}\n\n"
+                + $"Freie Software unter der <a href=\"{LicenseUrl}\">GNU General Public License, v3</a>.\n"
                 + "Du darfst das Programm unter deren Bedingungen weitergeben und ändern. Es kommt ohne jede Gewährleistung.\n\n"
-                + $"Verwendet <a href=\"{NAudioUrl}\">NAudio</a> von Mark Heath und Mitwirkenden (MIT-Lizenz).",
+                + $"Verwendet <a href=\"{NAudioUrl}\">NAudio</a> von Mark Heath et al. (MIT-Lizenz).",
             Icon = owner.Icon is { } icon ? new TaskDialogIcon(icon) : TaskDialogIcon.Information,
             EnableLinks = true,
             AllowCancel = true,
             Buttons = { TaskDialogButton.OK },
-            Footnote = "Die Kits gehören nicht zum Programm. Die Rechte an den Sounds liegen bei ihren Urhebern.",
+            Footnote = "              Die Kits gehören nicht zum Programm.\n              Die Rechte liegen bei ihren Urhebern.",
         };
         page.LinkClicked += Page_LinkClicked;
+        TaskDialog.ShowDialog(owner, page);
+    }
+
+    public static void ShowShortcuts(Form owner)
+    {
+        var page = new TaskDialogPage
+        {
+            Caption = AppSettings.AppName,
+            Heading = "Tastenkombinationen",
+            Text = "Wiedergabe und Tempo\n"
+                + "Leertaste: Start und Stopp\n"
+                + "Plus, Minus, Pfeiltasten: Tempo um 1 BPM\n"
+                + "Strg+Plus, Strg+Minus, Bild auf, Bild ab: Tempo um 5 BPM\n\n"
+                + "Datei, Bearbeiten und Hilfe\n"
+                + "Strg+N: Neu\n"
+                + "Strg+O: Öffnen\n"
+                + "Strg+S: Speichern\n"
+                + "Strg+Umschalt+S: Speichern unter\n"
+                + "Strg+Z: Rückgängig\n"
+                + "Strg+Y: Wiederholen\n"
+                + "F1: diese Übersicht\n\n"
+                + "Maus im Raster\n"
+                + "Klick auf einen Spurnamen: Klang anhören\n"
+                + "Rechtsklick auf einen Spurnamen: weitere Möglichkeiten\n"
+                + "Strg + Ziehen an Volume oder Pitch: alle Spuren gemeinsam\n"
+                + "Doppelklick auf einen Regler: Standardwert\n"
+                + "Strg + Doppelklick auf Volume oder Pitch: Standardwert für alle Spuren",
+            Icon = owner.Icon is { } icon ? new TaskDialogIcon(icon) : TaskDialogIcon.Information,
+            AllowCancel = true,
+            Buttons = { TaskDialogButton.OK },
+            Footnote = "Beim Schreiben im Abfolge-Feld gehören die Tasten dem Text. Ohne Wiedergabe steuern die Pfeiltasten das Zahlenfeld oder den Schieberegler mit dem Fokus.",
+        };
         TaskDialog.ShowDialog(owner, page);
     }
 

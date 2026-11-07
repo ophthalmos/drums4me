@@ -14,6 +14,7 @@ internal static class Program
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
         ApplicationConfiguration.Initialize();
+        Application.SetColorMode(AppSettings.Load().ColorMode);
 
         var startFile = StartFileFrom(args);
         using var instance = new SingleInstance();

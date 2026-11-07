@@ -5,11 +5,16 @@ Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das P
 ## Funktionen
 
 - 8 Spuren mit Lautstärke, Panorama und Tonhöhe, dazu Swing und 20 bis 300 BPM
+- Lautstärke und Tonhöhe aller Spuren gemeinsam ändern: Regler mit gedrückter Strg-Taste ziehen
 - 4 Patterns je Projekt, jedes mit eigener Taktart: 2/4, 3/4, 4/4, 5/4 (3+2 und 2+3), 6/8, 7/8, 9/8 und 12/8
 - Abfolge der Patterns, wahlweise mit Wiederholung
 - Vorzählen mit einstellbarer Anzahl von Takten
-- Tempo eintippen mit der Leertaste
+- Tempotrainer: Das Tempo steigt beim Spielen schrittweise bis zu einem Ziel
+- Tempo ändern mit Plus, Minus und den Pfeiltasten (1 BPM) sowie mit Strg+Plus, Strg+Minus, Bild auf und Bild ab (5 BPM), Start und Stopp mit der Leertaste
+- Tempo vorgeben durch rhythmisches Antippen der Leertaste in einem eigenen Fenster
 - optionales Aufblitzen der Anzeige beim Taktwechsel
+- Darstellung hell, dunkel oder wie Windows
+- Statuszeile mit Hinweisen zum Element unter der Maus sowie Taktzähler und Spielzeit
 - Rückgängig und Wiederholen, beim Schließen eine Liste der tatsächlichen Änderungen
 - Projekte als `.d4m`-Dateien, die zuletzt benutzte Datei wird beim Start geladen
 
@@ -19,10 +24,12 @@ Das Programm bringt keine Sounds mit. Ein Kit ist ein Ordner mit bis zu acht WAV
 
 | Ort | Inhalt |
 |---|---|
-| `%ProgramData%\drums4me\Kits` | Kits aus Inhaltspaketen |
+| `%ProgramData%\drums4me\Kits\<Sammlung>` | Kits aus Inhaltspaketen, die Sammlung erscheint in der Auswahlliste in Klammern |
 | `%APPDATA%\drums4me\Kits` | eigene Kits, haben bei gleichem Namen Vorrang |
 
 Die Spuren erscheinen in alphabetischer Reihenfolge der Dateinamen. Eine Zahl am Anfang des Namens legt die Reihenfolge fest und wird nicht angezeigt, zum Beispiel `1 Crash.wav`. Das gilt auch für die Ordnernamen der Kits.
+
+Ein Klick auf einen Spurnamen spielt den Klang zum Probehören. Mit der rechten Maustaste lassen sich die Spuren eigener Kits umbenennen. Eigene Kits stehen am Ende der Auswahlliste und sind dort als „(eigen)“ markiert.
 
 ## Bauen
 

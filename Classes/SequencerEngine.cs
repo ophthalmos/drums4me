@@ -6,7 +6,7 @@ namespace Drums4me.Classes;
 internal sealed record EngineTrack(float[] Samples, float GainLeft, float GainRight, double Rate);
 
 /// <summary>Unveränderlicher Stand, den die Oberfläche als Ganzes an den Audio-Thread übergibt.</summary>
-internal sealed record EngineState(double Bpm, double Swing, float Volume, bool[][][] Patterns, int ActivePattern, int[] Sequence, bool RepeatSequence, int CountInBars, Meter[] Meters, EngineTrack[] Tracks)
+internal sealed record EngineState(double Bpm, double Swing, float Volume, bool[][][] Patterns, int ActivePattern, int[] Sequence, bool RepeatSequence, int CountInBars, Meter[] Meters, EngineTrack[] Tracks, int TrainerStepBpm, int TrainerEveryBars, int TrainerTargetBpm)
 {
     public static EngineState From(Project project, DrumKit kit)
     {
@@ -34,7 +34,8 @@ internal sealed record EngineState(double Bpm, double Swing, float Volume, bool[
 
         // Bei 100 % dauern gerade Schritte das 1,5-Fache und ungerade die Hälfte.
         return new EngineState(project.Bpm, project.SwingPercent / 200.0, project.VolumePercent / 100f,
-            patterns, project.ActivePattern, project.ActiveSequence, project.SequenceRepeat, project.CountInBars, project.Patterns.Select(pattern => pattern.Meter).ToArray(), tracks);
+            patterns, project.ActivePattern, project.ActiveSequence, project.SequenceRepeat, project.CountInBars, [.. project.Patterns.Select(pattern => pattern.Meter)], tracks,
+            project.TrainerEnabled ? project.TrainerStepBpm : 0, project.TrainerEveryBars, project.TrainerTargetBpm);
     }
 }
 
@@ -42,9 +43,11 @@ internal sealed record EngineState(double Bpm, double Swing, float Volume, bool[
 /// Taktgeber und Mischer. Das Tempo ergibt sich allein aus dem Samplezähler im Audiostrom und ist damit unabhängig
 /// von der Rechnerlast. Read läuft im Audio-Thread und darf deshalb weder blockieren noch Speicher anfordern.
 /// </summary>
-internal sealed class SequencerEngine : ISampleProvider
+internal sealed class SequencerEngine(EngineState state) : ISampleProvider
 {
     private const int MaxVoices = 32;
+    private const int RewindToStart = 1;
+    private const int RewindToSilence = 2;
 
     // Stille nach dem letzten Sound, damit auch der Rest im Ausgabepuffer noch zu hören ist.
     private const int TrailingSilenceSamples = DrumKit.SampleRate / 5;
@@ -55,7 +58,7 @@ internal sealed class SequencerEngine : ISampleProvider
     private static readonly EngineTrack BeatClick = CreateClick(1000f, 0.6f);
 
     private readonly Voice[] _voices = new Voice[MaxVoices];
-    private volatile EngineState _state;
+    private volatile EngineState _state = state;
     private volatile int _currentStep = -1;
     private volatile int _currentPattern = -1;
     private volatile bool _isFinished;
@@ -72,8 +75,11 @@ internal sealed class SequencerEngine : ISampleProvider
     private int _countInStepsLeft;
     private Meter _countInMeter = Meter.FourFour;
     private volatile int _countInBar;
-
-    public SequencerEngine(EngineState state) => _state = state;
+    private int _trainerBars;
+    private int _trainerOffset;
+    private volatile int _currentBpm;
+    private EngineTrack? _pendingPreview;
+    private volatile int _barsPlayed;
 
     public WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(DrumKit.SampleRate, 2);
 
@@ -89,6 +95,12 @@ internal sealed class SequencerEngine : ISampleProvider
     /// <summary>Der gerade vorgezählte Takt ab 1, 0 außerhalb des Vorzählens.</summary>
     public int CountInBar => _countInBar;
 
+    /// <summary>Das gerade gespielte Tempo, beim Tempotrainer also samt seiner Erhöhung.</summary>
+    public int CurrentBpm => _currentBpm;
+
+    /// <summary>Der gerade gespielte Takt seit dem Start, 0 vor dem ersten Takt. Vorzählen zählt nicht mit.</summary>
+    public int BarsPlayed => _barsPlayed;
+
     /// <summary>Die Abfolge ohne Wiederholung ist zu Ende, und alle Sounds sind ausgeklungen.</summary>
     public bool IsFinished => _isFinished;
 
@@ -97,20 +109,46 @@ internal sealed class SequencerEngine : ISampleProvider
     /// <summary>Setzt die Wiedergabe beim nächsten Read auf den Anfang zurück und beendet klingende Sounds.</summary>
     public void Rewind()
     {
+        Interlocked.Exchange(ref _pendingPreview, null);
+        RequestReset(RewindToStart);
+    }
+
+    /// <summary>Spielt einen einzelnen Klang, ohne dass die Patterns laufen. IsFinished meldet das Ende.</summary>
+    public void BeginPreview(EngineTrack track)
+    {
+        Interlocked.Exchange(ref _pendingPreview, track);
+        RequestReset(RewindToSilence);
+    }
+
+    /// <summary>Spielt einen einzelnen Klang zusätzlich zu dem, was gerade läuft.</summary>
+    public void Preview(EngineTrack track) => Interlocked.Exchange(ref _pendingPreview, track);
+
+    private void RequestReset(int kind)
+    {
         _currentStep = -1;
         _currentPattern = -1;
         _isFinished = false;
         _countInBar = 0;
+        _barsPlayed = 0;
         Interlocked.Exchange(ref _lastBarStart, -1);
-        Interlocked.Exchange(ref _rewindPending, 1);
+        Interlocked.Exchange(ref _rewindPending, kind);
     }
 
     public int Read(Span<float> buffer)
     {
         var state = _state;
-        if (Interlocked.Exchange(ref _rewindPending, 0) == 1)
+        var reset = Interlocked.Exchange(ref _rewindPending, 0);
+        if (reset != 0)
         {
             ResetTransport(state);
+            _sequenceEnded = reset == RewindToSilence;
+        }
+
+        if (Interlocked.Exchange(ref _pendingPreview, null) is { } preview)
+        {
+            StartVoice(preview);
+            _trailingSamples = 0;
+            _isFinished = false;
         }
 
         var frames = buffer.Length / 2;
@@ -160,6 +198,9 @@ internal sealed class SequencerEngine : ISampleProvider
         _sequenceEnded = false;
         _trailingSamples = 0;
         _isFinished = false;
+        _trainerBars = 0;
+        _trainerOffset = 0;
+        _barsPlayed = 0;
         Interlocked.Exchange(ref _lastBarStart, -1);
         Array.Clear(_voices);
     }
@@ -259,6 +300,8 @@ internal sealed class SequencerEngine : ISampleProvider
         if (step == 0)
         {
             Interlocked.Exchange(ref _lastBarStart, _samplePos);
+            _barsPlayed++;
+            AdvanceTrainer(state);
         }
 
         var steps = state.Patterns[_playingPattern];
@@ -276,9 +319,36 @@ internal sealed class SequencerEngine : ISampleProvider
         _nextStep = (step + 1) % state.Meters[_playingPattern].Steps;
     }
 
-    private static double StepLength(EngineState state, int step)
+    /// <summary>Am Taktanfang: Nach der eingestellten Zahl gespielter Takte steigt das Tempo, bis das Ziel erreicht ist.</summary>
+    private void AdvanceTrainer(EngineState state)
     {
-        var sixteenth = 60.0 * DrumKit.SampleRate / state.Bpm / 4.0;
+        if (state.TrainerStepBpm == 0)
+        {
+            _trainerBars = 0;
+            _trainerOffset = 0;
+            return;
+        }
+
+        if (_trainerBars >= state.TrainerEveryBars)
+        {
+            _trainerBars = 0;
+            if (state.Bpm + _trainerOffset < state.TrainerTargetBpm)
+            {
+                _trainerOffset += state.TrainerStepBpm;
+            }
+        }
+        _trainerBars++;
+    }
+
+    /// <summary>Der Trainer überschreitet das Ziel nicht und senkt das Tempo nie unter den eingestellten Wert.</summary>
+    private double EffectiveBpm(EngineState state) =>
+        state.TrainerStepBpm == 0 ? state.Bpm : Math.Max(state.Bpm, Math.Min(state.Bpm + _trainerOffset, state.TrainerTargetBpm));
+
+    private double StepLength(EngineState state, int step)
+    {
+        var bpm = EffectiveBpm(state);
+        _currentBpm = (int)bpm;
+        var sixteenth = 60.0 * DrumKit.SampleRate / bpm / 4.0;
         return step % 2 == 0 ? sixteenth * (1.0 + state.Swing) : sixteenth * (1.0 - state.Swing);
     }
 

@@ -27,6 +27,14 @@ internal static class ProjectChanges
         Compare("Kit", saved.KitName, current.KitName);
         Compare("Vorzählen", saved.CountInBars, current.CountInBars, bars => bars == 1 ? "1 Takt" : $"{bars} Takte");
 
+        if (saved.TrainerEnabled != current.TrainerEnabled)
+        {
+            changes.Add(current.TrainerEnabled ? "Tempotrainer: eingeschaltet" : "Tempotrainer: ausgeschaltet");
+        }
+        Compare("Tempotrainer, Schritt", saved.TrainerStepBpm, current.TrainerStepBpm, bpm => $"{bpm} BPM");
+        Compare("Tempotrainer, Abstand", saved.TrainerEveryBars, current.TrainerEveryBars, bars => bars == 1 ? "1 Takt" : $"{bars} Takte");
+        Compare("Tempotrainer, Ziel", saved.TrainerTargetBpm, current.TrainerTargetBpm, bpm => $"{bpm} BPM");
+
         if (saved.SequenceEnabled != current.SequenceEnabled)
         {
             changes.Add(current.SequenceEnabled ? "Abfolge: eingeschaltet" : "Abfolge: ausgeschaltet");

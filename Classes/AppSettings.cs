@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Drums4me.Classes;
 
@@ -21,6 +22,10 @@ internal sealed class AppSettings
 
     /// <summary>Lässt das Raster zu jedem neuen Takt kurz aufleuchten.</summary>
     public bool FlashOnBar { get; set; }
+
+    /// <summary>Hell, dunkel oder wie Windows. Gilt ab dem nächsten Programmstart, denn sie muss vor dem ersten Fenster feststehen.</summary>
+    [JsonConverter(typeof(JsonStringEnumConverter<SystemColorMode>))]
+    public SystemColorMode ColorMode { get; set; } = SystemColorMode.System;
 
     public static AppSettings Load()
     {

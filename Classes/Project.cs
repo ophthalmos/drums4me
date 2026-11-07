@@ -15,6 +15,8 @@ internal sealed class Project
     public const int MinBpm = 20;
     public const int MaxBpm = 300;
     public const int MaxCountInBars = 8;
+    public const int MaxTrainerStepBpm = 20;
+    public const int MaxTrainerEveryBars = 64;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -38,6 +40,18 @@ internal sealed class Project
 
     /// <summary>So viele Takte zählt ein Metronom vor, bevor die Wiedergabe beginnt. 0 bedeutet kein Vorzählen.</summary>
     public int CountInBars { get; set; }
+
+    /// <summary>Der Tempotrainer erhöht beim Spielen das Tempo schrittweise. Bpm bleibt dabei unverändert und ist der Startwert.</summary>
+    public bool TrainerEnabled { get; set; }
+
+    /// <summary>Um so viele BPM steigt das Tempo je Schritt.</summary>
+    public int TrainerStepBpm { get; set; } = 2;
+
+    /// <summary>Nach so vielen Takten steigt das Tempo.</summary>
+    public int TrainerEveryBars { get; set; } = 4;
+
+    /// <summary>Bei diesem Tempo bleibt der Trainer stehen.</summary>
+    public int TrainerTargetBpm { get; set; } = 120;
 
     public TrackSettings[] Tracks { get; set; } = [];
     public Pattern[] Patterns { get; set; } = [];
@@ -165,6 +179,9 @@ internal sealed class Project
     {
         Bpm = Math.Clamp(Bpm, MinBpm, MaxBpm);
         CountInBars = Math.Clamp(CountInBars, 0, MaxCountInBars);
+        TrainerStepBpm = Math.Clamp(TrainerStepBpm, 1, MaxTrainerStepBpm);
+        TrainerEveryBars = Math.Clamp(TrainerEveryBars, 1, MaxTrainerEveryBars);
+        TrainerTargetBpm = Math.Clamp(TrainerTargetBpm, MinBpm, MaxBpm);
         SwingPercent = Math.Clamp(SwingPercent, 0, 100);
         VolumePercent = Math.Clamp(VolumePercent, 0, 100);
         ActivePattern = Math.Clamp(ActivePattern, 0, PatternCount - 1);

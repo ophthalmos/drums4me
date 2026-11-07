@@ -5,6 +5,7 @@
     <TargetFramework>net11.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks><!-- für den Quellgenerator von LibraryImport -->
 
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>false</UseWPF>
