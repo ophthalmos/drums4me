@@ -1,6 +1,6 @@
 namespace Drums4me.Forms
 {
-    partial class FrmTap
+    partial class FrmTempo
     {
         /// <summary>
         ///  Required designer variable.
@@ -32,48 +32,72 @@ namespace Drums4me.Forms
             labelHint = new Label();
             labelBpm = new Label();
             labelStatus = new Label();
+            buttonHalf = new Button();
+            buttonDouble = new Button();
             buttonReset = new Button();
             buttonApply = new Button();
             buttonCancel = new Button();
             flashTimer = new System.Windows.Forms.Timer(components);
-            pauseTimer = new System.Windows.Forms.Timer(components);
+            updateTimer = new System.Windows.Forms.Timer(components);
             SuspendLayout();
             //
             // labelHint
             //
             labelHint.Location = new Point(12, 12);
             labelHint.Name = "labelHint";
-            labelHint.Size = new Size(366, 22);
+            labelHint.Size = new Size(546, 44);
             labelHint.TabIndex = 0;
-            labelHint.Text = "Tippe im Takt auf die Leertaste.";
+            labelHint.Text = "Tippe im Takt auf die Leertaste oder spiele den Song in einem beliebigen Programm ab: drums4me hört den Ton von Windows mit. Nichts davon wird gespeichert.";
             labelHint.TextAlign = ContentAlignment.MiddleCenter;
             //
             // labelBpm
             //
             labelBpm.Font = new Font("Segoe UI", 32F, FontStyle.Bold);
-            labelBpm.Location = new Point(12, 42);
+            labelBpm.Location = new Point(12, 62);
             labelBpm.Name = "labelBpm";
-            labelBpm.Size = new Size(366, 84);
+            labelBpm.Size = new Size(546, 84);
             labelBpm.TabIndex = 1;
             labelBpm.Text = "– BPM";
             labelBpm.TextAlign = ContentAlignment.MiddleCenter;
             //
             // labelStatus
             //
+            labelStatus.AutoEllipsis = true;
             labelStatus.ForeColor = SystemColors.GrayText;
-            labelStatus.Location = new Point(12, 132);
+            labelStatus.Location = new Point(12, 150);
             labelStatus.Name = "labelStatus";
-            labelStatus.Size = new Size(366, 22);
+            labelStatus.Size = new Size(546, 22);
             labelStatus.TabIndex = 2;
-            labelStatus.Text = "Noch kein Schlag";
             labelStatus.TextAlign = ContentAlignment.MiddleCenter;
+            //
+            // buttonHalf
+            //
+            buttonHalf.Enabled = false;
+            buttonHalf.Location = new Point(12, 186);
+            buttonHalf.Name = "buttonHalf";
+            buttonHalf.Size = new Size(70, 32);
+            buttonHalf.TabIndex = 3;
+            buttonHalf.Text = "Halb";
+            buttonHalf.UseVisualStyleBackColor = true;
+            buttonHalf.Click += ButtonHalf_Click;
+            //
+            // buttonDouble
+            //
+            buttonDouble.Enabled = false;
+            buttonDouble.Location = new Point(88, 186);
+            buttonDouble.Name = "buttonDouble";
+            buttonDouble.Size = new Size(70, 32);
+            buttonDouble.TabIndex = 4;
+            buttonDouble.Text = "Doppelt";
+            buttonDouble.UseVisualStyleBackColor = true;
+            buttonDouble.Click += ButtonDouble_Click;
             //
             // buttonReset
             //
-            buttonReset.Location = new Point(12, 168);
+            buttonReset.Location = new Point(164, 186);
             buttonReset.Name = "buttonReset";
             buttonReset.Size = new Size(116, 32);
-            buttonReset.TabIndex = 3;
+            buttonReset.TabIndex = 5;
             buttonReset.Text = "Neu beginnen";
             buttonReset.UseVisualStyleBackColor = true;
             buttonReset.Click += ButtonReset_Click;
@@ -82,20 +106,20 @@ namespace Drums4me.Forms
             //
             buttonApply.DialogResult = DialogResult.OK;
             buttonApply.Enabled = false;
-            buttonApply.Location = new Point(174, 168);
+            buttonApply.Location = new Point(354, 186);
             buttonApply.Name = "buttonApply";
             buttonApply.Size = new Size(108, 32);
-            buttonApply.TabIndex = 4;
+            buttonApply.TabIndex = 6;
             buttonApply.Text = "Übernehmen";
             buttonApply.UseVisualStyleBackColor = true;
             //
             // buttonCancel
             //
             buttonCancel.DialogResult = DialogResult.Cancel;
-            buttonCancel.Location = new Point(288, 168);
+            buttonCancel.Location = new Point(468, 186);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(90, 32);
-            buttonCancel.TabIndex = 5;
+            buttonCancel.TabIndex = 7;
             buttonCancel.Text = "Abbrechen";
             buttonCancel.UseVisualStyleBackColor = true;
             //
@@ -104,22 +128,24 @@ namespace Drums4me.Forms
             flashTimer.Interval = 90;
             flashTimer.Tick += FlashTimer_Tick;
             //
-            // pauseTimer
+            // updateTimer
             //
-            pauseTimer.Enabled = true;
-            pauseTimer.Interval = 200;
-            pauseTimer.Tick += PauseTimer_Tick;
+            updateTimer.Enabled = true;
+            updateTimer.Interval = 500;
+            updateTimer.Tick += UpdateTimer_Tick;
             //
-            // FrmTap
+            // FrmTempo
             //
             AcceptButton = buttonApply;
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = buttonCancel;
-            ClientSize = new Size(390, 212);
+            ClientSize = new Size(570, 230);
             Controls.Add(labelHint);
             Controls.Add(labelBpm);
             Controls.Add(labelStatus);
+            Controls.Add(buttonHalf);
+            Controls.Add(buttonDouble);
             Controls.Add(buttonReset);
             Controls.Add(buttonApply);
             Controls.Add(buttonCancel);
@@ -127,11 +153,13 @@ namespace Drums4me.Forms
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "FrmTap";
+            Name = "FrmTempo";
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
-            Text = "Tempo tippen";
+            Text = "Tempo ermitteln";
+            FormClosed += FrmTempo_FormClosed;
+            Shown += FrmTempo_Shown;
             ResumeLayout(false);
         }
 
@@ -140,10 +168,12 @@ namespace Drums4me.Forms
         private Label labelHint;
         private Label labelBpm;
         private Label labelStatus;
+        private Button buttonHalf;
+        private Button buttonDouble;
         private Button buttonReset;
         private Button buttonApply;
         private Button buttonCancel;
         private System.Windows.Forms.Timer flashTimer;
-        private System.Windows.Forms.Timer pauseTimer;
+        private System.Windows.Forms.Timer updateTimer;
     }
 }

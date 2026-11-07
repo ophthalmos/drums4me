@@ -30,78 +30,121 @@
         {
             components = new System.ComponentModel.Container();
             var resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDrums4me));
-            menuStrip = new MenuStrip();
-            fileToolStripMenuItem = new ToolStripMenuItem();
-            newToolStripMenuItem = new ToolStripMenuItem();
-            openToolStripMenuItem = new ToolStripMenuItem();
-            demosToolStripMenuItem = new ToolStripMenuItem();
-            noDemosToolStripMenuItem = new ToolStripMenuItem();
-            saveToolStripMenuItem = new ToolStripMenuItem();
-            saveAsToolStripMenuItem = new ToolStripMenuItem();
-            fileSeparator = new ToolStripSeparator();
-            exitToolStripMenuItem = new ToolStripMenuItem();
-            editToolStripMenuItem = new ToolStripMenuItem();
-            undoToolStripMenuItem = new ToolStripMenuItem();
-            redoToolStripMenuItem = new ToolStripMenuItem();
-            editSeparator = new ToolStripSeparator();
-            clearPatternToolStripMenuItem = new ToolStripMenuItem();
-            settingsToolStripMenuItem = new ToolStripMenuItem();
-            projectFolderToolStripMenuItem = new ToolStripMenuItem();
-            appearanceToolStripMenuItem = new ToolStripMenuItem();
-            appearanceSystemToolStripMenuItem = new ToolStripMenuItem();
-            appearanceLightToolStripMenuItem = new ToolStripMenuItem();
-            appearanceDarkToolStripMenuItem = new ToolStripMenuItem();
-            settingsSeparator = new ToolStripSeparator();
-            ownKitsToolStripMenuItem = new ToolStripMenuItem();
-            installedKitsToolStripMenuItem = new ToolStripMenuItem();
-            reloadKitsToolStripMenuItem = new ToolStripMenuItem();
-            helpToolStripMenuItem = new ToolStripMenuItem();
-            shortcutsToolStripMenuItem = new ToolStripMenuItem();
-            aboutToolStripMenuItem = new ToolStripMenuItem();
-            rowMain = new FlowLayoutPanel();
+            ribbonTabs = new TabControl();
+            tabPageFile = new TabPage();
+            flowFile = new FlowLayoutPanel();
+            groupFile = new Panel();
+            buttonNew = new Button();
+            buttonSave = new Button();
+            buttonSaveAs = new Button();
+            captionFile = new Label();
+            dividerFile = new Panel();
+            groupFind = new Panel();
+            labelSearch = new Label();
+            textBoxSearch = new TextBox();
+            labelFilterKit = new Label();
+            comboFilterKit = new ComboBox();
+            labelFilterMeter = new Label();
+            comboFilterMeter = new ComboBox();
+            captionFind = new Label();
+            dividerFind = new Panel();
+            groupSource = new Panel();
+            buttonOtherFolder = new Button();
+            buttonDemos = new Button();
+            captionSource = new Label();
+            tabPageStart = new TabPage();
+            flowStart = new FlowLayoutPanel();
+            groupPlay = new Panel();
             buttonPlay = new Button();
+            captionPlay = new Label();
+            dividerPlay = new Panel();
+            groupTempo = new Panel();
             labelTempo = new Label();
             numericTempo = new NumericUpDown();
             labelBpm = new Label();
             buttonTap = new Button();
-            dividerTempo = new Panel();
-            labelSwing = new Label();
-            trackBarSwing = new TrackBar();
-            labelVolume = new Label();
-            trackBarVolume = new TrackBar();
-            labelKit = new Label();
-            comboKit = new ComboBox();
-            dividerKit = new Panel();
             labelCountIn = new Label();
             numericCountIn = new NumericUpDown();
-            checkBoxFlash = new CheckBox();
-            lineSequence = new Panel();
-            rowSequence = new FlowLayoutPanel();
-            checkBoxSequence = new CheckBox();
-            textBoxSequence = new TextBox();
-            checkBoxRepeat = new CheckBox();
-            dividerPattern = new Panel();
-            labelPattern = new Label();
-            radioPattern1 = new RadioButton();
-            radioPattern2 = new RadioButton();
-            radioPattern3 = new RadioButton();
-            radioPattern4 = new RadioButton();
-            labelMeter = new Label();
-            comboMeter = new ComboBox();
-            lineTrainer = new Panel();
-            rowTrainer = new FlowLayoutPanel();
+            labelCountInBars = new Label();
+            captionTempo = new Label();
+            dividerTempo = new Panel();
+            groupTrainer = new Panel();
             checkBoxTrainer = new CheckBox();
             labelTrainerStep = new Label();
             numericTrainerStep = new NumericUpDown();
             labelTrainerBars = new Label();
+            labelTrainerEvery = new Label();
             numericTrainerBars = new NumericUpDown();
             labelTrainerTarget = new Label();
             numericTrainerTarget = new NumericUpDown();
             labelTrainerBpm = new Label();
-            labelTrainerStatus = new Label();
+            captionTrainer = new Label();
+            dividerTrainer = new Panel();
+            groupSound = new Panel();
+            labelSwing = new Label();
+            trackBarSwing = new TrackBar();
+            labelSwingValue = new Label();
+            labelVolume = new Label();
+            trackBarVolume = new TrackBar();
+            labelVolumeValue = new Label();
+            lineKit = new Panel();
+            labelKit = new Label();
+            comboKit = new ComboBox();
+            captionSound = new Label();
+            dividerSound = new Panel();
+            groupPattern = new Panel();
+            radioPattern1 = new RadioButton();
+            radioPattern2 = new RadioButton();
+            radioPattern3 = new RadioButton();
+            radioPattern4 = new RadioButton();
+            comboMeter = new ComboBox();
+            buttonClearPattern = new Button();
+            captionPattern = new Label();
+            dividerPattern = new Panel();
+            groupSequence = new Panel();
+            checkBoxSequence = new CheckBox();
+            checkBoxRepeat = new CheckBox();
+            textBoxSequence = new TextBox();
+            captionSequence = new Label();
+            tabPageSettings = new TabPage();
+            flowSettings = new FlowLayoutPanel();
+            groupProjects = new Panel();
+            labelProjectFolder = new Label();
+            textBoxProjectFolder = new TextBox();
+            buttonProjectFolder = new Button();
+            labelProjectHint = new Label();
+            lineOpenLast = new Panel();
+            checkBoxOpenLast = new CheckBox();
+            captionProjects = new Label();
+            dividerProjects = new Panel();
+            groupAppearance = new Panel();
+            radioSystem = new RadioButton();
+            radioLight = new RadioButton();
+            radioDark = new RadioButton();
+            labelAppearanceHint = new Label();
+            lineFlash = new Panel();
+            checkBoxFlash = new CheckBox();
+            captionAppearance = new Label();
+            dividerAppearance = new Panel();
+            groupKits = new Panel();
+            labelOwnKits = new Label();
+            buttonOwnKits = new Button();
+            labelInstalledKits = new Label();
+            buttonInstalledKits = new Button();
+            buttonReloadKits = new Button();
+            labelKitCount = new Label();
+            captionKits = new Label();
+            buttonUndo = new Button();
+            buttonRedo = new Button();
+            buttonQuickSave = new Button();
+            buttonShortcuts = new Button();
+            buttonAbout = new Button();
             stepGrid = new Drums4me.Controls.StepGrid();
+            projectBrowser = new Drums4me.Controls.ProjectBrowser();
             statusStrip = new StatusStrip();
             statusHint = new ToolStripStatusLabel();
+            statusProjects = new ToolStripStatusLabel();
+            statusTrainer = new ToolStripStatusLabel();
             statusBars = new ToolStripStatusLabel();
             statusTime = new ToolStripStatusLabel();
             playheadTimer = new System.Windows.Forms.Timer(components);
@@ -109,697 +152,513 @@
             trackNameMenu = new ContextMenuStrip(components);
             previewTrackToolStripMenuItem = new ToolStripMenuItem();
             renameTrackToolStripMenuItem = new ToolStripMenuItem();
+            demosMenu = new ContextMenuStrip(components);
+            noDemosToolStripMenuItem = new ToolStripMenuItem();
             pendingOpenTimer = new System.Windows.Forms.Timer(components);
-            openFileDialog = new OpenFileDialog();
+            otherFolderDialog = new FolderBrowserDialog();
+            projectFolderDialog = new FolderBrowserDialog();
             saveFileDialog = new SaveFileDialog();
-            folderBrowserDialog = new FolderBrowserDialog();
-            menuStrip.SuspendLayout();
-            rowMain.SuspendLayout();
+            ribbonTabs.SuspendLayout();
+            tabPageFile.SuspendLayout();
+            flowFile.SuspendLayout();
+            groupFile.SuspendLayout();
+            groupFind.SuspendLayout();
+            groupSource.SuspendLayout();
+            tabPageStart.SuspendLayout();
+            flowStart.SuspendLayout();
+            groupPlay.SuspendLayout();
+            groupTempo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericTempo).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)trackBarSwing).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)trackBarVolume).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericCountIn).BeginInit();
-            rowSequence.SuspendLayout();
-            rowTrainer.SuspendLayout();
+            groupTrainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericTrainerStep).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerBars).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerTarget).BeginInit();
+            groupSound.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)trackBarSwing).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)trackBarVolume).BeginInit();
+            groupPattern.SuspendLayout();
+            groupSequence.SuspendLayout();
+            tabPageSettings.SuspendLayout();
+            flowSettings.SuspendLayout();
+            groupProjects.SuspendLayout();
+            groupAppearance.SuspendLayout();
+            groupKits.SuspendLayout();
             statusStrip.SuspendLayout();
             trackNameMenu.SuspendLayout();
+            demosMenu.SuspendLayout();
             SuspendLayout();
             // 
-            // menuStrip
+            // ribbonTabs
             // 
-            menuStrip.Font = new Font("Segoe UI", 10F);
-            menuStrip.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, settingsToolStripMenuItem, helpToolStripMenuItem });
-            menuStrip.Location = new Point(0, 0);
-            menuStrip.Name = "menuStrip";
-            menuStrip.Size = new Size(1260, 27);
-            menuStrip.TabIndex = 0;
+            ribbonTabs.Controls.Add(tabPageFile);
+            ribbonTabs.Controls.Add(tabPageStart);
+            ribbonTabs.Controls.Add(tabPageSettings);
+            ribbonTabs.Dock = DockStyle.Top;
+            ribbonTabs.Location = new Point(0, 0);
+            ribbonTabs.Name = "ribbonTabs";
+            ribbonTabs.SelectedIndex = 1;
+            ribbonTabs.Size = new Size(1260, 124);
+            ribbonTabs.TabIndex = 0;
+            ribbonTabs.SelectedIndexChanged += RibbonTabs_SelectedIndexChanged;
             // 
-            // fileToolStripMenuItem
+            // tabPageFile
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem, openToolStripMenuItem, demosToolStripMenuItem, saveToolStripMenuItem, saveAsToolStripMenuItem, fileSeparator, exitToolStripMenuItem });
-            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new Size(53, 23);
-            fileToolStripMenuItem.Text = "&Datei";
+            tabPageFile.Controls.Add(flowFile);
+            tabPageFile.Location = new Point(4, 26);
+            tabPageFile.Name = "tabPageFile";
+            tabPageFile.Size = new Size(1252, 94);
+            tabPageFile.TabIndex = 0;
+            tabPageFile.Text = "Datei";
             // 
-            // newToolStripMenuItem
+            // flowFile
             // 
-            newToolStripMenuItem.Image = (Image)resources.GetObject("newToolStripMenuItem.Image");
-            newToolStripMenuItem.Name = "newToolStripMenuItem";
-            newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
-            newToolStripMenuItem.Size = new Size(332, 24);
-            newToolStripMenuItem.Text = "&Neu";
-            newToolStripMenuItem.Click += NewToolStripMenuItem_Click;
+            flowFile.Controls.Add(groupFile);
+            flowFile.Controls.Add(dividerFile);
+            flowFile.Controls.Add(groupFind);
+            flowFile.Controls.Add(dividerFind);
+            flowFile.Controls.Add(groupSource);
+            flowFile.Dock = DockStyle.Fill;
+            flowFile.Location = new Point(0, 0);
+            flowFile.Name = "flowFile";
+            flowFile.Size = new Size(1252, 94);
+            flowFile.TabIndex = 0;
             // 
-            // openToolStripMenuItem
+            // groupFile
             // 
-            openToolStripMenuItem.Image = (Image)resources.GetObject("openToolStripMenuItem.Image");
-            openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-            openToolStripMenuItem.Size = new Size(332, 24);
-            openToolStripMenuItem.Text = "Ö&ffnen…";
-            openToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
+            groupFile.Controls.Add(buttonNew);
+            groupFile.Controls.Add(buttonSave);
+            groupFile.Controls.Add(buttonSaveAs);
+            groupFile.Controls.Add(captionFile);
+            groupFile.Location = new Point(0, 0);
+            groupFile.Margin = new Padding(0);
+            groupFile.Name = "groupFile";
+            groupFile.Size = new Size(252, 90);
+            groupFile.TabIndex = 0;
             // 
-            // demosToolStripMenuItem
+            // buttonNew
             // 
-            demosToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { noDemosToolStripMenuItem });
-            demosToolStripMenuItem.Image = (Image)resources.GetObject("demosToolStripMenuItem.Image");
-            demosToolStripMenuItem.Name = "demosToolStripMenuItem";
-            demosToolStripMenuItem.Size = new Size(332, 24);
-            demosToolStripMenuItem.Text = "De&mos";
-            demosToolStripMenuItem.DropDownOpening += DemosToolStripMenuItem_DropDownOpening;
+            buttonNew.AccessibleDescription = "Beginnt ein neues Projekt. Strg+N.";
+            buttonNew.Image = (Image)resources.GetObject("buttonNew.Image");
+            buttonNew.ImageAlign = ContentAlignment.BottomCenter;
+            buttonNew.Location = new Point(6, 3);
+            buttonNew.Name = "buttonNew";
+            buttonNew.Size = new Size(64, 64);
+            buttonNew.TabIndex = 0;
+            buttonNew.Text = "Neu";
+            buttonNew.TextAlign = ContentAlignment.TopCenter;
+            buttonNew.TextImageRelation = TextImageRelation.ImageAboveText;
+            buttonNew.UseVisualStyleBackColor = true;
+            buttonNew.Click += ButtonNew_Click;
             // 
-            // noDemosToolStripMenuItem
+            // buttonSave
             // 
-            noDemosToolStripMenuItem.Enabled = false;
-            noDemosToolStripMenuItem.Name = "noDemosToolStripMenuItem";
-            noDemosToolStripMenuItem.Size = new Size(217, 24);
-            noDemosToolStripMenuItem.Text = "Keine Demos installiert";
+            buttonSave.AccessibleDescription = "Speichert das Projekt. Strg+S.";
+            buttonSave.Image = (Image)resources.GetObject("buttonSave.Image");
+            buttonSave.ImageAlign = ContentAlignment.BottomCenter;
+            buttonSave.Location = new Point(72, 3);
+            buttonSave.Name = "buttonSave";
+            buttonSave.Size = new Size(82, 64);
+            buttonSave.TabIndex = 1;
+            buttonSave.Text = "Speichern";
+            buttonSave.TextAlign = ContentAlignment.TopCenter;
+            buttonSave.TextImageRelation = TextImageRelation.ImageAboveText;
+            buttonSave.UseVisualStyleBackColor = true;
+            buttonSave.Click += ButtonSave_Click;
             // 
-            // saveToolStripMenuItem
+            // buttonSaveAs
             // 
-            saveToolStripMenuItem.Image = (Image)resources.GetObject("saveToolStripMenuItem.Image");
-            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
-            saveToolStripMenuItem.Size = new Size(332, 24);
-            saveToolStripMenuItem.Text = "&Speichern";
-            saveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
+            buttonSaveAs.AccessibleDescription = "Speichert das Projekt unter einem anderen Namen. Strg+Umschalt+S.";
+            buttonSaveAs.Image = (Image)resources.GetObject("buttonSaveAs.Image");
+            buttonSaveAs.ImageAlign = ContentAlignment.BottomCenter;
+            buttonSaveAs.Location = new Point(156, 3);
+            buttonSaveAs.Name = "buttonSaveAs";
+            buttonSaveAs.Size = new Size(90, 64);
+            buttonSaveAs.TabIndex = 2;
+            buttonSaveAs.Text = "unter…";
+            buttonSaveAs.TextAlign = ContentAlignment.TopCenter;
+            buttonSaveAs.TextImageRelation = TextImageRelation.ImageAboveText;
+            buttonSaveAs.UseVisualStyleBackColor = true;
+            buttonSaveAs.Click += ButtonSaveAs_Click;
             // 
-            // saveAsToolStripMenuItem
+            // captionFile
             // 
-            saveAsToolStripMenuItem.Image = (Image)resources.GetObject("saveAsToolStripMenuItem.Image");
-            saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.S;
-            saveAsToolStripMenuItem.Size = new Size(332, 24);
-            saveAsToolStripMenuItem.Text = "Speichern &unter…";
-            saveAsToolStripMenuItem.Click += SaveAsToolStripMenuItem_Click;
+            captionFile.Dock = DockStyle.Bottom;
+            captionFile.ForeColor = SystemColors.GrayText;
+            captionFile.Location = new Point(0, 72);
+            captionFile.Name = "captionFile";
+            captionFile.Size = new Size(252, 18);
+            captionFile.TabIndex = 3;
+            captionFile.Text = "Projekt";
+            captionFile.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // fileSeparator
+            // dividerFile
             // 
-            fileSeparator.Name = "fileSeparator";
-            fileSeparator.Size = new Size(329, 6);
+            dividerFile.BackColor = SystemColors.ControlDark;
+            dividerFile.Location = new Point(252, 4);
+            dividerFile.Margin = new Padding(0, 4, 0, 4);
+            dividerFile.Name = "dividerFile";
+            dividerFile.Size = new Size(1, 82);
+            dividerFile.TabIndex = 1;
             // 
-            // exitToolStripMenuItem
+            // groupFind
             // 
-            exitToolStripMenuItem.Image = (Image)resources.GetObject("exitToolStripMenuItem.Image");
-            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(332, 24);
-            exitToolStripMenuItem.Text = "&Beenden";
-            exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
+            groupFind.Controls.Add(labelSearch);
+            groupFind.Controls.Add(textBoxSearch);
+            groupFind.Controls.Add(labelFilterKit);
+            groupFind.Controls.Add(comboFilterKit);
+            groupFind.Controls.Add(labelFilterMeter);
+            groupFind.Controls.Add(comboFilterMeter);
+            groupFind.Controls.Add(captionFind);
+            groupFind.Location = new Point(253, 0);
+            groupFind.Margin = new Padding(0);
+            groupFind.Name = "groupFind";
+            groupFind.Size = new Size(480, 90);
+            groupFind.TabIndex = 2;
             // 
-            // editToolStripMenuItem
+            // labelSearch
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem, editSeparator, clearPatternToolStripMenuItem });
-            editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new Size(86, 23);
-            editToolStripMenuItem.Text = "&Bearbeiten";
+            labelSearch.AccessibleDescription = "Sucht in den Namen der Projekte und Ordner.";
+            labelSearch.AutoSize = true;
+            labelSearch.Location = new Point(8, 8);
+            labelSearch.Name = "labelSearch";
+            labelSearch.Size = new Size(53, 19);
+            labelSearch.TabIndex = 0;
+            labelSearch.Text = "Suchen";
             // 
-            // undoToolStripMenuItem
+            // textBoxSearch
             // 
-            undoToolStripMenuItem.Enabled = false;
-            undoToolStripMenuItem.Image = (Image)resources.GetObject("undoToolStripMenuItem.Image");
-            undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            undoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Z;
-            undoToolStripMenuItem.Size = new Size(207, 24);
-            undoToolStripMenuItem.Text = "&Rückgängig";
-            undoToolStripMenuItem.Click += UndoToolStripMenuItem_Click;
+            textBoxSearch.AccessibleDescription = "Sucht in den Namen der Projekte und Ordner. Strg+F. Enter öffnet das markierte Projekt, Pfeil runter springt in die Liste.";
+            textBoxSearch.Location = new Point(62, 5);
+            textBoxSearch.Name = "textBoxSearch";
+            textBoxSearch.Size = new Size(400, 25);
+            textBoxSearch.TabIndex = 1;
+            textBoxSearch.TextChanged += BrowserFilter_Changed;
+            textBoxSearch.KeyDown += TextBoxSearch_KeyDown;
             // 
-            // redoToolStripMenuItem
+            // labelFilterKit
             // 
-            redoToolStripMenuItem.Enabled = false;
-            redoToolStripMenuItem.Image = (Image)resources.GetObject("redoToolStripMenuItem.Image");
-            redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            redoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Y;
-            redoToolStripMenuItem.Size = new Size(207, 24);
-            redoToolStripMenuItem.Text = "&Wiederholen";
-            redoToolStripMenuItem.Click += RedoToolStripMenuItem_Click;
+            labelFilterKit.AccessibleDescription = "Zeigt nur Projekte mit diesem Kit.";
+            labelFilterKit.AutoSize = true;
+            labelFilterKit.Location = new Point(8, 40);
+            labelFilterKit.Name = "labelFilterKit";
+            labelFilterKit.Size = new Size(25, 19);
+            labelFilterKit.TabIndex = 2;
+            labelFilterKit.Text = "Kit";
             // 
-            // editSeparator
+            // comboFilterKit
             // 
-            editSeparator.Name = "editSeparator";
-            editSeparator.Size = new Size(204, 6);
+            comboFilterKit.AccessibleDescription = "Zeigt nur Projekte mit diesem Kit.";
+            comboFilterKit.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboFilterKit.Location = new Point(62, 37);
+            comboFilterKit.MaxDropDownItems = 20;
+            comboFilterKit.Name = "comboFilterKit";
+            comboFilterKit.Size = new Size(170, 25);
+            comboFilterKit.TabIndex = 3;
+            comboFilterKit.SelectedIndexChanged += BrowserFilter_Changed;
             // 
-            // clearPatternToolStripMenuItem
+            // labelFilterMeter
             // 
-            clearPatternToolStripMenuItem.Image = (Image)resources.GetObject("clearPatternToolStripMenuItem.Image");
-            clearPatternToolStripMenuItem.Name = "clearPatternToolStripMenuItem";
-            clearPatternToolStripMenuItem.Size = new Size(207, 24);
-            clearPatternToolStripMenuItem.Text = "Pattern &leeren";
-            clearPatternToolStripMenuItem.Click += ClearPatternToolStripMenuItem_Click;
+            labelFilterMeter.AccessibleDescription = "Zeigt nur Projekte, in denen diese Taktart vorkommt.";
+            labelFilterMeter.AutoSize = true;
+            labelFilterMeter.Location = new Point(246, 40);
+            labelFilterMeter.Name = "labelFilterMeter";
+            labelFilterMeter.Size = new Size(50, 19);
+            labelFilterMeter.TabIndex = 4;
+            labelFilterMeter.Text = "Taktart";
             // 
-            // settingsToolStripMenuItem
+            // comboFilterMeter
             // 
-            settingsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { projectFolderToolStripMenuItem, appearanceToolStripMenuItem, settingsSeparator, ownKitsToolStripMenuItem, installedKitsToolStripMenuItem, reloadKitsToolStripMenuItem });
-            settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            settingsToolStripMenuItem.Size = new Size(102, 23);
-            settingsToolStripMenuItem.Text = "&Einstellungen";
+            comboFilterMeter.AccessibleDescription = "Zeigt nur Projekte, in denen diese Taktart vorkommt.";
+            comboFilterMeter.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboFilterMeter.Location = new Point(300, 37);
+            comboFilterMeter.Name = "comboFilterMeter";
+            comboFilterMeter.Size = new Size(162, 25);
+            comboFilterMeter.TabIndex = 5;
+            comboFilterMeter.SelectedIndexChanged += BrowserFilter_Changed;
             // 
-            // projectFolderToolStripMenuItem
+            // captionFind
             // 
-            projectFolderToolStripMenuItem.Image = (Image)resources.GetObject("projectFolderToolStripMenuItem.Image");
-            projectFolderToolStripMenuItem.Name = "projectFolderToolStripMenuItem";
-            projectFolderToolStripMenuItem.Size = new Size(232, 24);
-            projectFolderToolStripMenuItem.Text = "&Speicherort für Projekte…";
-            projectFolderToolStripMenuItem.Click += ProjectFolderToolStripMenuItem_Click;
+            captionFind.Dock = DockStyle.Bottom;
+            captionFind.ForeColor = SystemColors.GrayText;
+            captionFind.Location = new Point(0, 72);
+            captionFind.Name = "captionFind";
+            captionFind.Size = new Size(480, 18);
+            captionFind.TabIndex = 6;
+            captionFind.Text = "Finden";
+            captionFind.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // appearanceToolStripMenuItem
-            //
-            appearanceToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { appearanceSystemToolStripMenuItem, appearanceLightToolStripMenuItem, appearanceDarkToolStripMenuItem });
-            appearanceToolStripMenuItem.Image = (Image)resources.GetObject("appearanceToolStripMenuItem.Image");
-            appearanceToolStripMenuItem.Name = "appearanceToolStripMenuItem";
-            appearanceToolStripMenuItem.Size = new Size(232, 24);
-            appearanceToolStripMenuItem.Text = "&Darstellung";
-            appearanceToolStripMenuItem.DropDownOpening += AppearanceToolStripMenuItem_DropDownOpening;
-            //
-            // appearanceSystemToolStripMenuItem
-            //
-            appearanceSystemToolStripMenuItem.Name = "appearanceSystemToolStripMenuItem";
-            appearanceSystemToolStripMenuItem.Size = new Size(160, 24);
-            appearanceSystemToolStripMenuItem.Text = "Wie &Windows";
-            appearanceSystemToolStripMenuItem.Click += AppearanceSystemToolStripMenuItem_Click;
-            //
-            // appearanceLightToolStripMenuItem
-            //
-            appearanceLightToolStripMenuItem.Name = "appearanceLightToolStripMenuItem";
-            appearanceLightToolStripMenuItem.Size = new Size(160, 24);
-            appearanceLightToolStripMenuItem.Text = "&Hell";
-            appearanceLightToolStripMenuItem.Click += AppearanceLightToolStripMenuItem_Click;
-            //
-            // appearanceDarkToolStripMenuItem
-            //
-            appearanceDarkToolStripMenuItem.Name = "appearanceDarkToolStripMenuItem";
-            appearanceDarkToolStripMenuItem.Size = new Size(160, 24);
-            appearanceDarkToolStripMenuItem.Text = "&Dunkel";
-            appearanceDarkToolStripMenuItem.Click += AppearanceDarkToolStripMenuItem_Click;
-            //
-            // settingsSeparator
+            // dividerFind
             // 
-            settingsSeparator.Name = "settingsSeparator";
-            settingsSeparator.Size = new Size(229, 6);
+            dividerFind.BackColor = SystemColors.ControlDark;
+            dividerFind.Location = new Point(733, 4);
+            dividerFind.Margin = new Padding(0, 4, 0, 4);
+            dividerFind.Name = "dividerFind";
+            dividerFind.Size = new Size(1, 82);
+            dividerFind.TabIndex = 3;
             // 
-            // ownKitsToolStripMenuItem
+            // groupSource
             // 
-            ownKitsToolStripMenuItem.Image = (Image)resources.GetObject("ownKitsToolStripMenuItem.Image");
-            ownKitsToolStripMenuItem.Name = "ownKitsToolStripMenuItem";
-            ownKitsToolStripMenuItem.Size = new Size(232, 24);
-            ownKitsToolStripMenuItem.Text = "Ei&gene Kits öffnen";
-            ownKitsToolStripMenuItem.Click += OwnKitsToolStripMenuItem_Click;
+            groupSource.Controls.Add(buttonOtherFolder);
+            groupSource.Controls.Add(buttonDemos);
+            groupSource.Controls.Add(captionSource);
+            groupSource.Location = new Point(734, 0);
+            groupSource.Margin = new Padding(0);
+            groupSource.Name = "groupSource";
+            groupSource.Size = new Size(252, 90);
+            groupSource.TabIndex = 4;
             // 
-            // installedKitsToolStripMenuItem
+            // buttonOtherFolder
             // 
-            installedKitsToolStripMenuItem.Image = (Image)resources.GetObject("installedKitsToolStripMenuItem.Image");
-            installedKitsToolStripMenuItem.Name = "installedKitsToolStripMenuItem";
-            installedKitsToolStripMenuItem.Size = new Size(232, 24);
-            installedKitsToolStripMenuItem.Text = "&Installierte Kits öffnen";
-            installedKitsToolStripMenuItem.Click += InstalledKitsToolStripMenuItem_Click;
+            buttonOtherFolder.AccessibleDescription = "Zeigt die Projekte eines anderen Ordners. Der Speicherort in den Einstellungen bleibt, wie er ist.";
+            buttonOtherFolder.Image = (Image)resources.GetObject("buttonOtherFolder.Image");
+            buttonOtherFolder.ImageAlign = ContentAlignment.BottomCenter;
+            buttonOtherFolder.Location = new Point(6, 3);
+            buttonOtherFolder.Name = "buttonOtherFolder";
+            buttonOtherFolder.Size = new Size(125, 64);
+            buttonOtherFolder.TabIndex = 0;
+            buttonOtherFolder.Text = "Anderen Ordner";
+            buttonOtherFolder.TextAlign = ContentAlignment.TopCenter;
+            buttonOtherFolder.TextImageRelation = TextImageRelation.ImageAboveText;
+            buttonOtherFolder.UseVisualStyleBackColor = true;
+            buttonOtherFolder.Click += ButtonOtherFolder_Click;
             // 
-            // reloadKitsToolStripMenuItem
+            // buttonDemos
             // 
-            reloadKitsToolStripMenuItem.Image = (Image)resources.GetObject("reloadKitsToolStripMenuItem.Image");
-            reloadKitsToolStripMenuItem.Name = "reloadKitsToolStripMenuItem";
-            reloadKitsToolStripMenuItem.Size = new Size(232, 24);
-            reloadKitsToolStripMenuItem.Text = "Kits neu &einlesen";
-            reloadKitsToolStripMenuItem.Click += ReloadKitsToolStripMenuItem_Click;
+            buttonDemos.AccessibleDescription = "Öffnet eines der installierten Demo-Projekte.";
+            buttonDemos.Image = (Image)resources.GetObject("buttonDemos.Image");
+            buttonDemos.ImageAlign = ContentAlignment.BottomCenter;
+            buttonDemos.Location = new Point(135, 3);
+            buttonDemos.Name = "buttonDemos";
+            buttonDemos.Size = new Size(111, 64);
+            buttonDemos.TabIndex = 1;
+            buttonDemos.Text = "Demos öffnen";
+            buttonDemos.TextAlign = ContentAlignment.TopCenter;
+            buttonDemos.TextImageRelation = TextImageRelation.ImageAboveText;
+            buttonDemos.UseVisualStyleBackColor = true;
+            buttonDemos.Click += ButtonDemos_Click;
             // 
-            // helpToolStripMenuItem
+            // captionSource
             // 
-            helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { shortcutsToolStripMenuItem, aboutToolStripMenuItem });
-            helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new Size(48, 23);
-            helpToolStripMenuItem.Text = "&Hilfe";
+            captionSource.Dock = DockStyle.Bottom;
+            captionSource.ForeColor = SystemColors.GrayText;
+            captionSource.Location = new Point(0, 72);
+            captionSource.Name = "captionSource";
+            captionSource.Size = new Size(252, 18);
+            captionSource.TabIndex = 2;
+            captionSource.Text = "Quelle";
+            captionSource.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // shortcutsToolStripMenuItem
-            //
-            shortcutsToolStripMenuItem.Image = (Image)resources.GetObject("shortcutsToolStripMenuItem.Image");
-            shortcutsToolStripMenuItem.Name = "shortcutsToolStripMenuItem";
-            shortcutsToolStripMenuItem.ShortcutKeys = Keys.F1;
-            shortcutsToolStripMenuItem.Size = new Size(212, 24);
-            shortcutsToolStripMenuItem.Text = "&Tastenkombinationen…";
-            shortcutsToolStripMenuItem.Click += ShortcutsToolStripMenuItem_Click;
-            //
-            // aboutToolStripMenuItem
+            // tabPageStart
             // 
-            aboutToolStripMenuItem.Image = (Image)resources.GetObject("aboutToolStripMenuItem.Image");
-            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new Size(212, 24);
-            aboutToolStripMenuItem.Text = "Ü&ber drums4me…";
-            aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
+            tabPageStart.Controls.Add(flowStart);
+            tabPageStart.Location = new Point(4, 26);
+            tabPageStart.Name = "tabPageStart";
+            tabPageStart.Size = new Size(1252, 94);
+            tabPageStart.TabIndex = 1;
+            tabPageStart.Text = "Start";
             // 
-            // rowMain
+            // flowStart
             // 
-            rowMain.AutoSize = true;
-            rowMain.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            rowMain.Controls.Add(buttonPlay);
-            rowMain.Controls.Add(labelTempo);
-            rowMain.Controls.Add(numericTempo);
-            rowMain.Controls.Add(labelBpm);
-            rowMain.Controls.Add(buttonTap);
-            rowMain.Controls.Add(dividerTempo);
-            rowMain.Controls.Add(labelSwing);
-            rowMain.Controls.Add(trackBarSwing);
-            rowMain.Controls.Add(labelVolume);
-            rowMain.Controls.Add(trackBarVolume);
-            rowMain.Controls.Add(labelKit);
-            rowMain.Controls.Add(comboKit);
-            rowMain.Controls.Add(dividerKit);
-            rowMain.Controls.Add(labelCountIn);
-            rowMain.Controls.Add(numericCountIn);
-            rowMain.Controls.Add(checkBoxFlash);
-            rowMain.Dock = DockStyle.Top;
-            rowMain.Location = new Point(0, 27);
-            rowMain.Name = "rowMain";
-            rowMain.Padding = new Padding(6, 3, 6, 3);
-            rowMain.Size = new Size(1260, 44);
-            rowMain.TabIndex = 1;
+            flowStart.Controls.Add(groupPlay);
+            flowStart.Controls.Add(dividerPlay);
+            flowStart.Controls.Add(groupTempo);
+            flowStart.Controls.Add(dividerTempo);
+            flowStart.Controls.Add(groupTrainer);
+            flowStart.Controls.Add(dividerTrainer);
+            flowStart.Controls.Add(groupSound);
+            flowStart.Controls.Add(dividerSound);
+            flowStart.Controls.Add(groupPattern);
+            flowStart.Controls.Add(dividerPattern);
+            flowStart.Controls.Add(groupSequence);
+            flowStart.Dock = DockStyle.Fill;
+            flowStart.Location = new Point(0, 0);
+            flowStart.Name = "flowStart";
+            flowStart.Size = new Size(1252, 94);
+            flowStart.TabIndex = 0;
+            // 
+            // groupPlay
+            // 
+            groupPlay.Controls.Add(buttonPlay);
+            groupPlay.Controls.Add(captionPlay);
+            groupPlay.Location = new Point(0, 0);
+            groupPlay.Margin = new Padding(0);
+            groupPlay.Name = "groupPlay";
+            groupPlay.Size = new Size(88, 90);
+            groupPlay.TabIndex = 0;
             // 
             // buttonPlay
             // 
             buttonPlay.AccessibleDescription = "Startet oder stoppt die Wiedergabe. Leertaste.";
-            buttonPlay.Anchor = AnchorStyles.Left;
-            buttonPlay.Location = new Point(9, 6);
+            buttonPlay.AccessibleName = "Start";
+            buttonPlay.Font = new Font("Segoe UI Symbol", 22F);
+            buttonPlay.Location = new Point(12, 3);
             buttonPlay.Name = "buttonPlay";
-            buttonPlay.Size = new Size(92, 32);
+            buttonPlay.Size = new Size(64, 64);
             buttonPlay.TabIndex = 0;
-            buttonPlay.Text = "▶ Start";
+            buttonPlay.Text = "▶";
             buttonPlay.UseVisualStyleBackColor = true;
             buttonPlay.Click += ButtonPlay_Click;
             // 
+            // captionPlay
+            // 
+            captionPlay.Dock = DockStyle.Bottom;
+            captionPlay.ForeColor = SystemColors.GrayText;
+            captionPlay.Location = new Point(0, 72);
+            captionPlay.Name = "captionPlay";
+            captionPlay.Size = new Size(88, 18);
+            captionPlay.TabIndex = 1;
+            captionPlay.Text = "Wiedergabe";
+            captionPlay.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerPlay
+            // 
+            dividerPlay.BackColor = SystemColors.ControlDark;
+            dividerPlay.Location = new Point(88, 4);
+            dividerPlay.Margin = new Padding(0, 4, 0, 4);
+            dividerPlay.Name = "dividerPlay";
+            dividerPlay.Size = new Size(1, 82);
+            dividerPlay.TabIndex = 1;
+            // 
+            // groupTempo
+            // 
+            groupTempo.Controls.Add(labelTempo);
+            groupTempo.Controls.Add(numericTempo);
+            groupTempo.Controls.Add(labelBpm);
+            groupTempo.Controls.Add(buttonTap);
+            groupTempo.Controls.Add(labelCountIn);
+            groupTempo.Controls.Add(numericCountIn);
+            groupTempo.Controls.Add(labelCountInBars);
+            groupTempo.Controls.Add(captionTempo);
+            groupTempo.Location = new Point(89, 0);
+            groupTempo.Margin = new Padding(0);
+            groupTempo.Name = "groupTempo";
+            groupTempo.Size = new Size(208, 90);
+            groupTempo.TabIndex = 2;
+            // 
             // labelTempo
             // 
-            labelTempo.AccessibleDescription = "Tempo in Viertelnoten pro Minute. Plus, Minus, Pfeile: 1 BPM. Strg+Plus, Strg+Minus, Bild auf, Bild ab: 5 BPM.";
-            labelTempo.Anchor = AnchorStyles.Left;
+            labelTempo.AccessibleDescription = "Tempo in Viertelnoten pro Minute. Plus und Minus: 1 BPM. Strg+Plus und Strg+Minus: 5 BPM.";
             labelTempo.AutoSize = true;
-            labelTempo.Location = new Point(114, 12);
-            labelTempo.Margin = new Padding(10, 0, 0, 0);
+            labelTempo.Location = new Point(8, 8);
             labelTempo.Name = "labelTempo";
             labelTempo.Size = new Size(50, 19);
-            labelTempo.TabIndex = 1;
+            labelTempo.TabIndex = 0;
             labelTempo.Text = "Tempo";
             // 
             // numericTempo
             // 
-            numericTempo.AccessibleDescription = "Tempo in Viertelnoten pro Minute. Plus, Minus, Pfeile: 1 BPM. Strg+Plus, Strg+Minus, Bild auf, Bild ab: 5 BPM.";
-            numericTempo.Anchor = AnchorStyles.Left;
-            numericTempo.Location = new Point(167, 9);
+            numericTempo.AccessibleDescription = "Tempo in Viertelnoten pro Minute. Plus und Minus: 1 BPM. Strg+Plus und Strg+Minus: 5 BPM.";
+            numericTempo.Location = new Point(66, 5);
             numericTempo.Maximum = new decimal(new int[] { 300, 0, 0, 0 });
             numericTempo.Minimum = new decimal(new int[] { 20, 0, 0, 0 });
             numericTempo.Name = "numericTempo";
-            numericTempo.Size = new Size(62, 25);
-            numericTempo.TabIndex = 2;
+            numericTempo.Size = new Size(58, 25);
+            numericTempo.TabIndex = 1;
             numericTempo.TextAlign = HorizontalAlignment.Center;
             numericTempo.Value = new decimal(new int[] { 80, 0, 0, 0 });
             numericTempo.ValueChanged += NumericTempo_ValueChanged;
             // 
             // labelBpm
             // 
-            labelBpm.AccessibleDescription = "Tempo in Viertelnoten pro Minute. Plus, Minus, Pfeile: 1 BPM. Strg+Plus, Strg+Minus, Bild auf, Bild ab: 5 BPM.";
-            labelBpm.Anchor = AnchorStyles.Left;
+            labelBpm.AccessibleDescription = "Tempo in Viertelnoten pro Minute. Plus und Minus: 1 BPM. Strg+Plus und Strg+Minus: 5 BPM.";
             labelBpm.AutoSize = true;
-            labelBpm.Location = new Point(232, 12);
-            labelBpm.Margin = new Padding(0);
+            labelBpm.Location = new Point(126, 8);
             labelBpm.Name = "labelBpm";
             labelBpm.Size = new Size(38, 19);
-            labelBpm.TabIndex = 3;
+            labelBpm.TabIndex = 2;
             labelBpm.Text = "BPM";
             // 
             // buttonTap
             // 
-            buttonTap.AccessibleDescription = "Öffnet ein Fenster, in dem du das Tempo mit der Leertaste vorgibst.";
-            buttonTap.Anchor = AnchorStyles.Left;
-            buttonTap.Location = new Point(273, 6);
+            buttonTap.AccessibleDescription = "Öffnet ein Fenster, in dem du das Tempo mit der Leertaste tippst oder aus dem laufenden Song ermitteln lässt. Strg+T.";
+            buttonTap.AccessibleName = "Tempo ermitteln";
+            buttonTap.Image = (Image)resources.GetObject("buttonTap.Image");
+            buttonTap.Location = new Point(168, 3);
             buttonTap.Name = "buttonTap";
-            buttonTap.Size = new Size(58, 32);
-            buttonTap.TabIndex = 4;
-            buttonTap.Text = "Tap…";
+            buttonTap.Size = new Size(34, 64);
+            buttonTap.TabIndex = 3;
             buttonTap.UseVisualStyleBackColor = true;
             buttonTap.Click += ButtonTap_Click;
-            // 
-            // dividerTempo
-            // 
-            dividerTempo.Anchor = AnchorStyles.Left;
-            dividerTempo.BackColor = SystemColors.ControlDark;
-            dividerTempo.Location = new Point(338, 9);
-            dividerTempo.Margin = new Padding(4, 0, 4, 0);
-            dividerTempo.Name = "dividerTempo";
-            dividerTempo.Size = new Size(1, 26);
-            dividerTempo.TabIndex = 5;
-            // 
-            // labelSwing
-            // 
-            labelSwing.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
-            labelSwing.Anchor = AnchorStyles.Left;
-            labelSwing.Location = new Point(347, 12);
-            labelSwing.Margin = new Padding(4, 0, 0, 0);
-            labelSwing.Name = "labelSwing";
-            labelSwing.Size = new Size(86, 19);
-            labelSwing.TabIndex = 5;
-            labelSwing.Text = "Swing 0 %";
-            labelSwing.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // trackBarSwing
-            // 
-            trackBarSwing.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
-            trackBarSwing.Anchor = AnchorStyles.Left;
-            trackBarSwing.AutoSize = false;
-            trackBarSwing.Location = new Point(436, 7);
-            trackBarSwing.Maximum = 100;
-            trackBarSwing.Name = "trackBarSwing";
-            trackBarSwing.Size = new Size(100, 30);
-            trackBarSwing.TabIndex = 6;
-            trackBarSwing.TickStyle = TickStyle.None;
-            trackBarSwing.ValueChanged += TrackBarSwing_ValueChanged;
-            // 
-            // labelVolume
-            // 
-            labelVolume.AccessibleDescription = "Gesamtlautstärke aller Spuren.";
-            labelVolume.Anchor = AnchorStyles.Left;
-            labelVolume.Location = new Point(539, 12);
-            labelVolume.Margin = new Padding(0);
-            labelVolume.Name = "labelVolume";
-            labelVolume.Size = new Size(118, 19);
-            labelVolume.TabIndex = 7;
-            labelVolume.Text = "Lautstärke 80 %";
-            labelVolume.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // trackBarVolume
-            // 
-            trackBarVolume.AccessibleDescription = "Gesamtlautstärke aller Spuren.";
-            trackBarVolume.Anchor = AnchorStyles.Left;
-            trackBarVolume.AutoSize = false;
-            trackBarVolume.Location = new Point(660, 7);
-            trackBarVolume.Maximum = 100;
-            trackBarVolume.Name = "trackBarVolume";
-            trackBarVolume.Size = new Size(100, 30);
-            trackBarVolume.TabIndex = 8;
-            trackBarVolume.TickStyle = TickStyle.None;
-            trackBarVolume.Value = 80;
-            trackBarVolume.ValueChanged += TrackBarVolume_ValueChanged;
-            // 
-            // labelKit
-            // 
-            labelKit.AccessibleDescription = "Die Klänge dieses Projekts. In der Liste steht der Ordner des Kits in Klammern.";
-            labelKit.Anchor = AnchorStyles.Left;
-            labelKit.AutoSize = true;
-            labelKit.Location = new Point(767, 12);
-            labelKit.Margin = new Padding(4, 0, 0, 0);
-            labelKit.Name = "labelKit";
-            labelKit.Size = new Size(25, 19);
-            labelKit.TabIndex = 9;
-            labelKit.Text = "Kit";
-            // 
-            // comboKit
-            // 
-            comboKit.AccessibleDescription = "Die Klänge dieses Projekts. In der Liste steht der Ordner des Kits in Klammern.";
-            comboKit.Anchor = AnchorStyles.Left;
-            comboKit.DrawMode = DrawMode.OwnerDrawFixed;
-            comboKit.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboKit.DropDownWidth = 200;
-            comboKit.ItemHeight = 19;
-            comboKit.Location = new Point(795, 9);
-            comboKit.MaxDropDownItems = 30;
-            comboKit.Name = "comboKit";
-            comboKit.Size = new Size(120, 25);
-            comboKit.TabIndex = 10;
-            comboKit.DrawItem += ComboKit_DrawItem;
-            comboKit.SelectedIndexChanged += ComboKit_SelectedIndexChanged;
-            // 
-            // dividerKit
-            // 
-            dividerKit.Anchor = AnchorStyles.Left;
-            dividerKit.BackColor = SystemColors.ControlDark;
-            dividerKit.Location = new Point(922, 9);
-            dividerKit.Margin = new Padding(4, 0, 4, 0);
-            dividerKit.Name = "dividerKit";
-            dividerKit.Size = new Size(1, 26);
-            dividerKit.TabIndex = 11;
             // 
             // labelCountIn
             // 
             labelCountIn.AccessibleDescription = "So viele Takte zählt ein Metronom vor, bevor die Patterns einsetzen. 0: kein Vorzählen.";
-            labelCountIn.Anchor = AnchorStyles.Left;
-            labelCountIn.Location = new Point(931, 12);
-            labelCountIn.Margin = new Padding(4, 0, 0, 0);
+            labelCountIn.Location = new Point(8, 40);
             labelCountIn.Name = "labelCountIn";
             labelCountIn.Size = new Size(72, 19);
-            labelCountIn.TabIndex = 11;
+            labelCountIn.TabIndex = 4;
             labelCountIn.Text = "Vorzählen";
-            labelCountIn.TextAlign = ContentAlignment.MiddleRight;
             // 
             // numericCountIn
             // 
             numericCountIn.AccessibleDescription = "So viele Takte zählt ein Metronom vor, bevor die Patterns einsetzen. 0: kein Vorzählen.";
-            numericCountIn.Anchor = AnchorStyles.Left;
-            numericCountIn.Location = new Point(1006, 9);
+            numericCountIn.Location = new Point(80, 37);
             numericCountIn.Maximum = new decimal(new int[] { 8, 0, 0, 0 });
             numericCountIn.Name = "numericCountIn";
             numericCountIn.Size = new Size(44, 25);
-            numericCountIn.TabIndex = 12;
+            numericCountIn.TabIndex = 5;
             numericCountIn.TextAlign = HorizontalAlignment.Center;
             numericCountIn.ValueChanged += NumericCountIn_ValueChanged;
             // 
-            // checkBoxFlash
+            // labelCountInBars
             // 
-            checkBoxFlash.AccessibleDescription = "Lässt das Raster bei jedem Taktanfang kurz aufleuchten.";
-            checkBoxFlash.Anchor = AnchorStyles.Left;
-            checkBoxFlash.Appearance = Appearance.ToggleSwitch;
-            checkBoxFlash.AutoSize = true;
-            checkBoxFlash.Location = new Point(1065, 12);
-            checkBoxFlash.Margin = new Padding(12, 3, 3, 3);
-            checkBoxFlash.Name = "checkBoxFlash";
-            checkBoxFlash.Size = new Size(175, 19);
-            checkBoxFlash.TabIndex = 13;
-            checkBoxFlash.Text = "Taktwechsel anzeigen";
-            checkBoxFlash.UseVisualStyleBackColor = true;
-            checkBoxFlash.VisualStylesMode = VisualStylesMode.Net11;
-            checkBoxFlash.CheckedChanged += CheckBoxFlash_CheckedChanged;
+            labelCountInBars.AccessibleDescription = "So viele Takte zählt ein Metronom vor, bevor die Patterns einsetzen. 0: kein Vorzählen.";
+            labelCountInBars.AutoSize = true;
+            labelCountInBars.Location = new Point(126, 40);
+            labelCountInBars.Name = "labelCountInBars";
+            labelCountInBars.Size = new Size(40, 19);
+            labelCountInBars.TabIndex = 6;
+            labelCountInBars.Text = "Takte";
             // 
-            // lineSequence
+            // captionTempo
             // 
-            lineSequence.BackColor = SystemColors.ControlDark;
-            lineSequence.Dock = DockStyle.Top;
-            lineSequence.Location = new Point(0, 71);
-            lineSequence.Name = "lineSequence";
-            lineSequence.Size = new Size(1260, 1);
-            lineSequence.TabIndex = 2;
+            captionTempo.Dock = DockStyle.Bottom;
+            captionTempo.ForeColor = SystemColors.GrayText;
+            captionTempo.Location = new Point(0, 72);
+            captionTempo.Name = "captionTempo";
+            captionTempo.Size = new Size(208, 18);
+            captionTempo.TabIndex = 7;
+            captionTempo.Text = "Tempo";
+            captionTempo.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // rowSequence
+            // dividerTempo
             // 
-            rowSequence.AutoSize = true;
-            rowSequence.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            rowSequence.Controls.Add(checkBoxSequence);
-            rowSequence.Controls.Add(textBoxSequence);
-            rowSequence.Controls.Add(checkBoxRepeat);
-            rowSequence.Controls.Add(dividerPattern);
-            rowSequence.Controls.Add(labelPattern);
-            rowSequence.Controls.Add(radioPattern1);
-            rowSequence.Controls.Add(radioPattern2);
-            rowSequence.Controls.Add(radioPattern3);
-            rowSequence.Controls.Add(radioPattern4);
-            rowSequence.Controls.Add(labelMeter);
-            rowSequence.Controls.Add(comboMeter);
-            rowSequence.Dock = DockStyle.Top;
-            rowSequence.Location = new Point(0, 72);
-            rowSequence.Name = "rowSequence";
-            rowSequence.Padding = new Padding(6, 3, 6, 3);
-            rowSequence.Size = new Size(1260, 44);
-            rowSequence.TabIndex = 3;
+            dividerTempo.BackColor = SystemColors.ControlDark;
+            dividerTempo.Location = new Point(297, 4);
+            dividerTempo.Margin = new Padding(0, 4, 0, 4);
+            dividerTempo.Name = "dividerTempo";
+            dividerTempo.Size = new Size(1, 82);
+            dividerTempo.TabIndex = 3;
             // 
-            // checkBoxSequence
+            // groupTrainer
             // 
-            checkBoxSequence.AccessibleDescription = "Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2.";
-            checkBoxSequence.Anchor = AnchorStyles.Left;
-            checkBoxSequence.Appearance = Appearance.ToggleSwitch;
-            checkBoxSequence.Location = new Point(12, 12);
-            checkBoxSequence.Margin = new Padding(6, 3, 3, 3);
-            checkBoxSequence.Name = "checkBoxSequence";
-            checkBoxSequence.Size = new Size(134, 19);
-            checkBoxSequence.TabIndex = 0;
-            checkBoxSequence.Text = "Abfolge";
-            checkBoxSequence.UseVisualStyleBackColor = true;
-            checkBoxSequence.VisualStylesMode = VisualStylesMode.Net11;
-            checkBoxSequence.CheckedChanged += CheckBoxSequence_CheckedChanged;
-            // 
-            // textBoxSequence
-            // 
-            textBoxSequence.AccessibleDescription = "Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2.";
-            textBoxSequence.Anchor = AnchorStyles.Left;
-            textBoxSequence.Enabled = false;
-            textBoxSequence.Location = new Point(155, 9);
-            textBoxSequence.Margin = new Padding(6, 3, 3, 3);
-            textBoxSequence.Name = "textBoxSequence";
-            textBoxSequence.Size = new Size(260, 25);
-            textBoxSequence.TabIndex = 1;
-            textBoxSequence.TextChanged += TextBoxSequence_TextChanged;
-            textBoxSequence.Leave += TextBoxSequence_Leave;
-            // 
-            // checkBoxRepeat
-            // 
-            checkBoxRepeat.AccessibleDescription = "Beginnt die Abfolge am Ende von vorn. Sonst stoppt die Wiedergabe nach dem letzten Takt.";
-            checkBoxRepeat.Anchor = AnchorStyles.Left;
-            checkBoxRepeat.Appearance = Appearance.ToggleSwitch;
-            checkBoxRepeat.AutoSize = true;
-            checkBoxRepeat.Checked = true;
-            checkBoxRepeat.CheckState = CheckState.Checked;
-            checkBoxRepeat.Enabled = false;
-            checkBoxRepeat.Location = new Point(424, 12);
-            checkBoxRepeat.Margin = new Padding(6, 3, 3, 3);
-            checkBoxRepeat.Name = "checkBoxRepeat";
-            checkBoxRepeat.Size = new Size(123, 19);
-            checkBoxRepeat.TabIndex = 2;
-            checkBoxRepeat.Text = "Wiederholen";
-            checkBoxRepeat.UseVisualStyleBackColor = true;
-            checkBoxRepeat.VisualStylesMode = VisualStylesMode.Net11;
-            checkBoxRepeat.CheckedChanged += CheckBoxRepeat_CheckedChanged;
-            // 
-            // dividerPattern
-            // 
-            dividerPattern.Anchor = AnchorStyles.Left;
-            dividerPattern.BackColor = SystemColors.ControlDark;
-            dividerPattern.Location = new Point(560, 9);
-            dividerPattern.Margin = new Padding(10, 0, 10, 0);
-            dividerPattern.Name = "dividerPattern";
-            dividerPattern.Size = new Size(1, 26);
-            dividerPattern.TabIndex = 4;
-            // 
-            // labelPattern
-            // 
-            labelPattern.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
-            labelPattern.Anchor = AnchorStyles.Left;
-            labelPattern.AutoSize = true;
-            labelPattern.Location = new Point(577, 12);
-            labelPattern.Margin = new Padding(6, 0, 0, 0);
-            labelPattern.Name = "labelPattern";
-            labelPattern.Size = new Size(54, 19);
-            labelPattern.TabIndex = 4;
-            labelPattern.Text = "Pattern";
-            // 
-            // radioPattern1
-            // 
-            radioPattern1.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
-            radioPattern1.Anchor = AnchorStyles.Left;
-            radioPattern1.Appearance = Appearance.Button;
-            radioPattern1.Checked = true;
-            radioPattern1.Location = new Point(634, 6);
-            radioPattern1.Margin = new Padding(3, 3, 0, 3);
-            radioPattern1.Name = "radioPattern1";
-            radioPattern1.Size = new Size(34, 32);
-            radioPattern1.TabIndex = 5;
-            radioPattern1.TabStop = true;
-            radioPattern1.Text = "1";
-            radioPattern1.TextAlign = ContentAlignment.MiddleCenter;
-            radioPattern1.UseVisualStyleBackColor = true;
-            radioPattern1.CheckedChanged += RadioPattern_CheckedChanged;
-            // 
-            // radioPattern2
-            // 
-            radioPattern2.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
-            radioPattern2.Anchor = AnchorStyles.Left;
-            radioPattern2.Appearance = Appearance.Button;
-            radioPattern2.Location = new Point(668, 6);
-            radioPattern2.Margin = new Padding(0, 3, 0, 3);
-            radioPattern2.Name = "radioPattern2";
-            radioPattern2.Size = new Size(34, 32);
-            radioPattern2.TabIndex = 6;
-            radioPattern2.Text = "2";
-            radioPattern2.TextAlign = ContentAlignment.MiddleCenter;
-            radioPattern2.UseVisualStyleBackColor = true;
-            radioPattern2.CheckedChanged += RadioPattern_CheckedChanged;
-            // 
-            // radioPattern3
-            // 
-            radioPattern3.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
-            radioPattern3.Anchor = AnchorStyles.Left;
-            radioPattern3.Appearance = Appearance.Button;
-            radioPattern3.Location = new Point(702, 6);
-            radioPattern3.Margin = new Padding(0, 3, 0, 3);
-            radioPattern3.Name = "radioPattern3";
-            radioPattern3.Size = new Size(34, 32);
-            radioPattern3.TabIndex = 7;
-            radioPattern3.Text = "3";
-            radioPattern3.TextAlign = ContentAlignment.MiddleCenter;
-            radioPattern3.UseVisualStyleBackColor = true;
-            radioPattern3.CheckedChanged += RadioPattern_CheckedChanged;
-            // 
-            // radioPattern4
-            // 
-            radioPattern4.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
-            radioPattern4.Anchor = AnchorStyles.Left;
-            radioPattern4.Appearance = Appearance.Button;
-            radioPattern4.Location = new Point(736, 6);
-            radioPattern4.Margin = new Padding(0, 3, 0, 3);
-            radioPattern4.Name = "radioPattern4";
-            radioPattern4.Size = new Size(34, 32);
-            radioPattern4.TabIndex = 8;
-            radioPattern4.Text = "4";
-            radioPattern4.TextAlign = ContentAlignment.MiddleCenter;
-            radioPattern4.UseVisualStyleBackColor = true;
-            radioPattern4.CheckedChanged += RadioPattern_CheckedChanged;
-            // 
-            // labelMeter
-            // 
-            labelMeter.AccessibleDescription = "Die Taktart des aktuellen Patterns.";
-            labelMeter.Anchor = AnchorStyles.Left;
-            labelMeter.AutoSize = true;
-            labelMeter.Location = new Point(784, 12);
-            labelMeter.Margin = new Padding(14, 0, 0, 0);
-            labelMeter.Name = "labelMeter";
-            labelMeter.Size = new Size(50, 19);
-            labelMeter.TabIndex = 9;
-            labelMeter.Text = "Taktart";
-            // 
-            // comboMeter
-            // 
-            comboMeter.AccessibleDescription = "Die Taktart des aktuellen Patterns.";
-            comboMeter.Anchor = AnchorStyles.Left;
-            comboMeter.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboMeter.Location = new Point(837, 10);
-            comboMeter.Name = "comboMeter";
-            comboMeter.Size = new Size(110, 25);
-            comboMeter.TabIndex = 10;
-            comboMeter.SelectedIndexChanged += ComboMeter_SelectedIndexChanged;
-            // 
-            // lineTrainer
-            // 
-            lineTrainer.BackColor = SystemColors.ControlDark;
-            lineTrainer.Dock = DockStyle.Top;
-            lineTrainer.Location = new Point(0, 116);
-            lineTrainer.Name = "lineTrainer";
-            lineTrainer.Size = new Size(1260, 1);
-            lineTrainer.TabIndex = 4;
-            // 
-            // rowTrainer
-            // 
-            rowTrainer.AutoSize = true;
-            rowTrainer.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            rowTrainer.Controls.Add(checkBoxTrainer);
-            rowTrainer.Controls.Add(labelTrainerStep);
-            rowTrainer.Controls.Add(numericTrainerStep);
-            rowTrainer.Controls.Add(labelTrainerBars);
-            rowTrainer.Controls.Add(numericTrainerBars);
-            rowTrainer.Controls.Add(labelTrainerTarget);
-            rowTrainer.Controls.Add(numericTrainerTarget);
-            rowTrainer.Controls.Add(labelTrainerBpm);
-            rowTrainer.Controls.Add(labelTrainerStatus);
-            rowTrainer.Dock = DockStyle.Top;
-            rowTrainer.Location = new Point(0, 117);
-            rowTrainer.Name = "rowTrainer";
-            rowTrainer.Padding = new Padding(6, 3, 6, 3);
-            rowTrainer.Size = new Size(1260, 37);
-            rowTrainer.TabIndex = 5;
+            groupTrainer.Controls.Add(checkBoxTrainer);
+            groupTrainer.Controls.Add(labelTrainerStep);
+            groupTrainer.Controls.Add(numericTrainerStep);
+            groupTrainer.Controls.Add(labelTrainerBars);
+            groupTrainer.Controls.Add(labelTrainerEvery);
+            groupTrainer.Controls.Add(numericTrainerBars);
+            groupTrainer.Controls.Add(labelTrainerTarget);
+            groupTrainer.Controls.Add(numericTrainerTarget);
+            groupTrainer.Controls.Add(labelTrainerBpm);
+            groupTrainer.Controls.Add(captionTrainer);
+            groupTrainer.Location = new Point(298, 0);
+            groupTrainer.Margin = new Padding(0);
+            groupTrainer.Name = "groupTrainer";
+            groupTrainer.Size = new Size(244, 90);
+            groupTrainer.TabIndex = 4;
             // 
             // checkBoxTrainer
             // 
             checkBoxTrainer.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            checkBoxTrainer.Anchor = AnchorStyles.Left;
+            checkBoxTrainer.AccessibleName = "Tempotrainer";
             checkBoxTrainer.Appearance = Appearance.ToggleSwitch;
-            checkBoxTrainer.Location = new Point(12, 9);
-            checkBoxTrainer.Margin = new Padding(6, 3, 3, 3);
+            checkBoxTrainer.Location = new Point(8, 8);
             checkBoxTrainer.Name = "checkBoxTrainer";
-            checkBoxTrainer.Size = new Size(134, 19);
+            checkBoxTrainer.Size = new Size(84, 19);
             checkBoxTrainer.TabIndex = 0;
-            checkBoxTrainer.Text = "Tempotrainer";
+            checkBoxTrainer.Text = "Aktiv";
             checkBoxTrainer.UseVisualStyleBackColor = true;
             checkBoxTrainer.VisualStylesMode = VisualStylesMode.Net11;
             checkBoxTrainer.CheckedChanged += CheckBoxTrainer_CheckedChanged;
@@ -807,21 +666,18 @@
             // labelTrainerStep
             // 
             labelTrainerStep.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            labelTrainerStep.Anchor = AnchorStyles.Left;
             labelTrainerStep.AutoSize = true;
-            labelTrainerStep.Location = new Point(155, 9);
-            labelTrainerStep.Margin = new Padding(6, 0, 0, 0);
+            labelTrainerStep.Location = new Point(118, 8);
             labelTrainerStep.Name = "labelTrainerStep";
-            labelTrainerStep.Size = new Size(19, 19);
+            labelTrainerStep.Size = new Size(40, 19);
             labelTrainerStep.TabIndex = 1;
-            labelTrainerStep.Text = "+";
+            labelTrainerStep.Text = "Stufe";
             // 
             // numericTrainerStep
             // 
             numericTrainerStep.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            numericTrainerStep.Anchor = AnchorStyles.Left;
             numericTrainerStep.Enabled = false;
-            numericTrainerStep.Location = new Point(177, 6);
+            numericTrainerStep.Location = new Point(160, 5);
             numericTrainerStep.Maximum = new decimal(new int[] { 20, 0, 0, 0 });
             numericTrainerStep.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericTrainerStep.Name = "numericTrainerStep";
@@ -834,26 +690,33 @@
             // labelTrainerBars
             // 
             labelTrainerBars.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            labelTrainerBars.Anchor = AnchorStyles.Left;
             labelTrainerBars.AutoSize = true;
-            labelTrainerBars.Location = new Point(224, 9);
-            labelTrainerBars.Margin = new Padding(0);
+            labelTrainerBars.Location = new Point(205, 8);
             labelTrainerBars.Name = "labelTrainerBars";
-            labelTrainerBars.Size = new Size(62, 19);
+            labelTrainerBars.Size = new Size(38, 19);
             labelTrainerBars.TabIndex = 3;
-            labelTrainerBars.Text = "BPM alle";
+            labelTrainerBars.Text = "BPM";
+            // 
+            // labelTrainerEvery
+            // 
+            labelTrainerEvery.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
+            labelTrainerEvery.AutoSize = true;
+            labelTrainerEvery.Location = new Point(8, 40);
+            labelTrainerEvery.Name = "labelTrainerEvery";
+            labelTrainerEvery.Size = new Size(29, 19);
+            labelTrainerEvery.TabIndex = 4;
+            labelTrainerEvery.Text = "alle";
             // 
             // numericTrainerBars
             // 
             numericTrainerBars.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            numericTrainerBars.Anchor = AnchorStyles.Left;
             numericTrainerBars.Enabled = false;
-            numericTrainerBars.Location = new Point(289, 6);
+            numericTrainerBars.Location = new Point(38, 37);
             numericTrainerBars.Maximum = new decimal(new int[] { 64, 0, 0, 0 });
             numericTrainerBars.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericTrainerBars.Name = "numericTrainerBars";
             numericTrainerBars.Size = new Size(44, 25);
-            numericTrainerBars.TabIndex = 4;
+            numericTrainerBars.TabIndex = 5;
             numericTrainerBars.TextAlign = HorizontalAlignment.Center;
             numericTrainerBars.Value = new decimal(new int[] { 4, 0, 0, 0 });
             numericTrainerBars.ValueChanged += NumericTrainer_ValueChanged;
@@ -861,26 +724,23 @@
             // labelTrainerTarget
             // 
             labelTrainerTarget.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            labelTrainerTarget.Anchor = AnchorStyles.Left;
             labelTrainerTarget.AutoSize = true;
-            labelTrainerTarget.Location = new Point(336, 9);
-            labelTrainerTarget.Margin = new Padding(0);
+            labelTrainerTarget.Location = new Point(84, 40);
             labelTrainerTarget.Name = "labelTrainerTarget";
             labelTrainerTarget.Size = new Size(64, 19);
-            labelTrainerTarget.TabIndex = 5;
+            labelTrainerTarget.TabIndex = 6;
             labelTrainerTarget.Text = "Takte, bis";
             // 
             // numericTrainerTarget
             // 
             numericTrainerTarget.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            numericTrainerTarget.Anchor = AnchorStyles.Left;
             numericTrainerTarget.Enabled = false;
-            numericTrainerTarget.Location = new Point(403, 6);
+            numericTrainerTarget.Location = new Point(148, 37);
             numericTrainerTarget.Maximum = new decimal(new int[] { 300, 0, 0, 0 });
             numericTrainerTarget.Minimum = new decimal(new int[] { 20, 0, 0, 0 });
             numericTrainerTarget.Name = "numericTrainerTarget";
-            numericTrainerTarget.Size = new Size(62, 25);
-            numericTrainerTarget.TabIndex = 6;
+            numericTrainerTarget.Size = new Size(56, 25);
+            numericTrainerTarget.TabIndex = 7;
             numericTrainerTarget.TextAlign = HorizontalAlignment.Center;
             numericTrainerTarget.Value = new decimal(new int[] { 120, 0, 0, 0 });
             numericTrainerTarget.ValueChanged += NumericTrainer_ValueChanged;
@@ -888,45 +748,748 @@
             // labelTrainerBpm
             // 
             labelTrainerBpm.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            labelTrainerBpm.Anchor = AnchorStyles.Left;
             labelTrainerBpm.AutoSize = true;
-            labelTrainerBpm.Location = new Point(468, 9);
-            labelTrainerBpm.Margin = new Padding(0);
+            labelTrainerBpm.Location = new Point(205, 40);
             labelTrainerBpm.Name = "labelTrainerBpm";
             labelTrainerBpm.Size = new Size(38, 19);
-            labelTrainerBpm.TabIndex = 7;
+            labelTrainerBpm.TabIndex = 8;
             labelTrainerBpm.Text = "BPM";
             // 
-            // labelTrainerStatus
+            // captionTrainer
             // 
-            labelTrainerStatus.Anchor = AnchorStyles.Left;
-            labelTrainerStatus.AutoSize = true;
-            labelTrainerStatus.Location = new Point(520, 9);
-            labelTrainerStatus.Margin = new Padding(14, 0, 0, 0);
-            labelTrainerStatus.Name = "labelTrainerStatus";
-            labelTrainerStatus.Size = new Size(0, 19);
-            labelTrainerStatus.TabIndex = 8;
+            captionTrainer.Dock = DockStyle.Bottom;
+            captionTrainer.ForeColor = SystemColors.GrayText;
+            captionTrainer.Location = new Point(0, 72);
+            captionTrainer.Name = "captionTrainer";
+            captionTrainer.Size = new Size(244, 18);
+            captionTrainer.TabIndex = 9;
+            captionTrainer.Text = "Tempotrainer";
+            captionTrainer.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerTrainer
+            // 
+            dividerTrainer.BackColor = SystemColors.ControlDark;
+            dividerTrainer.Location = new Point(542, 4);
+            dividerTrainer.Margin = new Padding(0, 4, 0, 4);
+            dividerTrainer.Name = "dividerTrainer";
+            dividerTrainer.Size = new Size(1, 82);
+            dividerTrainer.TabIndex = 5;
+            // 
+            // groupSound
+            // 
+            groupSound.Controls.Add(labelSwing);
+            groupSound.Controls.Add(trackBarSwing);
+            groupSound.Controls.Add(labelSwingValue);
+            groupSound.Controls.Add(labelVolume);
+            groupSound.Controls.Add(trackBarVolume);
+            groupSound.Controls.Add(labelVolumeValue);
+            groupSound.Controls.Add(lineKit);
+            groupSound.Controls.Add(labelKit);
+            groupSound.Controls.Add(comboKit);
+            groupSound.Controls.Add(captionSound);
+            groupSound.Location = new Point(543, 0);
+            groupSound.Margin = new Padding(0);
+            groupSound.Name = "groupSound";
+            groupSound.Size = new Size(324, 90);
+            groupSound.TabIndex = 6;
+            // 
+            // labelSwing
+            // 
+            labelSwing.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
+            labelSwing.Location = new Point(8, 8);
+            labelSwing.Name = "labelSwing";
+            labelSwing.Size = new Size(48, 19);
+            labelSwing.TabIndex = 0;
+            labelSwing.Text = "Swing";
+            // 
+            // trackBarSwing
+            // 
+            trackBarSwing.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
+            trackBarSwing.AutoSize = false;
+            trackBarSwing.Location = new Point(56, 3);
+            trackBarSwing.Maximum = 100;
+            trackBarSwing.Name = "trackBarSwing";
+            trackBarSwing.Size = new Size(69, 30);
+            trackBarSwing.TabIndex = 1;
+            trackBarSwing.TickStyle = TickStyle.None;
+            trackBarSwing.ValueChanged += TrackBarSwing_ValueChanged;
+            // 
+            // labelSwingValue
+            // 
+            labelSwingValue.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
+            labelSwingValue.Location = new Point(125, 8);
+            labelSwingValue.Name = "labelSwingValue";
+            labelSwingValue.Size = new Size(50, 19);
+            labelSwingValue.TabIndex = 8;
+            labelSwingValue.Text = "0 %";
+            labelSwingValue.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // labelVolume
+            // 
+            labelVolume.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
+            labelVolume.Location = new Point(8, 40);
+            labelVolume.Name = "labelVolume";
+            labelVolume.Size = new Size(48, 19);
+            labelVolume.TabIndex = 2;
+            labelVolume.Text = "Vol.";
+            // 
+            // trackBarVolume
+            // 
+            trackBarVolume.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
+            trackBarVolume.AutoSize = false;
+            trackBarVolume.Location = new Point(56, 35);
+            trackBarVolume.Maximum = 100;
+            trackBarVolume.Name = "trackBarVolume";
+            trackBarVolume.Size = new Size(69, 30);
+            trackBarVolume.TabIndex = 3;
+            trackBarVolume.TickStyle = TickStyle.None;
+            trackBarVolume.Value = 80;
+            trackBarVolume.ValueChanged += TrackBarVolume_ValueChanged;
+            // 
+            // labelVolumeValue
+            // 
+            labelVolumeValue.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
+            labelVolumeValue.Location = new Point(125, 40);
+            labelVolumeValue.Name = "labelVolumeValue";
+            labelVolumeValue.Size = new Size(50, 19);
+            labelVolumeValue.TabIndex = 9;
+            labelVolumeValue.Text = "80 %";
+            labelVolumeValue.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // lineKit
+            // 
+            lineKit.BackColor = SystemColors.ScrollBar;
+            lineKit.Location = new Point(179, 6);
+            lineKit.Name = "lineKit";
+            lineKit.Size = new Size(1, 56);
+            lineKit.TabIndex = 6;
+            // 
+            // labelKit
+            // 
+            labelKit.AccessibleDescription = "Die Klänge dieses Projekts. In der Liste steht der Ordner des Kits in Klammern.";
+            labelKit.AutoSize = true;
+            labelKit.Location = new Point(187, 8);
+            labelKit.Name = "labelKit";
+            labelKit.Size = new Size(108, 19);
+            labelKit.TabIndex = 4;
+            labelKit.Text = "Drumkitauswahl";
+            // 
+            // comboKit
+            // 
+            comboKit.AccessibleDescription = "Die Klänge dieses Projekts. In der Liste steht der Ordner des Kits in Klammern.";
+            comboKit.DrawMode = DrawMode.OwnerDrawFixed;
+            comboKit.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboKit.DropDownWidth = 200;
+            comboKit.ItemHeight = 19;
+            comboKit.Location = new Point(187, 37);
+            comboKit.MaxDropDownItems = 30;
+            comboKit.Name = "comboKit";
+            comboKit.Size = new Size(133, 25);
+            comboKit.TabIndex = 5;
+            comboKit.DrawItem += ComboKit_DrawItem;
+            comboKit.SelectedIndexChanged += ComboKit_SelectedIndexChanged;
+            // 
+            // captionSound
+            // 
+            captionSound.Dock = DockStyle.Bottom;
+            captionSound.ForeColor = SystemColors.GrayText;
+            captionSound.Location = new Point(0, 72);
+            captionSound.Name = "captionSound";
+            captionSound.Size = new Size(324, 18);
+            captionSound.TabIndex = 7;
+            captionSound.Text = "Klang";
+            captionSound.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerSound
+            // 
+            dividerSound.BackColor = SystemColors.ControlDark;
+            dividerSound.Location = new Point(867, 4);
+            dividerSound.Margin = new Padding(0, 4, 0, 4);
+            dividerSound.Name = "dividerSound";
+            dividerSound.Size = new Size(1, 82);
+            dividerSound.TabIndex = 7;
+            // 
+            // groupPattern
+            // 
+            groupPattern.Controls.Add(radioPattern1);
+            groupPattern.Controls.Add(radioPattern2);
+            groupPattern.Controls.Add(radioPattern3);
+            groupPattern.Controls.Add(radioPattern4);
+            groupPattern.Controls.Add(comboMeter);
+            groupPattern.Controls.Add(buttonClearPattern);
+            groupPattern.Controls.Add(captionPattern);
+            groupPattern.Location = new Point(868, 0);
+            groupPattern.Margin = new Padding(0);
+            groupPattern.Name = "groupPattern";
+            groupPattern.Size = new Size(160, 90);
+            groupPattern.TabIndex = 8;
+            // 
+            // radioPattern1
+            // 
+            radioPattern1.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
+            radioPattern1.Appearance = Appearance.Button;
+            radioPattern1.Checked = true;
+            radioPattern1.Location = new Point(8, 3);
+            radioPattern1.Name = "radioPattern1";
+            radioPattern1.Size = new Size(36, 29);
+            radioPattern1.TabIndex = 0;
+            radioPattern1.TabStop = true;
+            radioPattern1.Text = "1";
+            radioPattern1.TextAlign = ContentAlignment.MiddleCenter;
+            radioPattern1.UseVisualStyleBackColor = true;
+            radioPattern1.CheckedChanged += RadioPattern_CheckedChanged;
+            // 
+            // radioPattern2
+            // 
+            radioPattern2.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
+            radioPattern2.Appearance = Appearance.Button;
+            radioPattern2.Location = new Point(44, 3);
+            radioPattern2.Name = "radioPattern2";
+            radioPattern2.Size = new Size(36, 29);
+            radioPattern2.TabIndex = 1;
+            radioPattern2.Text = "2";
+            radioPattern2.TextAlign = ContentAlignment.MiddleCenter;
+            radioPattern2.UseVisualStyleBackColor = true;
+            radioPattern2.CheckedChanged += RadioPattern_CheckedChanged;
+            // 
+            // radioPattern3
+            // 
+            radioPattern3.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
+            radioPattern3.Appearance = Appearance.Button;
+            radioPattern3.Location = new Point(80, 3);
+            radioPattern3.Name = "radioPattern3";
+            radioPattern3.Size = new Size(36, 29);
+            radioPattern3.TabIndex = 2;
+            radioPattern3.Text = "3";
+            radioPattern3.TextAlign = ContentAlignment.MiddleCenter;
+            radioPattern3.UseVisualStyleBackColor = true;
+            radioPattern3.CheckedChanged += RadioPattern_CheckedChanged;
+            // 
+            // radioPattern4
+            // 
+            radioPattern4.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
+            radioPattern4.Appearance = Appearance.Button;
+            radioPattern4.Location = new Point(116, 3);
+            radioPattern4.Name = "radioPattern4";
+            radioPattern4.Size = new Size(36, 29);
+            radioPattern4.TabIndex = 3;
+            radioPattern4.Text = "4";
+            radioPattern4.TextAlign = ContentAlignment.MiddleCenter;
+            radioPattern4.UseVisualStyleBackColor = true;
+            radioPattern4.CheckedChanged += RadioPattern_CheckedChanged;
+            // 
+            // comboMeter
+            // 
+            comboMeter.AccessibleDescription = "Die Taktart des aktuellen Patterns.";
+            comboMeter.AccessibleName = "Taktart";
+            comboMeter.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboMeter.Location = new Point(8, 37);
+            comboMeter.Name = "comboMeter";
+            comboMeter.Size = new Size(104, 25);
+            comboMeter.TabIndex = 4;
+            comboMeter.SelectedIndexChanged += ComboMeter_SelectedIndexChanged;
+            // 
+            // buttonClearPattern
+            // 
+            buttonClearPattern.AccessibleDescription = "Leert das aktuelle Pattern. Strg+Z nimmt das zurück.";
+            buttonClearPattern.AccessibleName = "Pattern leeren";
+            buttonClearPattern.Image = (Image)resources.GetObject("buttonClearPattern.Image");
+            buttonClearPattern.Location = new Point(116, 35);
+            buttonClearPattern.Name = "buttonClearPattern";
+            buttonClearPattern.Size = new Size(36, 29);
+            buttonClearPattern.TabIndex = 5;
+            buttonClearPattern.UseVisualStyleBackColor = true;
+            buttonClearPattern.Click += ButtonClearPattern_Click;
+            // 
+            // captionPattern
+            // 
+            captionPattern.Dock = DockStyle.Bottom;
+            captionPattern.ForeColor = SystemColors.GrayText;
+            captionPattern.Location = new Point(0, 72);
+            captionPattern.Name = "captionPattern";
+            captionPattern.Size = new Size(160, 18);
+            captionPattern.TabIndex = 6;
+            captionPattern.Text = "Pattern";
+            captionPattern.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerPattern
+            // 
+            dividerPattern.BackColor = SystemColors.ControlDark;
+            dividerPattern.Location = new Point(1028, 4);
+            dividerPattern.Margin = new Padding(0, 4, 0, 4);
+            dividerPattern.Name = "dividerPattern";
+            dividerPattern.Size = new Size(1, 82);
+            dividerPattern.TabIndex = 9;
+            // 
+            // groupSequence
+            // 
+            groupSequence.Controls.Add(checkBoxSequence);
+            groupSequence.Controls.Add(checkBoxRepeat);
+            groupSequence.Controls.Add(textBoxSequence);
+            groupSequence.Controls.Add(captionSequence);
+            groupSequence.Location = new Point(1029, 0);
+            groupSequence.Margin = new Padding(0);
+            groupSequence.Name = "groupSequence";
+            groupSequence.Size = new Size(222, 90);
+            groupSequence.TabIndex = 10;
+            // 
+            // checkBoxSequence
+            // 
+            checkBoxSequence.AccessibleDescription = "Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2.";
+            checkBoxSequence.AccessibleName = "Abfolge";
+            checkBoxSequence.Appearance = Appearance.ToggleSwitch;
+            checkBoxSequence.Location = new Point(8, 8);
+            checkBoxSequence.Name = "checkBoxSequence";
+            checkBoxSequence.Size = new Size(84, 19);
+            checkBoxSequence.TabIndex = 0;
+            checkBoxSequence.Text = "Aktiv";
+            checkBoxSequence.UseVisualStyleBackColor = true;
+            checkBoxSequence.VisualStylesMode = VisualStylesMode.Net11;
+            checkBoxSequence.CheckedChanged += CheckBoxSequence_CheckedChanged;
+            // 
+            // checkBoxRepeat
+            // 
+            checkBoxRepeat.AccessibleDescription = "Beginnt die Abfolge am Ende von vorn. Sonst stoppt die Wiedergabe nach dem letzten Takt.";
+            checkBoxRepeat.Appearance = Appearance.ToggleSwitch;
+            checkBoxRepeat.Checked = true;
+            checkBoxRepeat.CheckState = CheckState.Checked;
+            checkBoxRepeat.Enabled = false;
+            checkBoxRepeat.Location = new Point(92, 8);
+            checkBoxRepeat.Name = "checkBoxRepeat";
+            checkBoxRepeat.Size = new Size(126, 19);
+            checkBoxRepeat.TabIndex = 1;
+            checkBoxRepeat.Text = "Wiederholen";
+            checkBoxRepeat.UseVisualStyleBackColor = true;
+            checkBoxRepeat.VisualStylesMode = VisualStylesMode.Net11;
+            checkBoxRepeat.CheckedChanged += CheckBoxRepeat_CheckedChanged;
+            // 
+            // textBoxSequence
+            // 
+            textBoxSequence.AccessibleDescription = "Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2.";
+            textBoxSequence.Enabled = false;
+            textBoxSequence.Location = new Point(8, 37);
+            textBoxSequence.Name = "textBoxSequence";
+            textBoxSequence.Size = new Size(208, 25);
+            textBoxSequence.TabIndex = 2;
+            textBoxSequence.TextChanged += TextBoxSequence_TextChanged;
+            textBoxSequence.Leave += TextBoxSequence_Leave;
+            // 
+            // captionSequence
+            // 
+            captionSequence.Dock = DockStyle.Bottom;
+            captionSequence.ForeColor = SystemColors.GrayText;
+            captionSequence.Location = new Point(0, 72);
+            captionSequence.Name = "captionSequence";
+            captionSequence.Size = new Size(222, 18);
+            captionSequence.TabIndex = 3;
+            captionSequence.Text = "Abfolge";
+            captionSequence.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // tabPageSettings
+            // 
+            tabPageSettings.Controls.Add(flowSettings);
+            tabPageSettings.Location = new Point(4, 24);
+            tabPageSettings.Name = "tabPageSettings";
+            tabPageSettings.Size = new Size(1252, 96);
+            tabPageSettings.TabIndex = 2;
+            tabPageSettings.Text = "Einstellungen";
+            // 
+            // flowSettings
+            // 
+            flowSettings.Controls.Add(groupProjects);
+            flowSettings.Controls.Add(dividerProjects);
+            flowSettings.Controls.Add(groupAppearance);
+            flowSettings.Controls.Add(dividerAppearance);
+            flowSettings.Controls.Add(groupKits);
+            flowSettings.Dock = DockStyle.Fill;
+            flowSettings.Location = new Point(0, 0);
+            flowSettings.Name = "flowSettings";
+            flowSettings.Size = new Size(1252, 96);
+            flowSettings.TabIndex = 0;
+            // 
+            // groupProjects
+            // 
+            groupProjects.Controls.Add(labelProjectFolder);
+            groupProjects.Controls.Add(textBoxProjectFolder);
+            groupProjects.Controls.Add(buttonProjectFolder);
+            groupProjects.Controls.Add(labelProjectHint);
+            groupProjects.Controls.Add(lineOpenLast);
+            groupProjects.Controls.Add(checkBoxOpenLast);
+            groupProjects.Controls.Add(captionProjects);
+            groupProjects.Location = new Point(0, 0);
+            groupProjects.Margin = new Padding(0);
+            groupProjects.Name = "groupProjects";
+            groupProjects.Size = new Size(586, 90);
+            groupProjects.TabIndex = 0;
+            // 
+            // labelProjectFolder
+            // 
+            labelProjectFolder.AutoSize = true;
+            labelProjectFolder.Location = new Point(8, 8);
+            labelProjectFolder.Name = "labelProjectFolder";
+            labelProjectFolder.Size = new Size(78, 19);
+            labelProjectFolder.TabIndex = 0;
+            labelProjectFolder.Text = "Speicherort";
+            // 
+            // textBoxProjectFolder
+            // 
+            textBoxProjectFolder.Location = new Point(92, 5);
+            textBoxProjectFolder.Name = "textBoxProjectFolder";
+            textBoxProjectFolder.ReadOnly = true;
+            textBoxProjectFolder.Size = new Size(260, 25);
+            textBoxProjectFolder.TabIndex = 1;
+            textBoxProjectFolder.TabStop = false;
+            // 
+            // buttonProjectFolder
+            // 
+            buttonProjectFolder.AccessibleDescription = "Wählt den Ordner für deine Projekte.";
+            buttonProjectFolder.AccessibleName = "Speicherort ändern";
+            buttonProjectFolder.Image = (Image)resources.GetObject("buttonProjectFolder.Image");
+            buttonProjectFolder.Location = new Point(356, 3);
+            buttonProjectFolder.Name = "buttonProjectFolder";
+            buttonProjectFolder.Size = new Size(34, 29);
+            buttonProjectFolder.TabIndex = 2;
+            buttonProjectFolder.UseVisualStyleBackColor = true;
+            buttonProjectFolder.Click += ButtonProjectFolder_Click;
+            // 
+            // labelProjectHint
+            // 
+            labelProjectHint.AutoSize = true;
+            labelProjectHint.ForeColor = SystemColors.GrayText;
+            labelProjectHint.Location = new Point(8, 41);
+            labelProjectHint.Name = "labelProjectHint";
+            labelProjectHint.Size = new Size(375, 19);
+            labelProjectHint.TabIndex = 3;
+            labelProjectHint.Text = "Standard für Dateidialoge (Ändern verschiebt keine Dateien)";
+            //
+            // lineOpenLast
+            //
+            lineOpenLast.BackColor = SystemColors.ScrollBar;
+            lineOpenLast.Location = new Point(392, 6);
+            lineOpenLast.Name = "lineOpenLast";
+            lineOpenLast.Size = new Size(1, 56);
+            lineOpenLast.TabIndex = 4;
+            //
+            // checkBoxOpenLast
+            //
+            checkBoxOpenLast.AccessibleDescription = "Lädt beim Programmstart das zuletzt benutzte Projekt. Sonst beginnst du mit einem neuen.";
+            checkBoxOpenLast.Appearance = Appearance.ToggleSwitch;
+            checkBoxOpenLast.AutoSize = true;
+            checkBoxOpenLast.Location = new Point(400, 14);
+            checkBoxOpenLast.Name = "checkBoxOpenLast";
+            checkBoxOpenLast.Size = new Size(182, 38);
+            checkBoxOpenLast.TabIndex = 5;
+            checkBoxOpenLast.Text = "Letzte Datei bei\r\nProgrammstart öffnen";
+            checkBoxOpenLast.UseVisualStyleBackColor = true;
+            checkBoxOpenLast.VisualStylesMode = VisualStylesMode.Net11;
+            checkBoxOpenLast.CheckedChanged += CheckBoxOpenLast_CheckedChanged;
+            // 
+            // captionProjects
+            // 
+            captionProjects.Dock = DockStyle.Bottom;
+            captionProjects.ForeColor = SystemColors.GrayText;
+            captionProjects.Location = new Point(0, 72);
+            captionProjects.Name = "captionProjects";
+            captionProjects.Size = new Size(586, 18);
+            captionProjects.TabIndex = 6;
+            captionProjects.Text = "Projekte";
+            captionProjects.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerProjects
+            // 
+            dividerProjects.BackColor = SystemColors.ControlDark;
+            dividerProjects.Location = new Point(586, 4);
+            dividerProjects.Margin = new Padding(0, 4, 0, 4);
+            dividerProjects.Name = "dividerProjects";
+            dividerProjects.Size = new Size(1, 82);
+            dividerProjects.TabIndex = 1;
+            // 
+            // groupAppearance
+            // 
+            groupAppearance.Controls.Add(radioSystem);
+            groupAppearance.Controls.Add(radioLight);
+            groupAppearance.Controls.Add(radioDark);
+            groupAppearance.Controls.Add(labelAppearanceHint);
+            groupAppearance.Controls.Add(lineFlash);
+            groupAppearance.Controls.Add(checkBoxFlash);
+            groupAppearance.Controls.Add(captionAppearance);
+            groupAppearance.Location = new Point(587, 0);
+            groupAppearance.Margin = new Padding(0);
+            groupAppearance.Name = "groupAppearance";
+            groupAppearance.Size = new Size(346, 90);
+            groupAppearance.TabIndex = 2;
+            // 
+            // radioSystem
+            // 
+            radioSystem.AutoSize = true;
+            radioSystem.Location = new Point(8, 6);
+            radioSystem.Name = "radioSystem";
+            radioSystem.Size = new Size(71, 23);
+            radioSystem.TabIndex = 0;
+            radioSystem.TabStop = true;
+            radioSystem.Text = "System";
+            radioSystem.UseVisualStyleBackColor = true;
+            radioSystem.CheckedChanged += RadioColorMode_CheckedChanged;
+            // 
+            // radioLight
+            // 
+            radioLight.AutoSize = true;
+            radioLight.Location = new Point(84, 6);
+            radioLight.Name = "radioLight";
+            radioLight.Size = new Size(50, 23);
+            radioLight.TabIndex = 1;
+            radioLight.Text = "Hell";
+            radioLight.UseVisualStyleBackColor = true;
+            radioLight.CheckedChanged += RadioColorMode_CheckedChanged;
+            // 
+            // radioDark
+            // 
+            radioDark.AutoSize = true;
+            radioDark.Location = new Point(140, 6);
+            radioDark.Name = "radioDark";
+            radioDark.Size = new Size(70, 23);
+            radioDark.TabIndex = 2;
+            radioDark.Text = "Dunkel";
+            radioDark.UseVisualStyleBackColor = true;
+            radioDark.CheckedChanged += RadioColorMode_CheckedChanged;
+            // 
+            // labelAppearanceHint
+            // 
+            labelAppearanceHint.AutoSize = true;
+            labelAppearanceHint.ForeColor = SystemColors.GrayText;
+            labelAppearanceHint.Location = new Point(8, 40);
+            labelAppearanceHint.Name = "labelAppearanceHint";
+            labelAppearanceHint.Size = new Size(175, 19);
+            labelAppearanceHint.TabIndex = 3;
+            labelAppearanceHint.Text = "Gilt ab dem nächsten Start.";
+            // 
+            // lineFlash
+            // 
+            lineFlash.BackColor = SystemColors.ScrollBar;
+            lineFlash.Location = new Point(214, 6);
+            lineFlash.Name = "lineFlash";
+            lineFlash.Size = new Size(1, 56);
+            lineFlash.TabIndex = 5;
+            // 
+            // checkBoxFlash
+            // 
+            checkBoxFlash.AccessibleDescription = "Lässt das Raster bei jedem Taktanfang kurz aufleuchten.";
+            checkBoxFlash.Appearance = Appearance.ToggleSwitch;
+            checkBoxFlash.AutoSize = true;
+            checkBoxFlash.Location = new Point(224, 14);
+            checkBoxFlash.Name = "checkBoxFlash";
+            checkBoxFlash.Size = new Size(117, 38);
+            checkBoxFlash.TabIndex = 4;
+            checkBoxFlash.Text = "Taktwechsel\r\nanzeigen";
+            checkBoxFlash.UseVisualStyleBackColor = true;
+            checkBoxFlash.VisualStylesMode = VisualStylesMode.Net11;
+            checkBoxFlash.CheckedChanged += CheckBoxFlash_CheckedChanged;
+            // 
+            // captionAppearance
+            // 
+            captionAppearance.Dock = DockStyle.Bottom;
+            captionAppearance.ForeColor = SystemColors.GrayText;
+            captionAppearance.Location = new Point(0, 72);
+            captionAppearance.Name = "captionAppearance";
+            captionAppearance.Size = new Size(346, 18);
+            captionAppearance.TabIndex = 6;
+            captionAppearance.Text = "Darstellung";
+            captionAppearance.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerAppearance
+            // 
+            dividerAppearance.BackColor = SystemColors.ControlDark;
+            dividerAppearance.Location = new Point(933, 4);
+            dividerAppearance.Margin = new Padding(0, 4, 0, 4);
+            dividerAppearance.Name = "dividerAppearance";
+            dividerAppearance.Size = new Size(1, 82);
+            dividerAppearance.TabIndex = 3;
+            // 
+            // groupKits
+            // 
+            groupKits.Controls.Add(labelOwnKits);
+            groupKits.Controls.Add(buttonOwnKits);
+            groupKits.Controls.Add(labelInstalledKits);
+            groupKits.Controls.Add(buttonInstalledKits);
+            groupKits.Controls.Add(buttonReloadKits);
+            groupKits.Controls.Add(labelKitCount);
+            groupKits.Controls.Add(captionKits);
+            groupKits.Location = new Point(934, 0);
+            groupKits.Margin = new Padding(0);
+            groupKits.Name = "groupKits";
+            groupKits.Size = new Size(314, 90);
+            groupKits.TabIndex = 4;
+            // 
+            // labelOwnKits
+            // 
+            labelOwnKits.AutoSize = true;
+            labelOwnKits.Location = new Point(8, 8);
+            labelOwnKits.Name = "labelOwnKits";
+            labelOwnKits.Size = new Size(49, 19);
+            labelOwnKits.TabIndex = 0;
+            labelOwnKits.Text = "Eigene";
+            // 
+            // buttonOwnKits
+            // 
+            buttonOwnKits.Location = new Point(78, 3);
+            buttonOwnKits.Name = "buttonOwnKits";
+            buttonOwnKits.Size = new Size(70, 29);
+            buttonOwnKits.TabIndex = 1;
+            buttonOwnKits.Text = "Öffnen";
+            buttonOwnKits.UseVisualStyleBackColor = true;
+            buttonOwnKits.Click += ButtonOwnKits_Click;
+            // 
+            // labelInstalledKits
+            // 
+            labelInstalledKits.AutoSize = true;
+            labelInstalledKits.Location = new Point(8, 40);
+            labelInstalledKits.Name = "labelInstalledKits";
+            labelInstalledKits.Size = new Size(65, 19);
+            labelInstalledKits.TabIndex = 2;
+            labelInstalledKits.Text = "Installiert";
+            // 
+            // buttonInstalledKits
+            // 
+            buttonInstalledKits.Location = new Point(78, 35);
+            buttonInstalledKits.Name = "buttonInstalledKits";
+            buttonInstalledKits.Size = new Size(70, 29);
+            buttonInstalledKits.TabIndex = 3;
+            buttonInstalledKits.Text = "Öffnen";
+            buttonInstalledKits.UseVisualStyleBackColor = true;
+            buttonInstalledKits.Click += ButtonInstalledKits_Click;
+            // 
+            // buttonReloadKits
+            // 
+            buttonReloadKits.AccessibleDescription = "Sucht die Kits erneut, etwa nach dem Kopieren eines neuen Ordners.";
+            buttonReloadKits.Location = new Point(166, 3);
+            buttonReloadKits.Name = "buttonReloadKits";
+            buttonReloadKits.Size = new Size(140, 29);
+            buttonReloadKits.TabIndex = 4;
+            buttonReloadKits.Text = "Kits neu einlesen";
+            buttonReloadKits.UseVisualStyleBackColor = true;
+            buttonReloadKits.Click += ButtonReloadKits_Click;
+            // 
+            // labelKitCount
+            // 
+            labelKitCount.AutoSize = true;
+            labelKitCount.ForeColor = SystemColors.GrayText;
+            labelKitCount.Location = new Point(166, 40);
+            labelKitCount.Name = "labelKitCount";
+            labelKitCount.Size = new Size(105, 19);
+            labelKitCount.TabIndex = 5;
+            labelKitCount.Text = "0 Kits gefunden";
+            // 
+            // captionKits
+            // 
+            captionKits.Dock = DockStyle.Bottom;
+            captionKits.ForeColor = SystemColors.GrayText;
+            captionKits.Location = new Point(0, 72);
+            captionKits.Name = "captionKits";
+            captionKits.Size = new Size(314, 18);
+            captionKits.TabIndex = 6;
+            captionKits.Text = "Kits";
+            captionKits.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // buttonUndo
+            // 
+            buttonUndo.AccessibleDescription = "Nimmt die letzte Änderung zurück. Strg+Z.";
+            buttonUndo.AccessibleName = "Rückgängig";
+            buttonUndo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonUndo.Enabled = false;
+            buttonUndo.Image = (Image)resources.GetObject("buttonUndo.Image");
+            buttonUndo.Location = new Point(1100, 0);
+            buttonUndo.Name = "buttonUndo";
+            buttonUndo.Size = new Size(28, 24);
+            buttonUndo.TabIndex = 1;
+            buttonUndo.UseVisualStyleBackColor = true;
+            buttonUndo.Click += ButtonUndo_Click;
+            // 
+            // buttonRedo
+            // 
+            buttonRedo.AccessibleDescription = "Stellt die zurückgenommene Änderung wieder her. Strg+Y.";
+            buttonRedo.AccessibleName = "Wiederholen";
+            buttonRedo.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonRedo.Enabled = false;
+            buttonRedo.Image = (Image)resources.GetObject("buttonRedo.Image");
+            buttonRedo.Location = new Point(1130, 0);
+            buttonRedo.Name = "buttonRedo";
+            buttonRedo.Size = new Size(28, 24);
+            buttonRedo.TabIndex = 2;
+            buttonRedo.UseVisualStyleBackColor = true;
+            buttonRedo.Click += ButtonRedo_Click;
+            // 
+            // buttonQuickSave
+            // 
+            buttonQuickSave.AccessibleDescription = "Speichert das Projekt. Strg+S.";
+            buttonQuickSave.AccessibleName = "Speichern";
+            buttonQuickSave.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonQuickSave.Image = (Image)resources.GetObject("buttonQuickSave.Image");
+            buttonQuickSave.Location = new Point(1160, 0);
+            buttonQuickSave.Name = "buttonQuickSave";
+            buttonQuickSave.Size = new Size(28, 24);
+            buttonQuickSave.TabIndex = 3;
+            buttonQuickSave.UseVisualStyleBackColor = true;
+            buttonQuickSave.Click += ButtonSave_Click;
+            // 
+            // buttonShortcuts
+            // 
+            buttonShortcuts.AccessibleDescription = "Zeigt die Tastenkombinationen. F1.";
+            buttonShortcuts.AccessibleName = "Tastenkombinationen";
+            buttonShortcuts.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonShortcuts.Image = (Image)resources.GetObject("buttonShortcuts.Image");
+            buttonShortcuts.Location = new Point(1198, 0);
+            buttonShortcuts.Name = "buttonShortcuts";
+            buttonShortcuts.Size = new Size(28, 24);
+            buttonShortcuts.TabIndex = 4;
+            buttonShortcuts.UseVisualStyleBackColor = true;
+            buttonShortcuts.Click += ButtonShortcuts_Click;
+            // 
+            // buttonAbout
+            // 
+            buttonAbout.AccessibleDescription = "Zeigt Version und Lizenz von drums4me.";
+            buttonAbout.AccessibleName = "Über drums4me";
+            buttonAbout.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonAbout.Image = (Image)resources.GetObject("buttonAbout.Image");
+            buttonAbout.Location = new Point(1228, 0);
+            buttonAbout.Name = "buttonAbout";
+            buttonAbout.Size = new Size(28, 24);
+            buttonAbout.TabIndex = 5;
+            buttonAbout.UseVisualStyleBackColor = true;
+            buttonAbout.Click += ButtonAbout_Click;
             // 
             // stepGrid
             // 
             stepGrid.BackColor = SystemColors.Window;
             stepGrid.Dock = DockStyle.Fill;
-            stepGrid.Location = new Point(0, 154);
+            stepGrid.Location = new Point(0, 124);
             stepGrid.Name = "stepGrid";
-            stepGrid.Size = new Size(1260, 476);
+            stepGrid.Size = new Size(1260, 506);
             stepGrid.TabIndex = 6;
             stepGrid.Edited += StepGrid_Edited;
             stepGrid.EditCompleted += StepGrid_EditCompleted;
             stepGrid.TrackNameClicked += StepGrid_TrackNameClicked;
             // 
+            // projectBrowser
+            // 
+            projectBrowser.Dock = DockStyle.Fill;
+            projectBrowser.Font = new Font("Segoe UI", 10F);
+            projectBrowser.Location = new Point(0, 124);
+            projectBrowser.Name = "projectBrowser";
+            projectBrowser.Size = new Size(1260, 506);
+            projectBrowser.TabIndex = 7;
+            projectBrowser.Visible = false;
+            projectBrowser.ProjectChosen += ProjectBrowser_ProjectChosen;
+            projectBrowser.CountChanged += ProjectBrowser_CountChanged;
+            // 
             // statusStrip
             // 
             statusStrip.Font = new Font("Segoe UI", 10F);
-            statusStrip.Items.AddRange(new ToolStripItem[] { statusHint, statusBars, statusTime });
+            statusStrip.Items.AddRange(new ToolStripItem[] { statusHint, statusProjects, statusTrainer, statusBars, statusTime });
             statusStrip.Location = new Point(0, 630);
             statusStrip.Name = "statusStrip";
+            statusStrip.ShowItemToolTips = true;
             statusStrip.Size = new Size(1260, 24);
-            statusStrip.TabIndex = 7;
+            statusStrip.TabIndex = 8;
             // 
             // statusHint
             // 
@@ -934,6 +1497,20 @@
             statusHint.Size = new Size(1032, 19);
             statusHint.Spring = true;
             statusHint.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // statusProjects
+            // 
+            statusProjects.BorderSides = ToolStripStatusLabelBorderSides.Left;
+            statusProjects.Name = "statusProjects";
+            statusProjects.Size = new Size(4, 19);
+            statusProjects.Visible = false;
+            // 
+            // statusTrainer
+            // 
+            statusTrainer.BorderSides = ToolStripStatusLabelBorderSides.Left;
+            statusTrainer.Name = "statusTrainer";
+            statusTrainer.Size = new Size(4, 19);
+            statusTrainer.Visible = false;
             // 
             // statusBars
             // 
@@ -982,15 +1559,35 @@
             renameTrackToolStripMenuItem.Text = "&Umbenennen…";
             renameTrackToolStripMenuItem.Click += RenameTrackToolStripMenuItem_Click;
             // 
+            // demosMenu
+            // 
+            demosMenu.Font = new Font("Segoe UI", 10F);
+            demosMenu.Items.AddRange(new ToolStripItem[] { noDemosToolStripMenuItem });
+            demosMenu.Name = "demosMenu";
+            demosMenu.Size = new Size(218, 28);
+            // 
+            // noDemosToolStripMenuItem
+            // 
+            noDemosToolStripMenuItem.Enabled = false;
+            noDemosToolStripMenuItem.Name = "noDemosToolStripMenuItem";
+            noDemosToolStripMenuItem.Size = new Size(217, 24);
+            noDemosToolStripMenuItem.Text = "Keine Demos installiert";
+            // 
             // pendingOpenTimer
             // 
             pendingOpenTimer.Interval = 200;
             pendingOpenTimer.Tick += PendingOpenTimer_Tick;
             // 
-            // openFileDialog
+            // otherFolderDialog
             // 
-            openFileDialog.Filter = "drums4me-Projekte (*.d4m)|*.d4m|Alle Dateien (*.*)|*.*";
-            openFileDialog.Title = "Projekt öffnen";
+            otherFolderDialog.Description = "Wähle den Ordner, dessen Projekte du sehen möchtest.";
+            otherFolderDialog.ShowNewFolderButton = false;
+            otherFolderDialog.UseDescriptionForTitle = true;
+            // 
+            // projectFolderDialog
+            // 
+            projectFolderDialog.Description = "Wähle den Ordner für deine Projekte.";
+            projectFolderDialog.UseDescriptionForTitle = true;
             // 
             // saveFileDialog
             // 
@@ -998,139 +1595,200 @@
             saveFileDialog.Filter = "drums4me-Projekte (*.d4m)|*.d4m|Alle Dateien (*.*)|*.*";
             saveFileDialog.Title = "Projekt speichern";
             // 
-            // folderBrowserDialog
-            // 
-            folderBrowserDialog.Description = "Wähle den Ordner für deine Projekte.";
-            folderBrowserDialog.UseDescriptionForTitle = true;
-            // 
             // FrmDrums4me
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1260, 654);
+            Controls.Add(buttonUndo);
+            Controls.Add(buttonRedo);
+            Controls.Add(buttonQuickSave);
+            Controls.Add(buttonShortcuts);
+            Controls.Add(buttonAbout);
             Controls.Add(stepGrid);
+            Controls.Add(projectBrowser);
             Controls.Add(statusStrip);
-            Controls.Add(rowTrainer);
-            Controls.Add(lineTrainer);
-            Controls.Add(rowSequence);
-            Controls.Add(lineSequence);
-            Controls.Add(rowMain);
-            Controls.Add(menuStrip);
+            Controls.Add(ribbonTabs);
             Font = new Font("Segoe UI", 10F);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MainMenuStrip = menuStrip;
             MinimumSize = new Size(960, 574);
             Name = "FrmDrums4me";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "drums4me";
             FormClosing += FrmDrums4me_FormClosing;
             Load += FrmDrums4me_Load;
-            menuStrip.ResumeLayout(false);
-            menuStrip.PerformLayout();
-            rowMain.ResumeLayout(false);
-            rowMain.PerformLayout();
+            Resize += FrmDrums4me_Resize;
+            ribbonTabs.ResumeLayout(false);
+            tabPageFile.ResumeLayout(false);
+            flowFile.ResumeLayout(false);
+            groupFile.ResumeLayout(false);
+            groupFind.ResumeLayout(false);
+            groupFind.PerformLayout();
+            groupSource.ResumeLayout(false);
+            tabPageStart.ResumeLayout(false);
+            flowStart.ResumeLayout(false);
+            groupPlay.ResumeLayout(false);
+            groupTempo.ResumeLayout(false);
+            groupTempo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericTempo).EndInit();
-            ((System.ComponentModel.ISupportInitialize)trackBarSwing).EndInit();
-            ((System.ComponentModel.ISupportInitialize)trackBarVolume).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericCountIn).EndInit();
-            rowSequence.ResumeLayout(false);
-            rowSequence.PerformLayout();
-            rowTrainer.ResumeLayout(false);
-            rowTrainer.PerformLayout();
+            groupTrainer.ResumeLayout(false);
+            groupTrainer.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericTrainerStep).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerBars).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerTarget).EndInit();
+            groupSound.ResumeLayout(false);
+            groupSound.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)trackBarSwing).EndInit();
+            ((System.ComponentModel.ISupportInitialize)trackBarVolume).EndInit();
+            groupPattern.ResumeLayout(false);
+            groupSequence.ResumeLayout(false);
+            groupSequence.PerformLayout();
+            tabPageSettings.ResumeLayout(false);
+            flowSettings.ResumeLayout(false);
+            groupProjects.ResumeLayout(false);
+            groupProjects.PerformLayout();
+            groupAppearance.ResumeLayout(false);
+            groupAppearance.PerformLayout();
+            groupKits.ResumeLayout(false);
+            groupKits.PerformLayout();
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
             trackNameMenu.ResumeLayout(false);
+            demosMenu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private MenuStrip menuStrip;
-        private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem newToolStripMenuItem;
-        private ToolStripMenuItem openToolStripMenuItem;
-        private ToolStripMenuItem demosToolStripMenuItem;
-        private ToolStripMenuItem noDemosToolStripMenuItem;
-        private ToolStripMenuItem saveToolStripMenuItem;
-        private ToolStripMenuItem saveAsToolStripMenuItem;
-        private ToolStripSeparator fileSeparator;
-        private ToolStripMenuItem exitToolStripMenuItem;
-        private ToolStripMenuItem editToolStripMenuItem;
-        private ToolStripMenuItem undoToolStripMenuItem;
-        private ToolStripMenuItem redoToolStripMenuItem;
-        private ToolStripSeparator editSeparator;
-        private ToolStripMenuItem clearPatternToolStripMenuItem;
-        private ToolStripMenuItem settingsToolStripMenuItem;
-        private ToolStripMenuItem projectFolderToolStripMenuItem;
-        private ToolStripMenuItem appearanceToolStripMenuItem;
-        private ToolStripMenuItem appearanceSystemToolStripMenuItem;
-        private ToolStripMenuItem appearanceLightToolStripMenuItem;
-        private ToolStripMenuItem appearanceDarkToolStripMenuItem;
-        private ToolStripSeparator settingsSeparator;
-        private ToolStripMenuItem ownKitsToolStripMenuItem;
-        private ToolStripMenuItem installedKitsToolStripMenuItem;
-        private ToolStripMenuItem reloadKitsToolStripMenuItem;
-        private ToolStripMenuItem helpToolStripMenuItem;
-        private ToolStripMenuItem shortcutsToolStripMenuItem;
-        private ToolStripMenuItem aboutToolStripMenuItem;
-        private FlowLayoutPanel rowMain;
-        private Panel dividerTempo;
-        private Panel dividerKit;
-        private Panel lineSequence;
-        private FlowLayoutPanel rowSequence;
-        private Panel dividerPattern;
-        private Panel lineTrainer;
-        private FlowLayoutPanel rowTrainer;
+        private TabControl ribbonTabs;
+        private TabPage tabPageFile;
+        private FlowLayoutPanel flowFile;
+        private Panel groupFile;
+        private Button buttonNew;
+        private Button buttonSave;
+        private Button buttonSaveAs;
+        private Label captionFile;
+        private Panel dividerFile;
+        private Panel groupFind;
+        private Label labelSearch;
+        private TextBox textBoxSearch;
+        private Label labelFilterKit;
+        private ComboBox comboFilterKit;
+        private Label labelFilterMeter;
+        private ComboBox comboFilterMeter;
+        private Label captionFind;
+        private Panel dividerFind;
+        private Panel groupSource;
+        private Button buttonOtherFolder;
+        private Button buttonDemos;
+        private Label captionSource;
+        private TabPage tabPageStart;
+        private FlowLayoutPanel flowStart;
+        private Panel groupPlay;
         private Button buttonPlay;
+        private Label captionPlay;
+        private Panel dividerPlay;
+        private Panel groupTempo;
         private Label labelTempo;
         private NumericUpDown numericTempo;
         private Label labelBpm;
         private Button buttonTap;
+        private Label labelCountIn;
+        private NumericUpDown numericCountIn;
+        private Label labelCountInBars;
+        private Label captionTempo;
+        private Panel dividerTempo;
+        private Panel groupTrainer;
+        private CheckBox checkBoxTrainer;
+        private Label labelTrainerStep;
+        private NumericUpDown numericTrainerStep;
+        private Label labelTrainerBars;
+        private Label labelTrainerEvery;
+        private NumericUpDown numericTrainerBars;
+        private Label labelTrainerTarget;
+        private NumericUpDown numericTrainerTarget;
+        private Label labelTrainerBpm;
+        private Label captionTrainer;
+        private Panel dividerTrainer;
+        private Panel groupSound;
         private Label labelSwing;
+        private Label labelSwingValue;
         private TrackBar trackBarSwing;
         private Label labelVolume;
+        private Label labelVolumeValue;
         private TrackBar trackBarVolume;
+        private Panel lineKit;
         private Label labelKit;
         private ComboBox comboKit;
-        private Label labelPattern;
+        private Label captionSound;
+        private Panel dividerSound;
+        private Panel groupPattern;
         private RadioButton radioPattern1;
         private RadioButton radioPattern2;
         private RadioButton radioPattern3;
         private RadioButton radioPattern4;
+        private ComboBox comboMeter;
+        private Button buttonClearPattern;
+        private Label captionPattern;
+        private Panel dividerPattern;
+        private Panel groupSequence;
         private CheckBox checkBoxSequence;
-        private TextBox textBoxSequence;
         private CheckBox checkBoxRepeat;
+        private TextBox textBoxSequence;
+        private Label captionSequence;
+        private TabPage tabPageSettings;
+        private FlowLayoutPanel flowSettings;
+        private Panel groupProjects;
+        private Label labelProjectFolder;
+        private TextBox textBoxProjectFolder;
+        private Button buttonProjectFolder;
+        private Label labelProjectHint;
+        private Panel lineOpenLast;
+        private CheckBox checkBoxOpenLast;
+        private Label captionProjects;
+        private Panel dividerProjects;
+        private Panel groupAppearance;
+        private RadioButton radioSystem;
+        private RadioButton radioLight;
+        private RadioButton radioDark;
+        private Label labelAppearanceHint;
+        private Panel lineFlash;
+        private CheckBox checkBoxFlash;
+        private Label captionAppearance;
+        private Panel dividerAppearance;
+        private Panel groupKits;
+        private Label labelOwnKits;
+        private Button buttonOwnKits;
+        private Label labelInstalledKits;
+        private Button buttonInstalledKits;
+        private Button buttonReloadKits;
+        private Label labelKitCount;
+        private Label captionKits;
+        private Button buttonUndo;
+        private Button buttonRedo;
+        private Button buttonQuickSave;
+        private Button buttonShortcuts;
+        private Button buttonAbout;
         private System.Windows.Forms.Timer previewTimer;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel statusHint;
+        private ToolStripStatusLabel statusProjects;
+        private ToolStripStatusLabel statusTrainer;
         private ToolStripStatusLabel statusBars;
         private ToolStripStatusLabel statusTime;
         private ContextMenuStrip trackNameMenu;
         private ToolStripMenuItem previewTrackToolStripMenuItem;
         private ToolStripMenuItem renameTrackToolStripMenuItem;
-        private CheckBox checkBoxTrainer;
-        private Label labelTrainerStep;
-        private NumericUpDown numericTrainerStep;
-        private Label labelTrainerBars;
-        private NumericUpDown numericTrainerBars;
-        private Label labelTrainerTarget;
-        private NumericUpDown numericTrainerTarget;
-        private Label labelTrainerBpm;
-        private Label labelTrainerStatus;
-        private Label labelCountIn;
-        private NumericUpDown numericCountIn;
-        private CheckBox checkBoxFlash;
+        private ContextMenuStrip demosMenu;
+        private ToolStripMenuItem noDemosToolStripMenuItem;
         private Drums4me.Controls.StepGrid stepGrid;
-        private Label labelMeter;
-        private ComboBox comboMeter;
+        private Drums4me.Controls.ProjectBrowser projectBrowser;
         private System.Windows.Forms.Timer playheadTimer;
         private System.Windows.Forms.Timer pendingOpenTimer;
-        private OpenFileDialog openFileDialog;
+        private FolderBrowserDialog otherFolderDialog;
+        private FolderBrowserDialog projectFolderDialog;
         private SaveFileDialog saveFileDialog;
-        private FolderBrowserDialog folderBrowserDialog;
     }
 }

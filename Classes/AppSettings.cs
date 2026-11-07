@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -16,6 +16,9 @@ internal sealed class AppSettings
 
     /// <summary>Die zuletzt geöffnete oder gespeicherte Projektdatei.</summary>
     public string? LastFile { get; set; }
+
+    /// <summary>Lädt die letzte Datei beim Programmstart. Vorhandene Einstellungsdateien kennen den Wert noch nicht, deshalb ist er voreingestellt.</summary>
+    public bool OpenLastFile { get; set; } = true;
 
     /// <summary>Der selbst gewählte Ordner für Projekte. Leer bedeutet den Standardordner unter „Dokumente“.</summary>
     public string? ProjectFolder { get; set; }

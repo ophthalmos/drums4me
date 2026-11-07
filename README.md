@@ -1,4 +1,4 @@
-# drums4me
+﻿# drums4me
 
 Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das Programm läuft komplett offline.
 
@@ -10,13 +10,14 @@ Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das P
 - Abfolge der Patterns, wahlweise mit Wiederholung
 - Vorzählen mit einstellbarer Anzahl von Takten
 - Tempotrainer: Das Tempo steigt beim Spielen schrittweise bis zu einem Ziel
-- Tempo ändern mit Plus, Minus und den Pfeiltasten (1 BPM) sowie mit Strg+Plus, Strg+Minus, Bild auf und Bild ab (5 BPM), Start und Stopp mit der Leertaste
-- Tempo vorgeben durch rhythmisches Antippen der Leertaste in einem eigenen Fenster
+- Tempo ändern mit Plus und Minus (1 BPM) sowie Strg+Plus und Strg+Minus (5 BPM), Lautstärke mit Alt+Plus und Alt+Minus (5 %), Start und Stopp mit der Leertaste
+- Tempo ermitteln in einem Fenster (Strg+T): im Takt auf die Leertaste tippen oder einen gerade in Windows laufenden Song mithören lassen; die Analyse bleibt auf dem Rechner und speichert nichts
 - optionales Aufblitzen der Anzeige beim Taktwechsel
 - Darstellung hell, dunkel oder wie Windows
 - Statuszeile mit Hinweisen zum Element unter der Maus sowie Taktzähler und Spielzeit
 - Rückgängig und Wiederholen, beim Schließen eine Liste der tatsächlichen Änderungen
-- Projekte als `.d4m`-Dateien, die zuletzt benutzte Datei wird beim Start geladen
+- Projekte als `.d4m`-Dateien, die zuletzt benutzte Datei wird auf Wunsch beim Start geladen
+- Registerkarten statt Menü: Datei mit Projektübersicht, Suche, Filtern nach Kit und Taktart und sortierbaren Spalten, auch für andere Ordner; Start mit allen Bedienelementen zum Üben; Einstellungen
 
 ## Kits
 

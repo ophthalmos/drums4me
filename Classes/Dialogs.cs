@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -69,15 +69,19 @@ internal static class Dialogs
             Heading = "Tastenkombinationen",
             Text = "Wiedergabe und Tempo\n"
                 + "Leertaste: Start und Stopp\n"
-                + "Plus, Minus, Pfeiltasten: Tempo um 1 BPM\n"
-                + "Strg+Plus, Strg+Minus, Bild auf, Bild ab: Tempo um 5 BPM\n\n"
-                + "Datei, Bearbeiten und Hilfe\n"
+                + "Plus, Minus: Tempo um 1 BPM\n"
+                + "Strg+Plus, Strg+Minus: Tempo um 5 BPM\n"
+                + "Alt+Plus, Alt+Minus: Lautstärke um 5 %\n\n"
+                + "Befehle\n"
                 + "Strg+N: Neu\n"
-                + "Strg+O: Öffnen\n"
+                + "Strg+O: Karte Datei, Esc: zurück zur Karte Start\n"
+                + "Strg+F: Projekte suchen\n"
                 + "Strg+S: Speichern\n"
                 + "Strg+Umschalt+S: Speichern unter\n"
                 + "Strg+Z: Rückgängig\n"
                 + "Strg+Y: Wiederholen\n"
+                + "Strg+T: Tempo ermitteln (tippen oder mithören)\n"
+                + "Strg+Komma: Karte Einstellungen\n"
                 + "F1: diese Übersicht\n\n"
                 + "Maus im Raster\n"
                 + "Klick auf einen Spurnamen: Klang anhören\n"
@@ -88,7 +92,7 @@ internal static class Dialogs
             Icon = owner.Icon is { } icon ? new TaskDialogIcon(icon) : TaskDialogIcon.Information,
             AllowCancel = true,
             Buttons = { TaskDialogButton.OK },
-            Footnote = "Beim Schreiben im Abfolge-Feld gehören die Tasten dem Text. Ohne Wiedergabe steuern die Pfeiltasten das Zahlenfeld oder den Schieberegler mit dem Fokus.",
+            Footnote = "Beim Schreiben im Abfolge-Feld und in der Suche gehören Leertaste, Plus und Minus dem Text.",
         };
         TaskDialog.ShowDialog(owner, page);
     }
