@@ -1,4 +1,4 @@
-﻿# drums4me
+# drums4me
 
 Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das Programm läuft komplett offline.
 
@@ -7,7 +7,7 @@ Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das P
 - 8 Spuren mit Lautstärke, Panorama und Tonhöhe, dazu Swing und 20 bis 300 BPM
 - Lautstärke und Tonhöhe aller Spuren gemeinsam ändern: Regler mit gedrückter Strg-Taste ziehen
 - 4 Patterns je Projekt, jedes mit eigener Taktart: 2/4, 3/4, 4/4, 5/4 (3+2 und 2+3), 6/8, 7/8, 9/8 und 12/8
-- Abfolge der Patterns, wahlweise mit Wiederholung
+- Abfolge der Patterns, wahlweise mit Wiederholung; oben links im Raster steht das gezeigte Pattern und während einer Abfolge die Stelle darin, etwa „Pattern 4 4/5“
 - Vorzählen mit einstellbarer Anzahl von Takten
 - Tempotrainer: Das Tempo steigt beim Spielen schrittweise bis zu einem Ziel
 - Tempo ändern mit Plus und Minus (1 BPM) sowie Strg+Plus und Strg+Minus (5 BPM), Lautstärke mit Alt+Plus und Alt+Minus (5 %), Start und Stopp mit der Leertaste
@@ -17,7 +17,8 @@ Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das P
 - Statuszeile mit Hinweisen zum Element unter der Maus sowie Taktzähler und Spielzeit
 - Rückgängig und Wiederholen, beim Schließen eine Liste der tatsächlichen Änderungen
 - Projekte als `.d4m`-Dateien, die zuletzt benutzte Datei wird auf Wunsch beim Start geladen
-- Registerkarten statt Menü: Datei mit Projektübersicht, Suche, Filtern nach Kit und Taktart und sortierbaren Spalten, auch für andere Ordner; Start mit allen Bedienelementen zum Üben; Einstellungen
+- Fenstergröße und -lage bleiben von Sitzung zu Sitzung erhalten
+- Registerkarten statt Menü: Datei mit Befehlsspalte (Neu, Speichern, Schließen, Demos, Fensterlayout zurücksetzen, Beenden) und Projektübersicht mit Kontextmenü (im Editor bearbeiten, Dateipfad kopieren, Umbenennen, Duplizieren, Löschen in den Papierkorb, im Ordner anzeigen – auch in Directory Opus –, Eigenschaften), Suche, Filtern nach Kit und Taktart und sortierbaren Spalten, auch für andere Ordner; Start mit allen Bedienelementen zum Üben; Einstellungen mit Wahl des Ausgabegeräts, etwa eines Audio-Interfaces
 
 ## Kits
 

@@ -21,6 +21,7 @@ public sealed class StepGrid : Control
     private const string AllTracksHint = "Strg + Ziehen: alle Spuren gemeinsam. Doppelklick: Standardwert, mit Strg für alle Spuren.";
     private const string TrackNameHint = "Klick: Klang anhören. Rechtsklick: weitere Möglichkeiten.";
     private const string StepHint = "Klick: Schritt ein- oder ausschalten. Ziehen: mehrere Schritte auf einmal.";
+    private const string CaptionHint = "Das Pattern, das du gerade siehst. Läuft eine Abfolge, steht daneben, der wievielte Takt der Abfolge gerade spielt.";
     private static readonly string[] FaderHints =
     [
         $"Lautstärke der Spur. {AllTracksHint}",
@@ -44,6 +45,8 @@ public sealed class StepGrid : Control
     private Meter _meter = Meter.FourFour;
     private int _playStep = -1;
     private bool _barFlash;
+    private string _patternName = string.Empty;
+    private string _sequencePosition = string.Empty;
 
     private enum DragMode { None, Paint, Fader }
 
@@ -104,6 +107,20 @@ public sealed class StepGrid : Control
         }
     }
 
+    /// <summary>
+    /// Oben links über den Spurnamen: welches Pattern das Raster zeigt, etwa „Pattern 2“.
+    /// Läuft eine Abfolge, steht daneben die Stelle darin, etwa „4/5“ für den vierten von fünf Takten.
+    /// </summary>
+    internal void SetPatternCaption(string patternName, string sequencePosition)
+    {
+        if (patternName != _patternName || sequencePosition != _sequencePosition)
+        {
+            _patternName = patternName;
+            _sequencePosition = sequencePosition;
+            Invalidate(CaptionArea);
+        }
+    }
+
     internal void Bind(string[] trackNames, TrackSettings[] tracks, bool[][] steps, Meter meter)
     {
         _trackNames = trackNames;
@@ -153,6 +170,9 @@ public sealed class StepGrid : Control
         return new Rectangle(column.Left + knob, column.Top, column.Width - ValueWidth - (2 * knob), column.Height);
     }
 
+    /// <summary>Die Ecke über den Spurnamen, nach rechts bis zur Mitte des ersten Schritts, wo die „1“ steht.</summary>
+    private Rectangle CaptionArea => new(0, 0, (int)StepRect(0, 0).Left + ((int)StepWidth / 2) - LogicalToDeviceUnits(6), HeaderHeight);
+
     private void InvalidateStepColumn(int step)
     {
         if (step >= 0 && step < _meter.Steps)
@@ -197,6 +217,20 @@ public sealed class StepGrid : Control
 
     private void DrawHeader(Graphics graphics)
     {
+        if (_patternName.Length > 0)
+        {
+            const TextFormatFlags flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding | TextFormatFlags.NoClipping;
+            var area = CaptionArea;
+            using var bold = new Font(Font, FontStyle.Bold);
+            var nameRect = new Rectangle(Padding8, 0, area.Width - Padding8, HeaderHeight);
+            TextRenderer.DrawText(graphics, _patternName, bold, nameRect, ForeColor, flags);
+            if (_sequencePosition.Length > 0)
+            {
+                var left = Padding8 + TextRenderer.MeasureText(graphics, _patternName, bold, nameRect.Size, flags).Width + LogicalToDeviceUnits(6);
+                TextRenderer.DrawText(graphics, _sequencePosition, Font, new Rectangle(left, 0, Math.Max(0, area.Right - left), HeaderHeight), SystemColors.GrayText, flags);
+            }
+        }
+
         for (var step = 0; step < _meter.Steps; step++)
         {
             var cell = StepRect(0, step);
@@ -416,6 +450,10 @@ public sealed class StepGrid : Control
         if (HitName(point, out _))
         {
             return TrackNameHint;
+        }
+        if (_patternName.Length > 0 && CaptionArea.Contains(point))
+        {
+            return CaptionHint;
         }
 
         for (var fader = 0; fader < FaderCount; fader++)

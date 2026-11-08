@@ -1,7 +1,9 @@
 ﻿using Drums4me.Classes;
+using Drums4me.Controls;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 
 namespace Drums4me.Forms;
@@ -9,6 +11,9 @@ namespace Drums4me.Forms;
 public partial class FrmDrums4me : Form, IMessageFilter
 {
     private const int OutputLatencyMs = 40;
+    private const int MaxRestartTries = 5;
+    private const int MaxDeviceLosses = 3;
+    private const double DeviceLossWindowSeconds = 30;
     private const int BarFlashMs = 120;
     private const int TempoStep = 1;
     private const int TempoBigStep = 5;
@@ -56,10 +61,18 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private long _flashEnd;
     private int _trainerBpm;
     private WasapiPlayer? _previewOutput;
+    private MMDevice? _outputDevice;
+    private MMDevice? _previewDevice;
     private int _menuTrack;
     private long _playStart;
+    private int _restartTries;
+    private int _deviceLosses;
+    private long _firstDeviceLoss;
+    private string? _deviceLossMessage;
+    private Size _defaultSize;
     private string? _hoverHint;
     private string? _statusError;
+    private string? _notice;
 
     public FrmDrums4me()
     {
@@ -80,6 +93,8 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private void FrmDrums4me_Load(object? sender, EventArgs e)
     {
         Application.AddMessageFilter(this);
+        _defaultSize = Size;
+        RestoreWindow();
         if (Application.IsDarkModeEnabled)
         {
             // Die Trennlinien der Statuszeile wären auf Dunkel grell weiß.
@@ -91,12 +106,15 @@ public partial class FrmDrums4me : Form, IMessageFilter
             // Die Trenner innerhalb eines Bereichs sollen auch auf Dunkel schwächer sein als die Bereichsgrenzen.
             lineFlash.BackColor = Color.FromArgb(56, 56, 56);
             lineKit.BackColor = lineFlash.BackColor;
-            lineOpenLast.BackColor = lineFlash.BackColor;
+            lineCommands.BackColor = lineFlash.BackColor;
+            lineWindowCommands.BackColor = lineFlash.BackColor;
         }
         Directory.CreateDirectory(KitFolder);
         ApplyProjectFolder();
         checkBoxFlash.Checked = _settings.FlashOnBar;
         checkBoxOpenLast.Checked = _settings.OpenLastFile;
+        FillAudioDevices();
+        projectBrowser.SetColumnWidths(_settings.ColumnWidths);
         comboMeter.Items.AddRange([.. Meter.All]);
         ShowColorMode();
         buttonOwnKits.AccessibleDescription = $"Öffnet den Ordner für eigene Kits: {KitFolder}";
@@ -118,6 +136,17 @@ public partial class FrmDrums4me : Form, IMessageFilter
             ShowNoKitsMessage();
         }
         UpdateRibbonHeight();
+        PlaceFileCommands();
+    }
+
+    /// <summary>
+    /// Die Befehlsspalte der Karte „Datei“ beginnt direkt unter den Reitern, Band und Projektliste liegen rechts davon.
+    /// Wie hoch die Reiter sind, steht erst zur Laufzeit fest. Danach hält der Anker die Spalte in Form.
+    /// </summary>
+    private void PlaceFileCommands()
+    {
+        var top = ribbonTabs.Top + ribbonTabs.GetTabRect(0).Bottom;
+        panelFileCommands.SetBounds(0, top, panelFileCommands.Width, statusStrip.Top - top);
     }
 
     private void FrmDrums4me_Resize(object? sender, EventArgs e) => UpdateRibbonHeight();
@@ -130,8 +159,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
             return;
         }
 
+        // Auf der Karte „Datei“ hält ein Innenabstand die Gruppen rechts der Befehlsspalte.
         var page = ribbonTabs.DisplayRectangle;
-        var height = (ribbonTabs.Height - page.Height) + flow.GetPreferredSize(new Size(page.Width, 0)).Height + RibbonPagePadding;
+        var width = page.Width - ribbonTabs.SelectedTab.Padding.Horizontal;
+        var height = (ribbonTabs.Height - page.Height) + flow.GetPreferredSize(new Size(width, 0)).Height + RibbonPagePadding;
         if (ribbonTabs.Height != height)
         {
             ribbonTabs.Height = height;
@@ -148,6 +179,36 @@ public partial class FrmDrums4me : Form, IMessageFilter
         StopPlayback();
         StopPreview();
         Application.RemoveMessageFilter(this);
+        _settings.ColumnWidths = projectBrowser.GetColumnWidths();
+        var bounds = WindowState == FormWindowState.Normal ? Bounds : RestoreBounds;
+        _settings.Window = new WindowPlacement(bounds.X, bounds.Y, bounds.Width, bounds.Height, WindowState == FormWindowState.Maximized);
+        _settings.Save();
+    }
+
+    /// <summary>
+    /// Setzt Größe und Lage vom letzten Mal. Wurde inzwischen ein Bildschirm abgebaut oder umgestellt,
+    /// muss die Titelleiste noch sichtbar sein, sonst bleibt es bei der Standardlage.
+    /// </summary>
+    private void RestoreWindow()
+    {
+        if (_settings.Window is not { } window)
+        {
+            return;
+        }
+
+        var bounds = new Rectangle(window.X, window.Y, Math.Max(window.Width, MinimumSize.Width), Math.Max(window.Height, MinimumSize.Height));
+        var titleBar = new Rectangle(bounds.X, bounds.Y, bounds.Width, SystemInformation.CaptionHeight);
+        if (!Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(titleBar)))
+        {
+            return;
+        }
+
+        StartPosition = FormStartPosition.Manual;
+        Bounds = bounds;
+        if (window.Maximized)
+        {
+            WindowState = FormWindowState.Maximized;
+        }
     }
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -165,7 +226,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
 
         // Eine offene Auswahlliste schließt Esc selbst, das soll die Karte nicht wechseln.
-        if (keyData == Keys.Escape && ribbonTabs.SelectedTab != tabPageStart && !comboFilterKit.DroppedDown && !comboFilterMeter.DroppedDown)
+        if (keyData == Keys.Escape && ribbonTabs.SelectedTab != tabPageStart && ActiveControl is not ComboBox { DroppedDown: true } && !projectBrowser.IsEditingName)
         {
             ribbonTabs.SelectedTab = tabPageStart;
             return true;
@@ -218,6 +279,9 @@ public partial class FrmDrums4me : Form, IMessageFilter
             Keys.Control | Keys.Z => () => ButtonUndo_Click(this, EventArgs.Empty),
             Keys.Control | Keys.Y => () => ButtonRedo_Click(this, EventArgs.Empty),
             Keys.Control | Keys.T when !projectBrowser.Visible => () => ButtonTap_Click(this, EventArgs.Empty),
+
+            // In Textfeldern löscht Strg+Entf das nächste Wort, das soll so bleiben.
+            Keys.Control | Keys.Delete when CanEditProject && !IsTyping => () => ButtonClearPattern_Click(this, EventArgs.Empty),
             Keys.Control | Keys.Oemcomma => () => ribbonTabs.SelectedTab = tabPageSettings,
             Keys.F1 => () => Dialogs.ShowShortcuts(this),
             _ => null,
@@ -229,8 +293,8 @@ public partial class FrmDrums4me : Form, IMessageFilter
     /// <summary>Auf der Karte „Datei“ ist das Projekt verborgen. Änderungen daran blieben unbemerkt.</summary>
     private bool CanEditProject => !projectBrowser.Visible;
 
-    /// <summary>Im Abfolge-Feld und in der Suche der Karte „Datei“ gehören die Tasten dem Text.</summary>
-    private bool IsTyping => ActiveControl is TextBox;
+    /// <summary>Im Abfolge-Feld, in der Suche und beim Umbenennen in der Projektliste gehören die Tasten dem Text.</summary>
+    private bool IsTyping => ActiveControl is TextBox || projectBrowser.IsEditingName;
 
     // ==================== Projektübersicht ====================
 
@@ -286,6 +350,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
             SuspendLayout();
             stepGrid.Visible = !show;
             projectBrowser.Visible = show;
+            panelFileCommands.Visible = show;
             statusProjects.Visible = show;
             ResumeLayout();
             UpdateUndoMenu();
@@ -314,6 +379,104 @@ public partial class FrmDrums4me : Form, IMessageFilter
     }
 
     /// <summary>Die markierte Zeile ist das aktuelle oder letzte Projekt. Enter öffnet es, Pfeiltasten und Tippen wählen ein anderes. Ohne Projekte bleibt nur die Suche.</summary>
+    private void ProjectBrowser_RenameRequested(object? sender, ProjectRename e)
+    {
+        if (!ProjectFiles.TryGetRenameTarget(e.FilePath, e.NewName, out var target, out var problem))
+        {
+            Dialogs.Warning(this, "Das Projekt wurde nicht umbenannt.", problem);
+            return;
+        }
+        if (target == e.FilePath)
+        {
+            return;
+        }
+
+        try
+        {
+            File.Move(e.FilePath, target);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Dialogs.Error(this, "Das Projekt wurde nicht umbenannt.", ex.Message);
+            return;
+        }
+
+        if (IsSameFile(_filePath, e.FilePath))
+        {
+            _filePath = target;
+            UpdateTitle();
+        }
+        if (IsSameFile(_settings.LastFile, e.FilePath))
+        {
+            RememberFile(target);
+        }
+        RefreshProjectBrowser(target);
+        FocusProjectList();
+    }
+
+    private void ProjectBrowser_DuplicateRequested(object? sender, string path)
+    {
+        var target = ProjectFiles.DuplicateTarget(path);
+        try
+        {
+            File.Copy(path, target);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Dialogs.Error(this, "Das Projekt wurde nicht kopiert.", ex.Message);
+            return;
+        }
+
+        RefreshProjectBrowser(target);
+        FocusProjectList();
+        ShowNotice($"„{Path.GetFileNameWithoutExtension(target)}“ angelegt. Mit F2 gibst du ihm einen Namen.");
+    }
+
+    /// <summary>Ein gelöschtes offenes Projekt bleibt offen, nur ohne Datei. Schließen fragt dann, ob du es speichern willst.</summary>
+    private void ProjectBrowser_DeleteRequested(object? sender, string path)
+    {
+        var name = Path.GetFileNameWithoutExtension(path);
+        var isOpen = IsSameFile(_filePath, path);
+        if (!Dialogs.AskMoveToRecycleBin(this, name, isOpen))
+        {
+            return;
+        }
+
+        var neighbor = projectBrowser.NeighborOf(path);
+        try
+        {
+            ProjectFiles.MoveToRecycleBin(this, path);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        catch (IOException ex)
+        {
+            Dialogs.Error(this, "Das Projekt wurde nicht gelöscht.", ex.Message);
+            return;
+        }
+
+        if (isOpen)
+        {
+            _filePath = null;
+            _savedProject = Project.CreateEmpty();
+            _dirty = CurrentChanges().Count > 0;
+            UpdateTitle();
+        }
+        if (IsSameFile(_settings.LastFile, path))
+        {
+            RememberFile(null);
+        }
+        RefreshProjectBrowser(neighbor);
+        FocusProjectList();
+        ShowNotice($"„{name}“ liegt jetzt im Papierkorb.");
+    }
+
+    private void ProjectBrowser_NoticeRequested(object? sender, string text) => ShowNotice(text);
+
+    private static bool IsSameFile(string? a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+
     private void FocusProjectList()
     {
         if (!projectBrowser.FocusList())
@@ -326,9 +489,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
     private string BrowserFolder => _otherFolder ?? _projectFolder;
 
-    private void RefreshProjectBrowser()
+    /// <param name="select">Die Zeile, die markiert sein soll. Ohne Angabe ist es das offene oder zuletzt benutzte Projekt.</param>
+    private void RefreshProjectBrowser(string? select = null)
     {
-        projectBrowser.SetEntries(ProjectIndex.Scan(BrowserFolder, _kits.Select(kit => kit.Name)), _filePath ?? _settings.LastFile);
+        projectBrowser.SetEntries(ProjectIndex.Scan(BrowserFolder, _kits.Select(kit => kit.Name)), select ?? _filePath ?? _settings.LastFile);
         _fillingFilters = true;
         FillFilter(comboFilterKit, projectBrowser.KitNames);
         FillFilter(comboFilterMeter, projectBrowser.MeterNames);
@@ -379,6 +543,8 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
     private void TogglePlayback()
     {
+        // Wer selbst startet oder stoppt, übernimmt; ein anstehender Neustart nach einem Geräteausfall entfällt dann.
+        restartTimer.Stop();
         if (_output is null)
         {
             StartPlayback();
@@ -389,28 +555,53 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
     }
 
-    private static WasapiPlayer CreateOutput() => new WasapiPlayerBuilder()
-        .WithSharedMode()
-        .WithEventSync()
-        .WithLatency(OutputLatencyMs)
-        .WithMmcssThreadPriority("Pro Audio")
-        .Build();
+    /// <summary>Spielt über das gewählte Gerät. Ist es nicht angeschlossen, über den Windows-Standard, damit das Üben nicht daran scheitert.</summary>
+    private WasapiPlayer CreateOutput(out MMDevice? device)
+    {
+        device = AudioDevices.Open(_settings.AudioDeviceId);
+        if (device is null && !string.IsNullOrEmpty(_settings.AudioDeviceId))
+        {
+            ShowNotice($"„{_settings.AudioDeviceName}“ ist nicht angeschlossen, gespielt wird über den Windows-Standard.");
+        }
 
-    private void StartPlayback()
+        var builder = new WasapiPlayerBuilder();
+        if (device is not null)
+        {
+            builder = builder.WithDevice(device);
+        }
+        return builder
+            .WithSharedMode()
+            .WithEventSync()
+            .WithLatency(OutputLatencyMs)
+            .WithMmcssThreadPriority("Pro Audio")
+            .Build();
+    }
+
+    /// <param name="reportErrors">Bei false meldet der Aufrufer einen Fehler selbst. Liefert, ob die Wiedergabe läuft.</param>
+    private bool StartPlayback(bool reportErrors = true)
     {
         StopPreview();
         WasapiPlayer? output = null;
+        MMDevice? device = null;
         try
         {
-            output = CreateOutput();
+            output = CreateOutput(out device);
             output.PlaybackStopped += Output_PlaybackStopped;
             _engine.Rewind();
+
+            // Schon beim Vorzählen ist das Pattern zu sehen, mit dem die Abfolge beginnt.
+            if (_sequenceActive && _project.ActiveSequence is [var first, ..] && first != _project.ActivePattern)
+            {
+                ShowPattern(first);
+            }
             _flashedBar = -1;
             output.Init(_engine.ToWaveProvider());
             output.Play();
             _output = output;
+            _outputDevice = device;
             buttonPlay.Text = StopSymbol;
             buttonPlay.AccessibleName = "Stopp";
+            toolTip.SetToolTip(buttonPlay, "Stopp (Leertaste)");
             _trainerBpm = _project.Bpm;
             _playStart = Stopwatch.GetTimestamp();
             playheadTimer.Start();
@@ -421,8 +612,14 @@ public partial class FrmDrums4me : Form, IMessageFilter
         catch (Exception ex) when (ex is COMException or InvalidOperationException or ArgumentException or NotSupportedException)
         {
             output?.Dispose();
-            Dialogs.Error(this, "Die Audioausgabe konnte nicht gestartet werden.", ex.Message);
+            device?.Dispose();
+            if (reportErrors)
+            {
+                Dialogs.Error(this, "Die Audioausgabe konnte nicht gestartet werden.", ex.Message);
+            }
+            return false;
         }
+        return true;
     }
 
     private void StopPlayback()
@@ -435,13 +632,17 @@ public partial class FrmDrums4me : Form, IMessageFilter
         _output.PlaybackStopped -= Output_PlaybackStopped;
         _output.Dispose();
         _output = null;
+        _outputDevice?.Dispose();
+        _outputDevice = null;
         playheadTimer.Stop();
         stepGrid.PlayStep = -1;
         stepGrid.BarFlash = false;
         ShowCountIn(0);
         buttonPlay.Text = PlaySymbol;
         buttonPlay.AccessibleName = "Start";
+        toolTip.SetToolTip(buttonPlay, "Start (Leertaste)");
         UpdatePatternButtons();
+        UpdatePatternCaption();
         UpdateTrainerStatus();
     }
 
@@ -480,19 +681,22 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
 
         WasapiPlayer? output = null;
+        MMDevice? device = null;
         try
         {
-            output = CreateOutput();
+            output = CreateOutput(out device);
             output.PlaybackStopped += PreviewOutput_PlaybackStopped;
             _engine.BeginPreview(sound);
             output.Init(_engine.ToWaveProvider());
             output.Play();
             _previewOutput = output;
+            _previewDevice = device;
             previewTimer.Start();
         }
         catch (Exception ex) when (ex is COMException or InvalidOperationException or ArgumentException or NotSupportedException)
         {
             output?.Dispose();
+            device?.Dispose();
             Dialogs.Error(this, "Die Audioausgabe konnte nicht gestartet werden.", ex.Message);
         }
     }
@@ -517,19 +721,65 @@ public partial class FrmDrums4me : Form, IMessageFilter
         _previewOutput.PlaybackStopped -= PreviewOutput_PlaybackStopped;
         _previewOutput.Dispose();
         _previewOutput = null;
+        _previewDevice?.Dispose();
+        _previewDevice = null;
         previewTimer.Stop();
     }
 
+    /// <summary>
+    /// Gewolltes Stoppen meldet sich vorher ab: Dieses Ereignis bedeutet, dass das Audiogerät weggefallen ist.
+    /// Neu gestartet wird erst nach einer Pause, denn solange Windows umbaut, gelten gerade entfernte Geräte noch als vorhanden.
+    /// </summary>
     private void Output_PlaybackStopped(object? sender, StoppedEventArgs e)
     {
-        // Gewolltes Stoppen meldet sich vorher ab: Dieses Ereignis bedeutet, dass das Audiogerät weggefallen ist.
         StopPlayback();
-        if (e.Exception is not null)
+        if (e.Exception is null)
+        {
+            return;
+        }
+
+        // Fällt das Gerät immer wieder aus, ist etwas grundsätzlich nicht in Ordnung: dann lieber melden als endlos neu starten.
+        var now = Stopwatch.GetTimestamp();
+        if (now - _firstDeviceLoss > DeviceLossWindowSeconds * Stopwatch.Frequency)
+        {
+            _firstDeviceLoss = now;
+            _deviceLosses = 0;
+        }
+        if (++_deviceLosses > MaxDeviceLosses)
         {
             Dialogs.Warning(this, "Die Audioausgabe wurde unterbrochen.", e.Exception.Message);
+            return;
         }
+
+        _deviceLossMessage = e.Exception.Message;
+        _restartTries = 0;
+        ShowNotice("Das Ausgabegerät ist weggefallen. Die Wiedergabe startet gleich neu …");
+        restartTimer.Start();
     }
 
+    private void RestartTimer_Tick(object? sender, EventArgs e)
+    {
+        if (_output is not null)
+        {
+            restartTimer.Stop();
+            return;
+        }
+
+        _restartTries++;
+        if (StartPlayback(reportErrors: false))
+        {
+            restartTimer.Stop();
+            if (string.IsNullOrEmpty(_settings.AudioDeviceId))
+            {
+                ShowNotice("Das Ausgabegerät ist weggefallen, die Wiedergabe läuft über den Windows-Standard weiter.");
+            }
+        }
+        else if (_restartTries >= MaxRestartTries)
+        {
+            restartTimer.Stop();
+            Dialogs.Warning(this, "Die Audioausgabe wurde unterbrochen.", _deviceLossMessage ?? string.Empty);
+        }
+    }
     private void PlayheadTimer_Tick(object? sender, EventArgs e)
     {
         if (_engine.IsFinished)
@@ -545,6 +795,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
             ShowPattern(playing);
         }
         stepGrid.PlayStep = _engine.CurrentStep;
+        UpdatePatternCaption();
         ShowCountIn(_engine.CountInBar);
         UpdateBarFlash();
         if (_engine.CurrentStep >= 0)
@@ -580,10 +831,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
     }
 
-    /// <summary>Links steht, was das Element unter der Maus tut. Ein Eingabefehler hat Vorrang, bis er behoben ist.</summary>
+    /// <summary>Links steht, was das Element unter der Maus tut. Ein Eingabefehler hat Vorrang, bis er behoben ist, eine Meldung für einige Sekunden.</summary>
     private void UpdateStatusHint()
     {
-        SetStatusText(statusHint, _statusError ?? _hoverHint ?? string.Empty);
+        SetStatusText(statusHint, _statusError ?? _notice ?? _hoverHint ?? string.Empty);
         statusHint.ForeColor = _statusError is null ? SystemColors.ControlText : Theme.Error;
     }
 
@@ -741,6 +992,9 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
     }
 
+    /// <summary>Die Beschriftung steht über dem Schalter, ein Klick darauf schaltet wie bei einer gewöhnlichen Checkbox.</summary>
+    private void LabelFlash_Click(object? sender, EventArgs e) => checkBoxFlash.Checked = !checkBoxFlash.Checked;
+
     private void CheckBoxFlash_CheckedChanged(object? sender, EventArgs e)
     {
         if (_settings.FlashOnBar != checkBoxFlash.Checked)
@@ -763,11 +1017,21 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private void BindGrid()
     {
         stepGrid.Bind(_kit.TrackNames, _project.Tracks, _project.ActiveSteps, _project.ActiveMeter);
+        UpdatePatternCaption();
 
         var wasUpdating = _updatingUi;
         _updatingUi = true;
         comboMeter.SelectedItem = _project.ActiveMeter;
         _updatingUi = wasUpdating;
+    }
+
+    /// <summary>Oben links im Raster: das gezeigte Pattern, während einer Abfolge auch der wievielte Takt darin gerade spielt.</summary>
+    private void UpdatePatternCaption()
+    {
+        var length = _project.ActiveSequence.Length;
+        var index = _output is null ? -1 : _engine.CurrentSequenceIndex;
+        var position = _sequenceActive && index >= 0 && index < length ? $"{index + 1}/{length}" : string.Empty;
+        stepGrid.SetPatternCaption($"Pattern {_project.ActivePattern + 1}", position);
     }
 
     private void ComboMeter_SelectedIndexChanged(object? sender, EventArgs e)
@@ -919,7 +1183,29 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         stepGrid.Invalidate();
         ProjectEdited();
+        ShowNotice("Pattern geleert. Strg+Z holt es zurück.");
     }
+
+    /// <summary>Zeigt eine kurze Rückmeldung in der Statuszeile, die nach einigen Sekunden wieder verschwindet.</summary>
+    private void ShowNotice(string text)
+    {
+        _notice = text;
+        noticeTimer.Stop();
+        noticeTimer.Start();
+        UpdateStatusHint();
+    }
+
+    private void ClearNotice()
+    {
+        noticeTimer.Stop();
+        if (_notice is not null)
+        {
+            _notice = null;
+            UpdateStatusHint();
+        }
+    }
+
+    private void NoticeTimer_Tick(object? sender, EventArgs e) => ClearNotice();
 
     private RadioButton[] PatternButtons => [radioPattern1, radioPattern2, radioPattern3, radioPattern4];
 
@@ -970,6 +1256,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
     /// <summary>Übernimmt einen Stand aus dem Verlauf. Die Wiedergabe läuft dabei einfach mit den neuen Daten weiter.</summary>
     private void RestoreProject(Project state)
     {
+        ClearNotice();
         _project = state;
         ApplyProject();
         _dirty = CurrentChanges().Count > 0;
@@ -1097,19 +1384,59 @@ public partial class FrmDrums4me : Form, IMessageFilter
     {
         if (ConfirmDiscard())
         {
-            _project = Project.CreateDefault();
-            _savedProject = _project.Snapshot();
-            _history.Reset(_project);
-            UpdateUndoMenu();
-            _filePath = null;
-            _dirty = false;
-            ApplyProject();
+            ReplaceProject(Project.CreateDefault());
             if (projectBrowser.Visible)
             {
                 ShowProjectBrowser(false);
             }
         }
     }
+
+    /// <summary>Wie in CalcTape: Die Datei ist zu, das Raster leer. Du bleibst auf der Karte „Datei“, um gleich ein anderes Projekt zu wählen.</summary>
+    private void ButtonCloseProject_Click(object? sender, EventArgs e)
+    {
+        if (!ConfirmDiscard())
+        {
+            return;
+        }
+
+        var name = _filePath is null ? null : Path.GetFileNameWithoutExtension(_filePath);
+        ReplaceProject(Project.CreateEmpty());
+
+        // Eine geschlossene Datei soll beim nächsten Start nicht wieder aufgehen.
+        _settings.LastFile = null;
+        _settings.Save();
+        if (projectBrowser.Visible)
+        {
+            RefreshProjectBrowser();
+            FocusProjectList();
+        }
+        ShowNotice(name is null ? "Projekt geschlossen, das Raster ist leer." : $"„{name}“ geschlossen, das Raster ist leer.");
+    }
+
+    /// <summary>Ein neues, ungespeichertes Projekt ohne Vorgeschichte.</summary>
+    private void ReplaceProject(Project project)
+    {
+        _project = project;
+        _savedProject = _project.Snapshot();
+        _history.Reset(_project);
+        UpdateUndoMenu();
+        _filePath = null;
+        _dirty = false;
+        ApplyProject();
+    }
+
+    /// <summary>Größe und Lage wie beim ersten Start, mittig auf dem Bildschirm, auf dem das Fenster gerade steht.</summary>
+    private void ButtonResetLayout_Click(object? sender, EventArgs e)
+    {
+        WindowState = FormWindowState.Normal;
+        Size = _defaultSize;
+        CenterToScreen();
+        projectBrowser.ResetColumnWidths();
+        ShowNotice("Fensterlayout zurückgesetzt.");
+    }
+
+    private void ButtonExit_Click(object? sender, EventArgs e) => Close();
 
     /// <summary>Baut die Liste bei jedem Öffnen neu auf, damit neu installierte Pakete sofort erscheinen.</summary>
     private void ButtonDemos_Click(object? sender, EventArgs e)
@@ -1147,7 +1474,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         {
             menu.Add(noDemosToolStripMenuItem);
         }
-        demosMenu.Show(buttonDemos, new Point(0, buttonDemos.Height));
+        demosMenu.Show(buttonDemos, new Point(buttonDemos.Width, 0));
     }
 
     private static List<string> FindDemos()
@@ -1237,6 +1564,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
             return false;
         }
 
+        // Geöffnet wird am Anfang, nicht bei dem Pattern, das beim Speichern zufällig zu sehen war:
+        // mit Abfolge bei dem Pattern, mit dem sie beginnt, sonst bei Pattern 1.
+        _project.ActivePattern = _project.ActiveSequence is [var first, ..] ? first : 0;
+
         _filePath = path;
         _dirty = false;
         RememberFile(path);
@@ -1281,6 +1612,45 @@ public partial class FrmDrums4me : Form, IMessageFilter
             _settings.ProjectFolder = projectFolderDialog.SelectedPath;
             ApplyProjectFolder();
             _settings.Save();
+        }
+    }
+
+    /// <summary>Liest die Geräte bei jedem Aufklappen neu, damit ein gerade angestecktes Interface gleich erscheint.</summary>
+    private void FillAudioDevices()
+    {
+        var choices = AudioDevices.List();
+        var id = _settings.AudioDeviceId;
+        if (!string.IsNullOrEmpty(id) && !choices.Exists(choice => choice.Id == id))
+        {
+            choices.Add(new AudioDeviceChoice(id, $"{_settings.AudioDeviceName} (nicht angeschlossen)"));
+        }
+
+        _updatingUi = true;
+        comboAudioDevice.Items.Clear();
+        comboAudioDevice.Items.AddRange([.. choices]);
+        comboAudioDevice.SelectedItem = choices.Find(choice => choice.Id == (string.IsNullOrEmpty(id) ? null : id)) ?? choices[0];
+        _updatingUi = false;
+    }
+
+    private void ComboAudioDevice_DropDown(object? sender, EventArgs e) => FillAudioDevices();
+
+    private void ComboAudioDevice_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (_updatingUi || comboAudioDevice.SelectedItem is not AudioDeviceChoice choice || choice.Id == _settings.AudioDeviceId)
+        {
+            return;
+        }
+
+        _settings.AudioDeviceId = choice.Id;
+        _settings.AudioDeviceName = choice.Id is null ? null : choice.Name;
+        _settings.Save();
+
+        // Eine laufende Wiedergabe wechselt sofort auf das neue Gerät.
+        StopPreview();
+        if (_output is not null)
+        {
+            StopPlayback();
+            StartPlayback();
         }
     }
 

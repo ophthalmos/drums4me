@@ -23,6 +23,18 @@ internal sealed class AppSettings
     /// <summary>Der selbst gewählte Ordner für Projekte. Leer bedeutet den Standardordner unter „Dokumente“.</summary>
     public string? ProjectFolder { get; set; }
 
+    /// <summary>Das Ausgabegerät für die Wiedergabe. Leer bedeutet den Windows-Standard.</summary>
+    public string? AudioDeviceId { get; set; }
+
+    /// <summary>Der Name dazu, damit die Auswahl ihn auch zeigen kann, wenn das Gerät gerade nicht angeschlossen ist.</summary>
+    public string? AudioDeviceName { get; set; }
+
+    /// <summary>Die Spaltenbreiten der Projektliste in Pixeln.</summary>
+    public Dictionary<string, int>? ColumnWidths { get; set; }
+
+    /// <summary>Größe und Lage des Hauptfensters beim letzten Beenden. Fehlt der Wert, startet es mittig in Standardgröße.</summary>
+    public WindowPlacement? Window { get; set; }
+
     /// <summary>Lässt das Raster zu jedem neuen Takt kurz aufleuchten.</summary>
     public bool FlashOnBar { get; set; }
 
@@ -56,3 +68,6 @@ internal sealed class AppSettings
         }
     }
 }
+
+/// <summary>Die Lage gilt für das nicht maximierte Fenster, damit es nach dem Verkleinern wieder dort steht.</summary>
+internal sealed record WindowPlacement(int X, int Y, int Width, int Height, bool Maximized);

@@ -61,6 +61,7 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
     private volatile EngineState _state = state;
     private volatile int _currentStep = -1;
     private volatile int _currentPattern = -1;
+    private volatile int _currentSequenceIndex = -1;
     private volatile bool _isFinished;
     private int _rewindPending;
     private bool _sequenceEnded;
@@ -88,6 +89,9 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
 
     /// <summary>Das zuletzt gespielte Pattern, -1 vor dem ersten Schritt.</summary>
     public int CurrentPattern => _currentPattern;
+
+    /// <summary>Die Stelle des gerade gespielten Takts in der Abfolge ab 0, -1 ohne Abfolge und vor dem ersten Schritt.</summary>
+    public int CurrentSequenceIndex => _currentSequenceIndex;
 
     /// <summary>Die Position des letzten Taktanfangs im Audiostrom in Samples, -1 vor dem ersten Takt.</summary>
     public long LastBarStart => Interlocked.Read(ref _lastBarStart);
@@ -127,6 +131,7 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
     {
         _currentStep = -1;
         _currentPattern = -1;
+        _currentSequenceIndex = -1;
         _isFinished = false;
         _countInBar = 0;
         _barsPlayed = 0;
@@ -194,6 +199,7 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
         _nextStep = 0;
         _currentStep = -1;
         _currentPattern = -1;
+        _currentSequenceIndex = -1;
         _sequenceIndex = -1;
         _sequenceEnded = false;
         _trailingSamples = 0;
@@ -315,6 +321,7 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
 
         _currentStep = step;
         _currentPattern = _playingPattern;
+        _currentSequenceIndex = _sequenceIndex;
         _nextStepPos += StepLength(state, step);
         _nextStep = (step + 1) % state.Meters[_playingPattern].Steps;
     }

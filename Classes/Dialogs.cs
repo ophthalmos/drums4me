@@ -39,6 +39,23 @@ internal static class Dialogs
         return result == discard ? DialogResult.No : DialogResult.Cancel;
     }
 
+    /// <summary>Fragt, bevor ein Projekt in den Papierkorb wandert. Liefert true, wenn es weg soll.</summary>
+    public static bool AskMoveToRecycleBin(IWin32Window owner, string projectName, bool isOpen)
+    {
+        var delete = new TaskDialogButton("In den Papierkorb");
+        var page = new TaskDialogPage
+        {
+            Caption = AppSettings.AppName,
+            Heading = $"„{projectName}“ in den Papierkorb verschieben?",
+            Text = "Von dort kannst du das Projekt wiederherstellen."
+                + (isOpen ? "\n\nEs ist gerade geöffnet und bleibt es, bis du es schließt. Speichern legt dann eine neue Datei an." : string.Empty),
+            AllowCancel = true,
+            Buttons = { delete, TaskDialogButton.Cancel },
+            DefaultButton = delete,
+        };
+        return TaskDialog.ShowDialog(owner, page) == delete;
+    }
+
     public static void ShowAbout(Form owner)
     {
         var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3);
@@ -76,10 +93,13 @@ internal static class Dialogs
                 + "Strg+N: Neu\n"
                 + "Strg+O: Karte Datei, Esc: zurück zur Karte Start\n"
                 + "Strg+F: Projekte suchen\n"
+                + "In der Projektliste: F2 umbenennen, Entf in den Papierkorb, Alt+Eingabe Eigenschaften,\n"
+                + "Strg+E im Editor bearbeiten, Strg+Umschalt+C Dateipfad kopieren\n"
                 + "Strg+S: Speichern\n"
                 + "Strg+Umschalt+S: Speichern unter\n"
                 + "Strg+Z: Rückgängig\n"
                 + "Strg+Y: Wiederholen\n"
+                + "Strg+Entf: Pattern leeren\n"
                 + "Strg+T: Tempo ermitteln (tippen oder mithören)\n"
                 + "Strg+Komma: Karte Einstellungen\n"
                 + "F1: diese Übersicht\n\n"

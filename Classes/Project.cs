@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Drums4me.Classes;
@@ -123,8 +123,7 @@ internal sealed class Project
     /// <summary>Neues Projekt mit einem einfachen Metronom-Pattern: Viertel auf der geschlossenen Hi-Hat, Kick auf der Eins.</summary>
     public static Project CreateDefault()
     {
-        var project = new Project();
-        project.Normalize();
+        var project = CreateEmpty();
         const int closedHihat = 5;
         const int kick = 7;
         var steps = project.Patterns[0].Steps;
@@ -162,6 +161,14 @@ internal sealed class Project
             steps[track] = new bool[MaxStepCount];
         }
         return steps;
+    }
+
+    /// <summary>Ein Projekt ohne Schläge, wie es nach dem Schließen einer Datei bleibt.</summary>
+    public static Project CreateEmpty()
+    {
+        var project = new Project();
+        project.Normalize();
+        return project;
     }
 
     public static TrackSettings[] CreateDefaultTracks()

@@ -1,5 +1,8 @@
 ﻿using Drums4me.Classes;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace Drums4me.Controls;
 
@@ -10,12 +13,16 @@ namespace Drums4me.Controls;
 public sealed partial class ProjectBrowser : UserControl
 {
     private const int WeekdayDays = 6;   // sonst stünde derselbe Wochentag für heute und vor einer Woche
+    private const int MaxColumnWidth = 2000;
+    private const int MinNameWidth = 160;
+    private const int HeaderPadding = 14;
     private const string SortUp = " ▲";
     private const string SortDown = " ▼";
 
     private static readonly CultureInfo German = CultureInfo.GetCultureInfo("de-DE");
 
     private readonly Dictionary<ColumnHeader, string> _titles = [];
+    private readonly Dictionary<string, int> _defaultWidths;
     private List<ProjectEntry> _entries = [];
     private ColumnHeader _sortColumn;
     private bool _sortDescending;
@@ -33,6 +40,7 @@ public sealed partial class ProjectBrowser : UserControl
         }
         _sortColumn = columnName;
         ShowSortMark();
+        _defaultWidths = GetColumnWidths();
     }
 
     /// <summary>Wurde ein Projekt zum Öffnen gewählt? Der Pfad steht im Ereignis.</summary>
@@ -40,6 +48,23 @@ public sealed partial class ProjectBrowser : UserControl
 
     /// <summary>Die Anzahl der gezeigten Projekte hat sich geändert. Der Text steht in <see cref="CountText"/>.</summary>
     public event EventHandler? CountChanged;
+
+    /// <summary>Ein Projekt soll einen neuen Namen bekommen. Das erledigt das Hauptfenster, denn es kennt das offene Projekt.</summary>
+    public event EventHandler<ProjectRename>? RenameRequested;
+
+    /// <summary>Ein Projekt soll kopiert werden. Der Pfad steht im Ereignis.</summary>
+    public event EventHandler<string>? DuplicateRequested;
+
+    /// <summary>Ein Projekt soll in den Papierkorb. Der Pfad steht im Ereignis.</summary>
+    public event EventHandler<string>? DeleteRequested;
+
+    /// <summary>Eine kurze Rückmeldung für die Statuszeile, etwa nach dem Kopieren des Pfads.</summary>
+    public event EventHandler<string>? NoticeRequested;
+
+    /// <summary>Solange ein Name bearbeitet wird, gehören Leertaste und Esc dem Eingabefeld.</summary>
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public bool IsEditingName { get; private set; }
 
     public string CountText { get; private set; } = string.Empty;
 
@@ -83,6 +108,47 @@ public sealed partial class ProjectBrowser : UserControl
         ApplyFilter();
     }
 
+    /// <summary>Die Breiten aller Spalten, so wie du sie gezogen hast.</summary>
+    public Dictionary<string, int> GetColumnWidths() => SavedColumns().ToDictionary(pair => pair.Key, pair => pair.Value.Width);
+
+    /// <summary>Übernimmt gespeicherte Breiten. Unbekannte oder unsinnige Werte bleiben unbeachtet.</summary>
+    public void SetColumnWidths(IReadOnlyDictionary<string, int>? widths)
+    {
+        if (widths is null)
+        {
+            return;
+        }
+
+        foreach (var (key, column) in SavedColumns())
+        {
+            // Zu schmale Werte stammen von einer Spalte, die früher ganz zugeschoben werden konnte. Dann gilt die Standardbreite.
+            if (widths.TryGetValue(key, out var width) && width >= MinWidth(column) && width <= MaxColumnWidth)
+            {
+                column.Width = width;
+            }
+        }
+    }
+
+    /// <summary>Stellt die Breiten wieder her, mit denen die Liste ohne gespeicherte Einstellungen beginnt.</summary>
+    public void ResetColumnWidths()
+    {
+        foreach (var (key, column) in SavedColumns())
+        {
+            column.Width = _defaultWidths[key];
+        }
+    }
+
+    /// <summary>Die Schlüssel stehen in der Einstellungsdatei und dürfen sich deshalb nicht ändern.</summary>
+    private Dictionary<string, ColumnHeader> SavedColumns() => new()
+    {
+        ["Name"] = columnName,
+        ["Folder"] = columnFolder,
+        ["Modified"] = columnModified,
+        ["Tempo"] = columnTempo,
+        ["Meter"] = columnMeter,
+        ["Kit"] = columnKit,
+    };
+
     /// <summary>Liefert false, wenn die Liste leer ist.</summary>
     public bool FocusList() => listProjects.Items.Count > 0 && listProjects.Focus();
 
@@ -120,7 +186,6 @@ public sealed partial class ProjectBrowser : UserControl
             ? (_entries.Count == 1 ? "1 Projekt" : $"{_entries.Count} Projekte")
             : $"{shown.Count} von {_entries.Count} Projekten";
         CountChanged?.Invoke(this, EventArgs.Empty);
-        SizeNameColumn();
     }
 
     private ListViewItem CreateItem(ProjectEntry entry)
@@ -206,23 +271,176 @@ public sealed partial class ProjectBrowser : UserControl
         }
     }
 
-    private void SizeNameColumn()
-    {
-        var others = 0;
-        foreach (ColumnHeader column in listProjects.Columns)
-        {
-            others += column == columnName ? 0 : column.Width;
-        }
-        // Platz für die Bildlaufleiste bleibt immer frei, sonst käme durch sie eine waagerechte hinzu.
-        var free = listProjects.Width - SystemInformation.VerticalScrollBarWidth - others - 1;
-        columnName.Width = Math.Max(LogicalToDeviceUnits(160), free);
-    }
+    /// <summary>Jede Spalte bleibt so breit, dass ihr Titel samt Sortierpfeil lesbar ist. Eine Spalte mit Breite null wäre unauffindbar.</summary>
+    private int MinWidth(ColumnHeader column) => column == columnName
+        ? LogicalToDeviceUnits(MinNameWidth)
+        : TextRenderer.MeasureText(_titles[column] + SortDown, listProjects.Font).Width + LogicalToDeviceUnits(HeaderPadding);
 
     public void OpenSelected()
     {
-        if (listProjects.SelectedItems.Count > 0 && listProjects.SelectedItems[0].Tag is ProjectEntry entry)
+        if (SelectedEntry is { } entry)
         {
             ProjectChosen?.Invoke(this, entry.FilePath);
+        }
+    }
+
+    /// <summary>Die Zeile darunter, in der letzten Zeile die darüber. Dorthin wandert die Markierung, wenn ein Projekt verschwindet.</summary>
+    public string? NeighborOf(string path)
+    {
+        var paths = listProjects.Items.Cast<ListViewItem>().Select(item => ((ProjectEntry)item.Tag!).FilePath).ToList();
+        var index = paths.FindIndex(other => string.Equals(other, path, StringComparison.OrdinalIgnoreCase));
+        return index < 0 ? null
+            : index + 1 < paths.Count ? paths[index + 1]
+            : index > 0 ? paths[index - 1]
+            : null;
+    }
+
+    private ProjectEntry? SelectedEntry => listProjects.SelectedItems.Count > 0 ? listProjects.SelectedItems[0].Tag as ProjectEntry : null;
+
+    // ==================== Kontextmenü und Tasten ====================
+
+    /// <summary>Ein Rechtsklick auf die freie Fläche unter den Zeilen hebt die Markierung auf. Ohne Projekt bleibt das Menü zu.</summary>
+    private void ProjectMenu_Opening(object? sender, CancelEventArgs e) => e.Cancel = SelectedEntry is null;
+
+    private void MenuOpen_Click(object? sender, EventArgs e) => OpenSelected();
+
+    private void MenuShowInFolder_Click(object? sender, EventArgs e)
+    {
+        if (SelectedEntry is not { } entry)
+        {
+            return;
+        }
+
+        try
+        {
+            ProjectFiles.ShowInFileManager(entry.FilePath);
+        }
+        catch (Win32Exception ex)
+        {
+            Debug.WriteLine($"Dateimanager nicht gestartet: {ex.Message}");
+        }
+    }
+
+    private void MenuEdit_Click(object? sender, EventArgs e) => OpenInEditor();
+
+    private void OpenInEditor()
+    {
+        if (SelectedEntry is not { } entry)
+        {
+            return;
+        }
+
+        try
+        {
+            ProjectFiles.OpenInTextEditor((IWin32Window?)FindForm() ?? this, entry.FilePath);
+        }
+        catch (Win32Exception ex)
+        {
+            Dialogs.Error((IWin32Window?)FindForm() ?? this, "Der Editor ließ sich nicht starten.", ex.Message);
+        }
+    }
+
+    private void MenuCopyPath_Click(object? sender, EventArgs e) => CopyPath();
+
+    /// <summary>Ohne Anführungszeichen, wie in PDFlight.</summary>
+    private void CopyPath()
+    {
+        if (SelectedEntry is not { } entry)
+        {
+            return;
+        }
+
+        try
+        {
+            Clipboard.SetText(entry.FilePath);
+            NoticeRequested?.Invoke(this, "Der Dateipfad steht in der Zwischenablage.");
+        }
+        catch (ExternalException ex)
+        {
+            // Ein anderes Programm hält die Zwischenablage gerade fest.
+            Dialogs.Error((IWin32Window?)FindForm() ?? this, "Der Dateipfad ließ sich nicht kopieren.", ex.Message);
+        }
+    }
+
+    private void MenuProperties_Click(object? sender, EventArgs e) => ShowProperties();
+
+    private void ShowProperties()
+    {
+        if (SelectedEntry is { } entry)
+        {
+            ProjectFiles.ShowProperties((IWin32Window?)FindForm() ?? this, entry.FilePath);
+        }
+    }
+
+    private void MenuRename_Click(object? sender, EventArgs e) => BeginRename();
+
+    private void MenuDuplicate_Click(object? sender, EventArgs e)
+    {
+        if (SelectedEntry is { } entry)
+        {
+            DuplicateRequested?.Invoke(this, entry.FilePath);
+        }
+    }
+
+    private void MenuDelete_Click(object? sender, EventArgs e)
+    {
+        if (SelectedEntry is { } entry)
+        {
+            DeleteRequested?.Invoke(this, entry.FilePath);
+        }
+    }
+
+    private void ListProjects_KeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.KeyData == Keys.F2)
+        {
+            BeginRename();
+            e.Handled = true;
+        }
+        else if (e.KeyData == Keys.Delete && SelectedEntry is { } entry)
+        {
+            DeleteRequested?.Invoke(this, entry.FilePath);
+            e.Handled = true;
+        }
+        else if (e.KeyData == (Keys.Control | Keys.E))
+        {
+            OpenInEditor();
+            e.Handled = true;
+        }
+        else if (e.KeyData == (Keys.Control | Keys.Shift | Keys.C))
+        {
+            CopyPath();
+            e.Handled = true;
+        }
+        else if (e.KeyData == (Keys.Alt | Keys.Enter))
+        {
+            ShowProperties();
+            e.Handled = true;
+            e.SuppressKeyPress = true;   // sonst piept Windows über die unbenutzte Alt-Taste
+        }
+    }
+
+    private void BeginRename()
+    {
+        if (listProjects.SelectedItems.Count > 0)
+        {
+            listProjects.SelectedItems[0].BeginEdit();
+        }
+    }
+
+    private void ListProjects_BeforeLabelEdit(object? sender, LabelEditEventArgs e) => IsEditingName = true;
+
+    /// <summary>
+    /// Umbenannt wird erst nach dem Ende der Bearbeitung, denn danach baut sich die Liste neu auf.
+    /// Bis dahin zeigt die Zeile den alten Namen, bei einem Fehler bleibt es dabei.
+    /// </summary>
+    private void ListProjects_AfterLabelEdit(object? sender, LabelEditEventArgs e)
+    {
+        IsEditingName = false;
+        e.CancelEdit = true;
+        if (e.Label is { } label && listProjects.Items[e.Item].Tag is ProjectEntry entry && label != entry.Name)
+        {
+            BeginInvoke(() => RenameRequested?.Invoke(this, new ProjectRename(entry.FilePath, label)));
         }
     }
 
@@ -251,5 +469,18 @@ public sealed partial class ProjectBrowser : UserControl
 
     private void ListProjects_ItemActivate(object? sender, EventArgs e) => OpenSelected();
 
-    private void ListProjects_ClientSizeChanged(object? sender, EventArgs e) => SizeNameColumn();
+    private void ListProjects_ColumnWidthChanging(object? sender, ColumnWidthChangingEventArgs e)
+    {
+        var column = listProjects.Columns[e.ColumnIndex];
+        var min = MinWidth(column);
+        if (e.NewWidth < min)
+        {
+            // Abbrechen hält die Kante beim Ziehen an. Nur NewWidth zu setzen, würde der Spaltenkopf nicht übernehmen.
+            e.Cancel = true;
+            e.NewWidth = Math.Max(column.Width, min);
+        }
+    }
 }
+
+/// <summary>Der neue Name ist so, wie er eingegeben wurde. Geprüft wird beim Umbenennen.</summary>
+public sealed record ProjectRename(string FilePath, string NewName);

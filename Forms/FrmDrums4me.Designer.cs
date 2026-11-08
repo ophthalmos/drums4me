@@ -33,12 +33,6 @@
             ribbonTabs = new TabControl();
             tabPageFile = new TabPage();
             flowFile = new FlowLayoutPanel();
-            groupFile = new Panel();
-            buttonNew = new Button();
-            buttonSave = new Button();
-            buttonSaveAs = new Button();
-            captionFile = new Label();
-            dividerFile = new Panel();
             groupFind = new Panel();
             labelSearch = new Label();
             textBoxSearch = new TextBox();
@@ -48,10 +42,9 @@
             comboFilterMeter = new ComboBox();
             captionFind = new Label();
             dividerFind = new Panel();
-            groupSource = new Panel();
-            buttonOtherFolder = new Button();
-            buttonDemos = new Button();
-            captionSource = new Label();
+            groupStartup = new Panel();
+            checkBoxOpenLast = new CheckBox();
+            captionStartup = new Label();
             tabPageStart = new TabPage();
             flowStart = new FlowLayoutPanel();
             groupPlay = new Panel();
@@ -113,8 +106,6 @@
             textBoxProjectFolder = new TextBox();
             buttonProjectFolder = new Button();
             labelProjectHint = new Label();
-            lineOpenLast = new Panel();
-            checkBoxOpenLast = new CheckBox();
             captionProjects = new Label();
             dividerProjects = new Panel();
             groupAppearance = new Panel();
@@ -123,6 +114,7 @@
             radioDark = new RadioButton();
             labelAppearanceHint = new Label();
             lineFlash = new Panel();
+            labelFlash = new Label();
             checkBoxFlash = new CheckBox();
             captionAppearance = new Label();
             dividerAppearance = new Panel();
@@ -134,6 +126,25 @@
             buttonReloadKits = new Button();
             labelKitCount = new Label();
             captionKits = new Label();
+            dividerKits = new Panel();
+            groupAudio = new Panel();
+            labelAudioDevice = new Label();
+            comboAudioDevice = new ComboBox();
+            captionAudio = new Label();
+            ribbonImages = new ImageList(components);
+            panelFileCommands = new Panel();
+            buttonNew = new Button();
+            buttonSave = new Button();
+            buttonSaveAs = new Button();
+            buttonCloseProject = new Button();
+            lineCommands = new Panel();
+            buttonOtherFolder = new Button();
+            buttonDemos = new Button();
+            lineWindowCommands = new Panel();
+            buttonResetLayout = new Button();
+            buttonFileAbout = new Button();
+            buttonExit = new Button();
+            lineFileCommands = new Panel();
             buttonUndo = new Button();
             buttonRedo = new Button();
             buttonQuickSave = new Button();
@@ -149,6 +160,9 @@
             statusTime = new ToolStripStatusLabel();
             playheadTimer = new System.Windows.Forms.Timer(components);
             previewTimer = new System.Windows.Forms.Timer(components);
+            noticeTimer = new System.Windows.Forms.Timer(components);
+            restartTimer = new System.Windows.Forms.Timer(components);
+            toolTip = new ToolTip(components);
             trackNameMenu = new ContextMenuStrip(components);
             previewTrackToolStripMenuItem = new ToolStripMenuItem();
             renameTrackToolStripMenuItem = new ToolStripMenuItem();
@@ -161,9 +175,8 @@
             ribbonTabs.SuspendLayout();
             tabPageFile.SuspendLayout();
             flowFile.SuspendLayout();
-            groupFile.SuspendLayout();
             groupFind.SuspendLayout();
-            groupSource.SuspendLayout();
+            groupStartup.SuspendLayout();
             tabPageStart.SuspendLayout();
             flowStart.SuspendLayout();
             groupPlay.SuspendLayout();
@@ -184,6 +197,8 @@
             groupProjects.SuspendLayout();
             groupAppearance.SuspendLayout();
             groupKits.SuspendLayout();
+            groupAudio.SuspendLayout();
+            panelFileCommands.SuspendLayout();
             statusStrip.SuspendLayout();
             trackNameMenu.SuspendLayout();
             demosMenu.SuspendLayout();
@@ -195,111 +210,37 @@
             ribbonTabs.Controls.Add(tabPageStart);
             ribbonTabs.Controls.Add(tabPageSettings);
             ribbonTabs.Dock = DockStyle.Top;
+            ribbonTabs.ImageList = ribbonImages;
             ribbonTabs.Location = new Point(0, 0);
             ribbonTabs.Name = "ribbonTabs";
             ribbonTabs.SelectedIndex = 1;
+            ribbonTabs.ShowToolTips = true;
             ribbonTabs.Size = new Size(1260, 124);
             ribbonTabs.TabIndex = 0;
             ribbonTabs.SelectedIndexChanged += RibbonTabs_SelectedIndexChanged;
             // 
             // tabPageFile
             // 
+            tabPageFile.AccessibleName = "Datei";
             tabPageFile.Controls.Add(flowFile);
+            tabPageFile.ImageIndex = 0;
             tabPageFile.Location = new Point(4, 26);
             tabPageFile.Name = "tabPageFile";
+            tabPageFile.Padding = new Padding(236, 0, 0, 0);
             tabPageFile.Size = new Size(1252, 94);
             tabPageFile.TabIndex = 0;
-            tabPageFile.Text = "Datei";
+            tabPageFile.ToolTipText = "Datei (Strg+O): Projekte, Neu, Speichern und mehr. Esc führt zurück zur Karte Start.";
             // 
             // flowFile
             // 
-            flowFile.Controls.Add(groupFile);
-            flowFile.Controls.Add(dividerFile);
             flowFile.Controls.Add(groupFind);
             flowFile.Controls.Add(dividerFind);
-            flowFile.Controls.Add(groupSource);
+            flowFile.Controls.Add(groupStartup);
             flowFile.Dock = DockStyle.Fill;
-            flowFile.Location = new Point(0, 0);
+            flowFile.Location = new Point(236, 0);
             flowFile.Name = "flowFile";
-            flowFile.Size = new Size(1252, 94);
+            flowFile.Size = new Size(1016, 94);
             flowFile.TabIndex = 0;
-            // 
-            // groupFile
-            // 
-            groupFile.Controls.Add(buttonNew);
-            groupFile.Controls.Add(buttonSave);
-            groupFile.Controls.Add(buttonSaveAs);
-            groupFile.Controls.Add(captionFile);
-            groupFile.Location = new Point(0, 0);
-            groupFile.Margin = new Padding(0);
-            groupFile.Name = "groupFile";
-            groupFile.Size = new Size(252, 90);
-            groupFile.TabIndex = 0;
-            // 
-            // buttonNew
-            // 
-            buttonNew.AccessibleDescription = "Beginnt ein neues Projekt. Strg+N.";
-            buttonNew.Image = (Image)resources.GetObject("buttonNew.Image");
-            buttonNew.ImageAlign = ContentAlignment.BottomCenter;
-            buttonNew.Location = new Point(6, 3);
-            buttonNew.Name = "buttonNew";
-            buttonNew.Size = new Size(64, 64);
-            buttonNew.TabIndex = 0;
-            buttonNew.Text = "Neu";
-            buttonNew.TextAlign = ContentAlignment.TopCenter;
-            buttonNew.TextImageRelation = TextImageRelation.ImageAboveText;
-            buttonNew.UseVisualStyleBackColor = true;
-            buttonNew.Click += ButtonNew_Click;
-            // 
-            // buttonSave
-            // 
-            buttonSave.AccessibleDescription = "Speichert das Projekt. Strg+S.";
-            buttonSave.Image = (Image)resources.GetObject("buttonSave.Image");
-            buttonSave.ImageAlign = ContentAlignment.BottomCenter;
-            buttonSave.Location = new Point(72, 3);
-            buttonSave.Name = "buttonSave";
-            buttonSave.Size = new Size(82, 64);
-            buttonSave.TabIndex = 1;
-            buttonSave.Text = "Speichern";
-            buttonSave.TextAlign = ContentAlignment.TopCenter;
-            buttonSave.TextImageRelation = TextImageRelation.ImageAboveText;
-            buttonSave.UseVisualStyleBackColor = true;
-            buttonSave.Click += ButtonSave_Click;
-            // 
-            // buttonSaveAs
-            // 
-            buttonSaveAs.AccessibleDescription = "Speichert das Projekt unter einem anderen Namen. Strg+Umschalt+S.";
-            buttonSaveAs.Image = (Image)resources.GetObject("buttonSaveAs.Image");
-            buttonSaveAs.ImageAlign = ContentAlignment.BottomCenter;
-            buttonSaveAs.Location = new Point(156, 3);
-            buttonSaveAs.Name = "buttonSaveAs";
-            buttonSaveAs.Size = new Size(90, 64);
-            buttonSaveAs.TabIndex = 2;
-            buttonSaveAs.Text = "unter…";
-            buttonSaveAs.TextAlign = ContentAlignment.TopCenter;
-            buttonSaveAs.TextImageRelation = TextImageRelation.ImageAboveText;
-            buttonSaveAs.UseVisualStyleBackColor = true;
-            buttonSaveAs.Click += ButtonSaveAs_Click;
-            // 
-            // captionFile
-            // 
-            captionFile.Dock = DockStyle.Bottom;
-            captionFile.ForeColor = SystemColors.GrayText;
-            captionFile.Location = new Point(0, 72);
-            captionFile.Name = "captionFile";
-            captionFile.Size = new Size(252, 18);
-            captionFile.TabIndex = 3;
-            captionFile.Text = "Projekt";
-            captionFile.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // dividerFile
-            // 
-            dividerFile.BackColor = SystemColors.ControlDark;
-            dividerFile.Location = new Point(252, 4);
-            dividerFile.Margin = new Padding(0, 4, 0, 4);
-            dividerFile.Name = "dividerFile";
-            dividerFile.Size = new Size(1, 82);
-            dividerFile.TabIndex = 1;
             // 
             // groupFind
             // 
@@ -310,11 +251,11 @@
             groupFind.Controls.Add(labelFilterMeter);
             groupFind.Controls.Add(comboFilterMeter);
             groupFind.Controls.Add(captionFind);
-            groupFind.Location = new Point(253, 0);
+            groupFind.Location = new Point(0, 0);
             groupFind.Margin = new Padding(0);
             groupFind.Name = "groupFind";
             groupFind.Size = new Size(480, 90);
-            groupFind.TabIndex = 2;
+            groupFind.TabIndex = 0;
             // 
             // labelSearch
             // 
@@ -391,70 +332,53 @@
             // dividerFind
             // 
             dividerFind.BackColor = SystemColors.ControlDark;
-            dividerFind.Location = new Point(733, 4);
+            dividerFind.Location = new Point(480, 4);
             dividerFind.Margin = new Padding(0, 4, 0, 4);
             dividerFind.Name = "dividerFind";
             dividerFind.Size = new Size(1, 82);
-            dividerFind.TabIndex = 3;
+            dividerFind.TabIndex = 1;
             // 
-            // groupSource
+            // groupStartup
             // 
-            groupSource.Controls.Add(buttonOtherFolder);
-            groupSource.Controls.Add(buttonDemos);
-            groupSource.Controls.Add(captionSource);
-            groupSource.Location = new Point(734, 0);
-            groupSource.Margin = new Padding(0);
-            groupSource.Name = "groupSource";
-            groupSource.Size = new Size(252, 90);
-            groupSource.TabIndex = 4;
+            groupStartup.Controls.Add(checkBoxOpenLast);
+            groupStartup.Controls.Add(captionStartup);
+            groupStartup.Location = new Point(481, 0);
+            groupStartup.Margin = new Padding(0);
+            groupStartup.Name = "groupStartup";
+            groupStartup.Size = new Size(150, 90);
+            groupStartup.TabIndex = 2;
             // 
-            // buttonOtherFolder
+            // checkBoxOpenLast
             // 
-            buttonOtherFolder.AccessibleDescription = "Zeigt die Projekte eines anderen Ordners. Der Speicherort in den Einstellungen bleibt, wie er ist.";
-            buttonOtherFolder.Image = (Image)resources.GetObject("buttonOtherFolder.Image");
-            buttonOtherFolder.ImageAlign = ContentAlignment.BottomCenter;
-            buttonOtherFolder.Location = new Point(6, 3);
-            buttonOtherFolder.Name = "buttonOtherFolder";
-            buttonOtherFolder.Size = new Size(125, 64);
-            buttonOtherFolder.TabIndex = 0;
-            buttonOtherFolder.Text = "Anderen Ordner";
-            buttonOtherFolder.TextAlign = ContentAlignment.TopCenter;
-            buttonOtherFolder.TextImageRelation = TextImageRelation.ImageAboveText;
-            buttonOtherFolder.UseVisualStyleBackColor = true;
-            buttonOtherFolder.Click += ButtonOtherFolder_Click;
+            checkBoxOpenLast.AccessibleDescription = "Lädt beim Programmstart das zuletzt benutzte Projekt. Sonst beginnst du mit einem neuen.";
+            checkBoxOpenLast.Appearance = Appearance.ToggleSwitch;
+            checkBoxOpenLast.AutoSize = true;
+            checkBoxOpenLast.Location = new Point(10, 14);
+            checkBoxOpenLast.Name = "checkBoxOpenLast";
+            checkBoxOpenLast.Size = new Size(129, 38);
+            checkBoxOpenLast.TabIndex = 0;
+            checkBoxOpenLast.Text = "Letzte Datei\r\nwieder öffnen";
+            checkBoxOpenLast.UseVisualStyleBackColor = true;
+            checkBoxOpenLast.VisualStylesMode = VisualStylesMode.Net11;
+            checkBoxOpenLast.CheckedChanged += CheckBoxOpenLast_CheckedChanged;
             // 
-            // buttonDemos
+            // captionStartup
             // 
-            buttonDemos.AccessibleDescription = "Öffnet eines der installierten Demo-Projekte.";
-            buttonDemos.Image = (Image)resources.GetObject("buttonDemos.Image");
-            buttonDemos.ImageAlign = ContentAlignment.BottomCenter;
-            buttonDemos.Location = new Point(135, 3);
-            buttonDemos.Name = "buttonDemos";
-            buttonDemos.Size = new Size(111, 64);
-            buttonDemos.TabIndex = 1;
-            buttonDemos.Text = "Demos öffnen";
-            buttonDemos.TextAlign = ContentAlignment.TopCenter;
-            buttonDemos.TextImageRelation = TextImageRelation.ImageAboveText;
-            buttonDemos.UseVisualStyleBackColor = true;
-            buttonDemos.Click += ButtonDemos_Click;
-            // 
-            // captionSource
-            // 
-            captionSource.Dock = DockStyle.Bottom;
-            captionSource.ForeColor = SystemColors.GrayText;
-            captionSource.Location = new Point(0, 72);
-            captionSource.Name = "captionSource";
-            captionSource.Size = new Size(252, 18);
-            captionSource.TabIndex = 2;
-            captionSource.Text = "Quelle";
-            captionSource.TextAlign = ContentAlignment.MiddleCenter;
+            captionStartup.Dock = DockStyle.Bottom;
+            captionStartup.ForeColor = SystemColors.GrayText;
+            captionStartup.Location = new Point(0, 72);
+            captionStartup.Name = "captionStartup";
+            captionStartup.Size = new Size(150, 18);
+            captionStartup.TabIndex = 1;
+            captionStartup.Text = "Programmstart";
+            captionStartup.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // tabPageStart
             // 
             tabPageStart.Controls.Add(flowStart);
-            tabPageStart.Location = new Point(4, 26);
+            tabPageStart.Location = new Point(4, 24);
             tabPageStart.Name = "tabPageStart";
-            tabPageStart.Size = new Size(1252, 94);
+            tabPageStart.Size = new Size(1252, 96);
             tabPageStart.TabIndex = 1;
             tabPageStart.Text = "Start";
             // 
@@ -474,7 +398,7 @@
             flowStart.Dock = DockStyle.Fill;
             flowStart.Location = new Point(0, 0);
             flowStart.Name = "flowStart";
-            flowStart.Size = new Size(1252, 94);
+            flowStart.Size = new Size(1252, 96);
             flowStart.TabIndex = 0;
             // 
             // groupPlay
@@ -497,6 +421,7 @@
             buttonPlay.Size = new Size(64, 64);
             buttonPlay.TabIndex = 0;
             buttonPlay.Text = "▶";
+            toolTip.SetToolTip(buttonPlay, "Start (Leertaste)");
             buttonPlay.UseVisualStyleBackColor = true;
             buttonPlay.Click += ButtonPlay_Click;
             // 
@@ -578,6 +503,7 @@
             buttonTap.Name = "buttonTap";
             buttonTap.Size = new Size(34, 64);
             buttonTap.TabIndex = 3;
+            toolTip.SetToolTip(buttonTap, "Tempo ermitteln (Strg+T)");
             buttonTap.UseVisualStyleBackColor = true;
             buttonTap.Click += ButtonTap_Click;
             // 
@@ -991,13 +917,14 @@
             // 
             // buttonClearPattern
             // 
-            buttonClearPattern.AccessibleDescription = "Leert das aktuelle Pattern. Strg+Z nimmt das zurück.";
+            buttonClearPattern.AccessibleDescription = "Leert das aktuelle Pattern. Strg+Entf. Strg+Z nimmt das zurück.";
             buttonClearPattern.AccessibleName = "Pattern leeren";
             buttonClearPattern.Image = (Image)resources.GetObject("buttonClearPattern.Image");
             buttonClearPattern.Location = new Point(116, 35);
             buttonClearPattern.Name = "buttonClearPattern";
             buttonClearPattern.Size = new Size(36, 29);
             buttonClearPattern.TabIndex = 5;
+            toolTip.SetToolTip(buttonClearPattern, "Pattern leeren (Strg+Entf)");
             buttonClearPattern.UseVisualStyleBackColor = true;
             buttonClearPattern.Click += ButtonClearPattern_Click;
             // 
@@ -1101,6 +1028,8 @@
             flowSettings.Controls.Add(groupAppearance);
             flowSettings.Controls.Add(dividerAppearance);
             flowSettings.Controls.Add(groupKits);
+            flowSettings.Controls.Add(dividerKits);
+            flowSettings.Controls.Add(groupAudio);
             flowSettings.Dock = DockStyle.Fill;
             flowSettings.Location = new Point(0, 0);
             flowSettings.Name = "flowSettings";
@@ -1113,13 +1042,11 @@
             groupProjects.Controls.Add(textBoxProjectFolder);
             groupProjects.Controls.Add(buttonProjectFolder);
             groupProjects.Controls.Add(labelProjectHint);
-            groupProjects.Controls.Add(lineOpenLast);
-            groupProjects.Controls.Add(checkBoxOpenLast);
             groupProjects.Controls.Add(captionProjects);
             groupProjects.Location = new Point(0, 0);
             groupProjects.Margin = new Padding(0);
             groupProjects.Name = "groupProjects";
-            groupProjects.Size = new Size(586, 90);
+            groupProjects.Size = new Size(396, 90);
             groupProjects.TabIndex = 0;
             // 
             // labelProjectFolder
@@ -1149,6 +1076,7 @@
             buttonProjectFolder.Name = "buttonProjectFolder";
             buttonProjectFolder.Size = new Size(34, 29);
             buttonProjectFolder.TabIndex = 2;
+            toolTip.SetToolTip(buttonProjectFolder, "Speicherort ändern");
             buttonProjectFolder.UseVisualStyleBackColor = true;
             buttonProjectFolder.Click += ButtonProjectFolder_Click;
             // 
@@ -1161,28 +1089,6 @@
             labelProjectHint.Size = new Size(375, 19);
             labelProjectHint.TabIndex = 3;
             labelProjectHint.Text = "Standard für Dateidialoge (Ändern verschiebt keine Dateien)";
-            //
-            // lineOpenLast
-            //
-            lineOpenLast.BackColor = SystemColors.ScrollBar;
-            lineOpenLast.Location = new Point(392, 6);
-            lineOpenLast.Name = "lineOpenLast";
-            lineOpenLast.Size = new Size(1, 56);
-            lineOpenLast.TabIndex = 4;
-            //
-            // checkBoxOpenLast
-            //
-            checkBoxOpenLast.AccessibleDescription = "Lädt beim Programmstart das zuletzt benutzte Projekt. Sonst beginnst du mit einem neuen.";
-            checkBoxOpenLast.Appearance = Appearance.ToggleSwitch;
-            checkBoxOpenLast.AutoSize = true;
-            checkBoxOpenLast.Location = new Point(400, 14);
-            checkBoxOpenLast.Name = "checkBoxOpenLast";
-            checkBoxOpenLast.Size = new Size(182, 38);
-            checkBoxOpenLast.TabIndex = 5;
-            checkBoxOpenLast.Text = "Letzte Datei bei\r\nProgrammstart öffnen";
-            checkBoxOpenLast.UseVisualStyleBackColor = true;
-            checkBoxOpenLast.VisualStylesMode = VisualStylesMode.Net11;
-            checkBoxOpenLast.CheckedChanged += CheckBoxOpenLast_CheckedChanged;
             // 
             // captionProjects
             // 
@@ -1190,15 +1096,15 @@
             captionProjects.ForeColor = SystemColors.GrayText;
             captionProjects.Location = new Point(0, 72);
             captionProjects.Name = "captionProjects";
-            captionProjects.Size = new Size(586, 18);
-            captionProjects.TabIndex = 6;
+            captionProjects.Size = new Size(396, 18);
+            captionProjects.TabIndex = 4;
             captionProjects.Text = "Projekte";
             captionProjects.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dividerProjects
             // 
             dividerProjects.BackColor = SystemColors.ControlDark;
-            dividerProjects.Location = new Point(586, 4);
+            dividerProjects.Location = new Point(396, 4);
             dividerProjects.Margin = new Padding(0, 4, 0, 4);
             dividerProjects.Name = "dividerProjects";
             dividerProjects.Size = new Size(1, 82);
@@ -1211,12 +1117,13 @@
             groupAppearance.Controls.Add(radioDark);
             groupAppearance.Controls.Add(labelAppearanceHint);
             groupAppearance.Controls.Add(lineFlash);
+            groupAppearance.Controls.Add(labelFlash);
             groupAppearance.Controls.Add(checkBoxFlash);
             groupAppearance.Controls.Add(captionAppearance);
-            groupAppearance.Location = new Point(587, 0);
+            groupAppearance.Location = new Point(397, 0);
             groupAppearance.Margin = new Padding(0);
             groupAppearance.Name = "groupAppearance";
-            groupAppearance.Size = new Size(346, 90);
+            groupAppearance.Size = new Size(292, 90);
             groupAppearance.TabIndex = 2;
             // 
             // radioSystem
@@ -1271,16 +1178,27 @@
             lineFlash.Size = new Size(1, 56);
             lineFlash.TabIndex = 5;
             // 
+            // labelFlash
+            // 
+            labelFlash.AccessibleDescription = "Lässt das Raster bei jedem Taktanfang kurz aufleuchten.";
+            labelFlash.AutoSize = true;
+            labelFlash.Location = new Point(224, 8);
+            labelFlash.Name = "labelFlash";
+            labelFlash.Size = new Size(58, 19);
+            labelFlash.TabIndex = 5;
+            labelFlash.Text = "Taktblitz";
+            labelFlash.Click += LabelFlash_Click;
+            // 
             // checkBoxFlash
             // 
             checkBoxFlash.AccessibleDescription = "Lässt das Raster bei jedem Taktanfang kurz aufleuchten.";
+            checkBoxFlash.AccessibleName = "Taktblitz";
             checkBoxFlash.Appearance = Appearance.ToggleSwitch;
             checkBoxFlash.AutoSize = true;
-            checkBoxFlash.Location = new Point(224, 14);
+            checkBoxFlash.Location = new Point(236, 36);
             checkBoxFlash.Name = "checkBoxFlash";
-            checkBoxFlash.Size = new Size(117, 38);
+            checkBoxFlash.Size = new Size(37, 16);
             checkBoxFlash.TabIndex = 4;
-            checkBoxFlash.Text = "Taktwechsel\r\nanzeigen";
             checkBoxFlash.UseVisualStyleBackColor = true;
             checkBoxFlash.VisualStylesMode = VisualStylesMode.Net11;
             checkBoxFlash.CheckedChanged += CheckBoxFlash_CheckedChanged;
@@ -1291,7 +1209,7 @@
             captionAppearance.ForeColor = SystemColors.GrayText;
             captionAppearance.Location = new Point(0, 72);
             captionAppearance.Name = "captionAppearance";
-            captionAppearance.Size = new Size(346, 18);
+            captionAppearance.Size = new Size(292, 18);
             captionAppearance.TabIndex = 6;
             captionAppearance.Text = "Darstellung";
             captionAppearance.TextAlign = ContentAlignment.MiddleCenter;
@@ -1299,7 +1217,7 @@
             // dividerAppearance
             // 
             dividerAppearance.BackColor = SystemColors.ControlDark;
-            dividerAppearance.Location = new Point(933, 4);
+            dividerAppearance.Location = new Point(689, 4);
             dividerAppearance.Margin = new Padding(0, 4, 0, 4);
             dividerAppearance.Name = "dividerAppearance";
             dividerAppearance.Size = new Size(1, 82);
@@ -1314,7 +1232,7 @@
             groupKits.Controls.Add(buttonReloadKits);
             groupKits.Controls.Add(labelKitCount);
             groupKits.Controls.Add(captionKits);
-            groupKits.Location = new Point(934, 0);
+            groupKits.Location = new Point(690, 0);
             groupKits.Margin = new Padding(0);
             groupKits.Name = "groupKits";
             groupKits.Size = new Size(314, 90);
@@ -1390,6 +1308,293 @@
             captionKits.Text = "Kits";
             captionKits.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // dividerKits
+            // 
+            dividerKits.BackColor = SystemColors.ControlDark;
+            dividerKits.Location = new Point(1004, 4);
+            dividerKits.Margin = new Padding(0, 4, 0, 4);
+            dividerKits.Name = "dividerKits";
+            dividerKits.Size = new Size(1, 82);
+            dividerKits.TabIndex = 5;
+            // 
+            // groupAudio
+            // 
+            groupAudio.Controls.Add(labelAudioDevice);
+            groupAudio.Controls.Add(comboAudioDevice);
+            groupAudio.Controls.Add(captionAudio);
+            groupAudio.Location = new Point(1005, 0);
+            groupAudio.Margin = new Padding(0);
+            groupAudio.Name = "groupAudio";
+            groupAudio.Size = new Size(242, 90);
+            groupAudio.TabIndex = 6;
+            // 
+            // labelAudioDevice
+            // 
+            labelAudioDevice.AccessibleDescription = "Über dieses Gerät spielt drums4me, zum Beispiel ein Audio-Interface für den Kopfhörer. Windows-Standard folgt der Einstellung von Windows.";
+            labelAudioDevice.AutoSize = true;
+            labelAudioDevice.Location = new Point(8, 8);
+            labelAudioDevice.Name = "labelAudioDevice";
+            labelAudioDevice.Size = new Size(94, 19);
+            labelAudioDevice.TabIndex = 0;
+            labelAudioDevice.Text = "Ausgabegerät";
+            // 
+            // comboAudioDevice
+            // 
+            comboAudioDevice.AccessibleDescription = "Über dieses Gerät spielt drums4me, zum Beispiel ein Audio-Interface für den Kopfhörer. Windows-Standard folgt der Einstellung von Windows.";
+            comboAudioDevice.AccessibleName = "Ausgabegerät";
+            comboAudioDevice.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboAudioDevice.DropDownWidth = 340;
+            comboAudioDevice.Location = new Point(8, 37);
+            comboAudioDevice.Name = "comboAudioDevice";
+            comboAudioDevice.Size = new Size(226, 25);
+            comboAudioDevice.TabIndex = 1;
+            comboAudioDevice.DropDown += ComboAudioDevice_DropDown;
+            comboAudioDevice.SelectedIndexChanged += ComboAudioDevice_SelectedIndexChanged;
+            // 
+            // captionAudio
+            // 
+            captionAudio.Dock = DockStyle.Bottom;
+            captionAudio.ForeColor = SystemColors.GrayText;
+            captionAudio.Location = new Point(0, 72);
+            captionAudio.Name = "captionAudio";
+            captionAudio.Size = new Size(242, 18);
+            captionAudio.TabIndex = 2;
+            captionAudio.Text = "Audio";
+            captionAudio.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // ribbonImages
+            // 
+            ribbonImages.ColorDepth = ColorDepth.Depth32Bit;
+            ribbonImages.ImageStream = (ImageListStreamer)resources.GetObject("ribbonImages.ImageStream");
+            ribbonImages.TransparentColor = Color.Transparent;
+            ribbonImages.Images.SetKeyName(0, "file");
+            // 
+            // panelFileCommands
+            // 
+            panelFileCommands.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            panelFileCommands.Controls.Add(buttonNew);
+            panelFileCommands.Controls.Add(buttonSave);
+            panelFileCommands.Controls.Add(buttonSaveAs);
+            panelFileCommands.Controls.Add(buttonCloseProject);
+            panelFileCommands.Controls.Add(lineCommands);
+            panelFileCommands.Controls.Add(buttonOtherFolder);
+            panelFileCommands.Controls.Add(buttonDemos);
+            panelFileCommands.Controls.Add(lineWindowCommands);
+            panelFileCommands.Controls.Add(buttonResetLayout);
+            panelFileCommands.Controls.Add(buttonFileAbout);
+            panelFileCommands.Controls.Add(buttonExit);
+            panelFileCommands.Controls.Add(lineFileCommands);
+            panelFileCommands.Location = new Point(0, 25);
+            panelFileCommands.Name = "panelFileCommands";
+            panelFileCommands.Size = new Size(240, 605);
+            panelFileCommands.TabIndex = 9;
+            panelFileCommands.Visible = false;
+            // 
+            // buttonNew
+            // 
+            buttonNew.AccessibleDescription = "Beginnt ein neues Projekt. Strg+N.";
+            buttonNew.BackColor = Color.Transparent;
+            buttonNew.FlatAppearance.BorderSize = 0;
+            buttonNew.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonNew.FlatStyle = FlatStyle.Flat;
+            buttonNew.Image = (Image)resources.GetObject("buttonNew.Image");
+            buttonNew.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonNew.Location = new Point(0, 12);
+            buttonNew.Name = "buttonNew";
+            buttonNew.Padding = new Padding(16, 0, 0, 0);
+            buttonNew.Size = new Size(239, 36);
+            buttonNew.TabIndex = 0;
+            buttonNew.Text = "Neu";
+            buttonNew.TextAlign = ContentAlignment.MiddleLeft;
+            buttonNew.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonNew.UseVisualStyleBackColor = false;
+            buttonNew.Click += ButtonNew_Click;
+            // 
+            // buttonSave
+            // 
+            buttonSave.AccessibleDescription = "Speichert das Projekt. Strg+S.";
+            buttonSave.BackColor = Color.Transparent;
+            buttonSave.FlatAppearance.BorderSize = 0;
+            buttonSave.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonSave.FlatStyle = FlatStyle.Flat;
+            buttonSave.Image = (Image)resources.GetObject("buttonSave.Image");
+            buttonSave.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonSave.Location = new Point(0, 52);
+            buttonSave.Name = "buttonSave";
+            buttonSave.Padding = new Padding(16, 0, 0, 0);
+            buttonSave.Size = new Size(239, 36);
+            buttonSave.TabIndex = 1;
+            buttonSave.Text = "Speichern";
+            buttonSave.TextAlign = ContentAlignment.MiddleLeft;
+            buttonSave.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonSave.UseVisualStyleBackColor = false;
+            buttonSave.Click += ButtonSave_Click;
+            // 
+            // buttonSaveAs
+            // 
+            buttonSaveAs.AccessibleDescription = "Speichert das Projekt unter einem anderen Namen. Strg+Umschalt+S.";
+            buttonSaveAs.BackColor = Color.Transparent;
+            buttonSaveAs.FlatAppearance.BorderSize = 0;
+            buttonSaveAs.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonSaveAs.FlatStyle = FlatStyle.Flat;
+            buttonSaveAs.Image = (Image)resources.GetObject("buttonSaveAs.Image");
+            buttonSaveAs.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonSaveAs.Location = new Point(0, 92);
+            buttonSaveAs.Name = "buttonSaveAs";
+            buttonSaveAs.Padding = new Padding(16, 0, 0, 0);
+            buttonSaveAs.Size = new Size(239, 36);
+            buttonSaveAs.TabIndex = 2;
+            buttonSaveAs.Text = "Speichern unter…";
+            buttonSaveAs.TextAlign = ContentAlignment.MiddleLeft;
+            buttonSaveAs.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonSaveAs.UseVisualStyleBackColor = false;
+            buttonSaveAs.Click += ButtonSaveAs_Click;
+            // 
+            // buttonCloseProject
+            // 
+            buttonCloseProject.AccessibleDescription = "Schließt die Datei und leert das Raster. Beim nächsten Start wird sie nicht wieder geöffnet.";
+            buttonCloseProject.BackColor = Color.Transparent;
+            buttonCloseProject.FlatAppearance.BorderSize = 0;
+            buttonCloseProject.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonCloseProject.FlatStyle = FlatStyle.Flat;
+            buttonCloseProject.Image = (Image)resources.GetObject("buttonCloseProject.Image");
+            buttonCloseProject.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonCloseProject.Location = new Point(0, 132);
+            buttonCloseProject.Name = "buttonCloseProject";
+            buttonCloseProject.Padding = new Padding(16, 0, 0, 0);
+            buttonCloseProject.Size = new Size(239, 36);
+            buttonCloseProject.TabIndex = 3;
+            buttonCloseProject.Text = "Schließen";
+            buttonCloseProject.TextAlign = ContentAlignment.MiddleLeft;
+            buttonCloseProject.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonCloseProject.UseVisualStyleBackColor = false;
+            buttonCloseProject.Click += ButtonCloseProject_Click;
+            // 
+            // lineCommands
+            // 
+            lineCommands.BackColor = SystemColors.ScrollBar;
+            lineCommands.Location = new Point(16, 176);
+            lineCommands.Name = "lineCommands";
+            lineCommands.Size = new Size(208, 1);
+            lineCommands.TabIndex = 4;
+            // 
+            // buttonOtherFolder
+            // 
+            buttonOtherFolder.AccessibleDescription = "Zeigt die Projekte eines anderen Ordners. Der Speicherort in den Einstellungen bleibt, wie er ist.";
+            buttonOtherFolder.BackColor = Color.Transparent;
+            buttonOtherFolder.FlatAppearance.BorderSize = 0;
+            buttonOtherFolder.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonOtherFolder.FlatStyle = FlatStyle.Flat;
+            buttonOtherFolder.Image = (Image)resources.GetObject("buttonOtherFolder.Image");
+            buttonOtherFolder.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonOtherFolder.Location = new Point(0, 185);
+            buttonOtherFolder.Name = "buttonOtherFolder";
+            buttonOtherFolder.Padding = new Padding(16, 0, 0, 0);
+            buttonOtherFolder.Size = new Size(239, 36);
+            buttonOtherFolder.TabIndex = 5;
+            buttonOtherFolder.Text = "Anderen Ordner…";
+            buttonOtherFolder.TextAlign = ContentAlignment.MiddleLeft;
+            buttonOtherFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonOtherFolder.UseVisualStyleBackColor = false;
+            buttonOtherFolder.Click += ButtonOtherFolder_Click;
+            // 
+            // buttonDemos
+            // 
+            buttonDemos.AccessibleDescription = "Öffnet eines der installierten Demo-Projekte.";
+            buttonDemos.BackColor = Color.Transparent;
+            buttonDemos.FlatAppearance.BorderSize = 0;
+            buttonDemos.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonDemos.FlatStyle = FlatStyle.Flat;
+            buttonDemos.Image = (Image)resources.GetObject("buttonDemos.Image");
+            buttonDemos.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonDemos.Location = new Point(0, 225);
+            buttonDemos.Name = "buttonDemos";
+            buttonDemos.Padding = new Padding(16, 0, 0, 0);
+            buttonDemos.Size = new Size(239, 36);
+            buttonDemos.TabIndex = 6;
+            buttonDemos.Text = "Demos öffnen";
+            buttonDemos.TextAlign = ContentAlignment.MiddleLeft;
+            buttonDemos.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonDemos.UseVisualStyleBackColor = false;
+            buttonDemos.Click += ButtonDemos_Click;
+            // 
+            // lineWindowCommands
+            // 
+            lineWindowCommands.BackColor = SystemColors.ScrollBar;
+            lineWindowCommands.Location = new Point(16, 269);
+            lineWindowCommands.Name = "lineWindowCommands";
+            lineWindowCommands.Size = new Size(208, 1);
+            lineWindowCommands.TabIndex = 7;
+            // 
+            // buttonResetLayout
+            // 
+            buttonResetLayout.AccessibleDescription = "Stellt Fenstergröße, Fensterlage und Spaltenbreiten der Projektliste wieder her wie beim ersten Start.";
+            buttonResetLayout.BackColor = Color.Transparent;
+            buttonResetLayout.FlatAppearance.BorderSize = 0;
+            buttonResetLayout.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonResetLayout.FlatStyle = FlatStyle.Flat;
+            buttonResetLayout.Image = (Image)resources.GetObject("buttonResetLayout.Image");
+            buttonResetLayout.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonResetLayout.Location = new Point(0, 278);
+            buttonResetLayout.Name = "buttonResetLayout";
+            buttonResetLayout.Padding = new Padding(16, 0, 0, 0);
+            buttonResetLayout.Size = new Size(239, 36);
+            buttonResetLayout.TabIndex = 8;
+            buttonResetLayout.Text = "Fensterlayout zurücksetzen";
+            buttonResetLayout.TextAlign = ContentAlignment.MiddleLeft;
+            buttonResetLayout.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonResetLayout.UseVisualStyleBackColor = false;
+            buttonResetLayout.Click += ButtonResetLayout_Click;
+            // 
+            // buttonFileAbout
+            // 
+            buttonFileAbout.AccessibleDescription = "Zeigt Version und Lizenz von drums4me.";
+            buttonFileAbout.BackColor = Color.Transparent;
+            buttonFileAbout.FlatAppearance.BorderSize = 0;
+            buttonFileAbout.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonFileAbout.FlatStyle = FlatStyle.Flat;
+            buttonFileAbout.Image = (Image)resources.GetObject("buttonFileAbout.Image");
+            buttonFileAbout.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonFileAbout.Location = new Point(0, 318);
+            buttonFileAbout.Name = "buttonFileAbout";
+            buttonFileAbout.Padding = new Padding(16, 0, 0, 0);
+            buttonFileAbout.Size = new Size(239, 36);
+            buttonFileAbout.TabIndex = 9;
+            buttonFileAbout.Text = "Über";
+            buttonFileAbout.TextAlign = ContentAlignment.MiddleLeft;
+            buttonFileAbout.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonFileAbout.UseVisualStyleBackColor = false;
+            buttonFileAbout.Click += ButtonAbout_Click;
+            // 
+            // buttonExit
+            // 
+            buttonExit.AccessibleDescription = "Beendet drums4me. Ungesicherte Änderungen werden vorher abgefragt.";
+            buttonExit.BackColor = Color.Transparent;
+            buttonExit.FlatAppearance.BorderSize = 0;
+            buttonExit.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonExit.FlatStyle = FlatStyle.Flat;
+            buttonExit.Image = (Image)resources.GetObject("buttonExit.Image");
+            buttonExit.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonExit.Location = new Point(0, 358);
+            buttonExit.Name = "buttonExit";
+            buttonExit.Padding = new Padding(16, 0, 0, 0);
+            buttonExit.Size = new Size(239, 36);
+            buttonExit.TabIndex = 10;
+            buttonExit.Text = "Beenden";
+            buttonExit.TextAlign = ContentAlignment.MiddleLeft;
+            buttonExit.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonExit.UseVisualStyleBackColor = false;
+            buttonExit.Click += ButtonExit_Click;
+            // 
+            // lineFileCommands
+            // 
+            lineFileCommands.BackColor = SystemColors.ControlDark;
+            lineFileCommands.Dock = DockStyle.Right;
+            lineFileCommands.Location = new Point(239, 0);
+            lineFileCommands.Name = "lineFileCommands";
+            lineFileCommands.Size = new Size(1, 605);
+            lineFileCommands.TabIndex = 11;
+            // 
             // buttonUndo
             // 
             buttonUndo.AccessibleDescription = "Nimmt die letzte Änderung zurück. Strg+Z.";
@@ -1401,6 +1606,7 @@
             buttonUndo.Name = "buttonUndo";
             buttonUndo.Size = new Size(28, 24);
             buttonUndo.TabIndex = 1;
+            toolTip.SetToolTip(buttonUndo, "Rückgängig (Strg+Z)");
             buttonUndo.UseVisualStyleBackColor = true;
             buttonUndo.Click += ButtonUndo_Click;
             // 
@@ -1415,6 +1621,7 @@
             buttonRedo.Name = "buttonRedo";
             buttonRedo.Size = new Size(28, 24);
             buttonRedo.TabIndex = 2;
+            toolTip.SetToolTip(buttonRedo, "Wiederholen (Strg+Y)");
             buttonRedo.UseVisualStyleBackColor = true;
             buttonRedo.Click += ButtonRedo_Click;
             // 
@@ -1428,6 +1635,7 @@
             buttonQuickSave.Name = "buttonQuickSave";
             buttonQuickSave.Size = new Size(28, 24);
             buttonQuickSave.TabIndex = 3;
+            toolTip.SetToolTip(buttonQuickSave, "Speichern (Strg+S)");
             buttonQuickSave.UseVisualStyleBackColor = true;
             buttonQuickSave.Click += ButtonSave_Click;
             // 
@@ -1441,6 +1649,7 @@
             buttonShortcuts.Name = "buttonShortcuts";
             buttonShortcuts.Size = new Size(28, 24);
             buttonShortcuts.TabIndex = 4;
+            toolTip.SetToolTip(buttonShortcuts, "Tastenkombinationen (F1)");
             buttonShortcuts.UseVisualStyleBackColor = true;
             buttonShortcuts.Click += ButtonShortcuts_Click;
             // 
@@ -1454,6 +1663,7 @@
             buttonAbout.Name = "buttonAbout";
             buttonAbout.Size = new Size(28, 24);
             buttonAbout.TabIndex = 5;
+            toolTip.SetToolTip(buttonAbout, "Über drums4me");
             buttonAbout.UseVisualStyleBackColor = true;
             buttonAbout.Click += ButtonAbout_Click;
             // 
@@ -1475,11 +1685,15 @@
             projectBrowser.Font = new Font("Segoe UI", 10F);
             projectBrowser.Location = new Point(0, 124);
             projectBrowser.Name = "projectBrowser";
+            projectBrowser.Padding = new Padding(240, 0, 0, 0);
             projectBrowser.Size = new Size(1260, 506);
             projectBrowser.TabIndex = 7;
             projectBrowser.Visible = false;
             projectBrowser.ProjectChosen += ProjectBrowser_ProjectChosen;
             projectBrowser.CountChanged += ProjectBrowser_CountChanged;
+            projectBrowser.RenameRequested += ProjectBrowser_RenameRequested;
+            projectBrowser.DuplicateRequested += ProjectBrowser_DuplicateRequested;
+            projectBrowser.DeleteRequested += ProjectBrowser_DeleteRequested;
             // 
             // statusStrip
             // 
@@ -1537,6 +1751,16 @@
             // 
             previewTimer.Interval = 50;
             previewTimer.Tick += PreviewTimer_Tick;
+            // 
+            // noticeTimer
+            // 
+            noticeTimer.Interval = 4000;
+            noticeTimer.Tick += NoticeTimer_Tick;
+            // 
+            // restartTimer
+            // 
+            restartTimer.Interval = 1000;
+            restartTimer.Tick += RestartTimer_Tick;
             // 
             // trackNameMenu
             // 
@@ -1605,6 +1829,7 @@
             Controls.Add(buttonQuickSave);
             Controls.Add(buttonShortcuts);
             Controls.Add(buttonAbout);
+            Controls.Add(panelFileCommands);
             Controls.Add(stepGrid);
             Controls.Add(projectBrowser);
             Controls.Add(statusStrip);
@@ -1621,10 +1846,10 @@
             ribbonTabs.ResumeLayout(false);
             tabPageFile.ResumeLayout(false);
             flowFile.ResumeLayout(false);
-            groupFile.ResumeLayout(false);
             groupFind.ResumeLayout(false);
             groupFind.PerformLayout();
-            groupSource.ResumeLayout(false);
+            groupStartup.ResumeLayout(false);
+            groupStartup.PerformLayout();
             tabPageStart.ResumeLayout(false);
             flowStart.ResumeLayout(false);
             groupPlay.ResumeLayout(false);
@@ -1652,6 +1877,9 @@
             groupAppearance.PerformLayout();
             groupKits.ResumeLayout(false);
             groupKits.PerformLayout();
+            groupAudio.ResumeLayout(false);
+            groupAudio.PerformLayout();
+            panelFileCommands.ResumeLayout(false);
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
             trackNameMenu.ResumeLayout(false);
@@ -1664,13 +1892,13 @@
 
         private TabControl ribbonTabs;
         private TabPage tabPageFile;
+        private ImageList ribbonImages;
         private FlowLayoutPanel flowFile;
-        private Panel groupFile;
+        private Panel panelFileCommands;
+        private Panel lineFileCommands;
         private Button buttonNew;
         private Button buttonSave;
         private Button buttonSaveAs;
-        private Label captionFile;
-        private Panel dividerFile;
         private Panel groupFind;
         private Label labelSearch;
         private TextBox textBoxSearch;
@@ -1680,10 +1908,14 @@
         private ComboBox comboFilterMeter;
         private Label captionFind;
         private Panel dividerFind;
-        private Panel groupSource;
+        private Panel lineCommands;
+        private Button buttonCloseProject;
+        private Panel lineWindowCommands;
+        private Button buttonResetLayout;
+        private Button buttonFileAbout;
+        private Button buttonExit;
         private Button buttonOtherFolder;
         private Button buttonDemos;
-        private Label captionSource;
         private TabPage tabPageStart;
         private FlowLayoutPanel flowStart;
         private Panel groupPlay;
@@ -1745,8 +1977,9 @@
         private TextBox textBoxProjectFolder;
         private Button buttonProjectFolder;
         private Label labelProjectHint;
-        private Panel lineOpenLast;
+        private Panel groupStartup;
         private CheckBox checkBoxOpenLast;
+        private Label captionStartup;
         private Label captionProjects;
         private Panel dividerProjects;
         private Panel groupAppearance;
@@ -1755,6 +1988,7 @@
         private RadioButton radioDark;
         private Label labelAppearanceHint;
         private Panel lineFlash;
+        private Label labelFlash;
         private CheckBox checkBoxFlash;
         private Label captionAppearance;
         private Panel dividerAppearance;
@@ -1766,12 +2000,20 @@
         private Button buttonReloadKits;
         private Label labelKitCount;
         private Label captionKits;
+        private Panel dividerKits;
+        private Panel groupAudio;
+        private Label labelAudioDevice;
+        private ComboBox comboAudioDevice;
+        private Label captionAudio;
         private Button buttonUndo;
         private Button buttonRedo;
         private Button buttonQuickSave;
         private Button buttonShortcuts;
         private Button buttonAbout;
         private System.Windows.Forms.Timer previewTimer;
+        private System.Windows.Forms.Timer noticeTimer;
+        private System.Windows.Forms.Timer restartTimer;
+        private ToolTip toolTip;
         private StatusStrip statusStrip;
         private ToolStripStatusLabel statusHint;
         private ToolStripStatusLabel statusProjects;
