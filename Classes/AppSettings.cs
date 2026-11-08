@@ -29,6 +29,9 @@ internal sealed class AppSettings
     /// <summary>Der Name dazu, damit die Auswahl ihn auch zeigen kann, wenn das Gerät gerade nicht angeschlossen ist.</summary>
     public string? AudioDeviceName { get; set; }
 
+    /// <summary>Kits, die nicht in der Auswahl auf der Karte „Start“ erscheinen sollen. Projekte mit einem davon klingen trotzdem richtig.</summary>
+    public List<string>? HiddenKits { get; set; }
+
     /// <summary>Die Spaltenbreiten der Projektliste in Pixeln.</summary>
     public Dictionary<string, int>? ColumnWidths { get; set; }
 

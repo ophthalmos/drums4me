@@ -80,11 +80,13 @@
             labelVolume = new Label();
             trackBarVolume = new TrackBar();
             labelVolumeValue = new Label();
-            lineKit = new Panel();
-            labelKit = new Label();
-            comboKit = new ComboBox();
             captionSound = new Label();
             dividerSound = new Panel();
+            groupDrumkit = new Panel();
+            comboKit = new ComboBox();
+            buttonSelectKits = new Button();
+            captionDrumkit = new Label();
+            dividerDrumkit = new Panel();
             groupPattern = new Panel();
             radioPattern1 = new RadioButton();
             radioPattern2 = new RadioButton();
@@ -123,8 +125,9 @@
             buttonOwnKits = new Button();
             labelInstalledKits = new Label();
             buttonInstalledKits = new Button();
+            lineKitFolders = new Panel();
             buttonReloadKits = new Button();
-            labelKitCount = new Label();
+            buttonKitGuide = new Button();
             captionKits = new Label();
             dividerKits = new Panel();
             groupAudio = new Panel();
@@ -139,6 +142,7 @@
             buttonCloseProject = new Button();
             lineCommands = new Panel();
             buttonOtherFolder = new Button();
+            buttonDefaultFolder = new Button();
             buttonDemos = new Button();
             lineWindowCommands = new Panel();
             buttonResetLayout = new Button();
@@ -190,6 +194,7 @@
             groupSound.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarSwing).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBarVolume).BeginInit();
+            groupDrumkit.SuspendLayout();
             groupPattern.SuspendLayout();
             groupSequence.SuspendLayout();
             tabPageSettings.SuspendLayout();
@@ -229,7 +234,7 @@
             tabPageFile.Padding = new Padding(236, 0, 0, 0);
             tabPageFile.Size = new Size(1252, 94);
             tabPageFile.TabIndex = 0;
-            tabPageFile.ToolTipText = "Datei (Strg+O): Projekte, Neu, Speichern und mehr. Esc führt zurück zur Karte Start.";
+            tabPageFile.ToolTipText = "Datei (Strg+O oder Alt+D): Projekte, Neu, Speichern und mehr. Esc führt zurück zur Karte Start.";
             // 
             // flowFile
             // 
@@ -392,6 +397,8 @@
             flowStart.Controls.Add(dividerTrainer);
             flowStart.Controls.Add(groupSound);
             flowStart.Controls.Add(dividerSound);
+            flowStart.Controls.Add(groupDrumkit);
+            flowStart.Controls.Add(dividerDrumkit);
             flowStart.Controls.Add(groupPattern);
             flowStart.Controls.Add(dividerPattern);
             flowStart.Controls.Add(groupSequence);
@@ -709,14 +716,11 @@
             groupSound.Controls.Add(labelVolume);
             groupSound.Controls.Add(trackBarVolume);
             groupSound.Controls.Add(labelVolumeValue);
-            groupSound.Controls.Add(lineKit);
-            groupSound.Controls.Add(labelKit);
-            groupSound.Controls.Add(comboKit);
             groupSound.Controls.Add(captionSound);
             groupSound.Location = new Point(543, 0);
             groupSound.Margin = new Padding(0);
             groupSound.Name = "groupSound";
-            groupSound.Size = new Size(324, 90);
+            groupSound.Size = new Size(179, 90);
             groupSound.TabIndex = 6;
             // 
             // labelSwing
@@ -724,7 +728,7 @@
             labelSwing.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
             labelSwing.Location = new Point(8, 8);
             labelSwing.Name = "labelSwing";
-            labelSwing.Size = new Size(48, 19);
+            labelSwing.Size = new Size(45, 19);
             labelSwing.TabIndex = 0;
             labelSwing.Text = "Swing";
             // 
@@ -732,10 +736,10 @@
             // 
             trackBarSwing.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
             trackBarSwing.AutoSize = false;
-            trackBarSwing.Location = new Point(56, 3);
+            trackBarSwing.Location = new Point(53, 3);
             trackBarSwing.Maximum = 100;
             trackBarSwing.Name = "trackBarSwing";
-            trackBarSwing.Size = new Size(69, 30);
+            trackBarSwing.Size = new Size(74, 30);
             trackBarSwing.TabIndex = 1;
             trackBarSwing.TickStyle = TickStyle.None;
             trackBarSwing.ValueChanged += TrackBarSwing_ValueChanged;
@@ -743,9 +747,9 @@
             // labelSwingValue
             // 
             labelSwingValue.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
-            labelSwingValue.Location = new Point(125, 8);
+            labelSwingValue.Location = new Point(127, 8);
             labelSwingValue.Name = "labelSwingValue";
-            labelSwingValue.Size = new Size(50, 19);
+            labelSwingValue.Size = new Size(48, 19);
             labelSwingValue.TabIndex = 8;
             labelSwingValue.Text = "0 %";
             labelSwingValue.TextAlign = ContentAlignment.MiddleRight;
@@ -755,7 +759,7 @@
             labelVolume.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
             labelVolume.Location = new Point(8, 40);
             labelVolume.Name = "labelVolume";
-            labelVolume.Size = new Size(48, 19);
+            labelVolume.Size = new Size(45, 19);
             labelVolume.TabIndex = 2;
             labelVolume.Text = "Vol.";
             // 
@@ -763,10 +767,10 @@
             // 
             trackBarVolume.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
             trackBarVolume.AutoSize = false;
-            trackBarVolume.Location = new Point(56, 35);
+            trackBarVolume.Location = new Point(53, 35);
             trackBarVolume.Maximum = 100;
             trackBarVolume.Name = "trackBarVolume";
-            trackBarVolume.Size = new Size(69, 30);
+            trackBarVolume.Size = new Size(74, 30);
             trackBarVolume.TabIndex = 3;
             trackBarVolume.TickStyle = TickStyle.None;
             trackBarVolume.Value = 80;
@@ -775,45 +779,12 @@
             // labelVolumeValue
             // 
             labelVolumeValue.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
-            labelVolumeValue.Location = new Point(125, 40);
+            labelVolumeValue.Location = new Point(127, 40);
             labelVolumeValue.Name = "labelVolumeValue";
-            labelVolumeValue.Size = new Size(50, 19);
+            labelVolumeValue.Size = new Size(48, 19);
             labelVolumeValue.TabIndex = 9;
             labelVolumeValue.Text = "80 %";
             labelVolumeValue.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // lineKit
-            // 
-            lineKit.BackColor = SystemColors.ScrollBar;
-            lineKit.Location = new Point(179, 6);
-            lineKit.Name = "lineKit";
-            lineKit.Size = new Size(1, 56);
-            lineKit.TabIndex = 6;
-            // 
-            // labelKit
-            // 
-            labelKit.AccessibleDescription = "Die Klänge dieses Projekts. In der Liste steht der Ordner des Kits in Klammern.";
-            labelKit.AutoSize = true;
-            labelKit.Location = new Point(187, 8);
-            labelKit.Name = "labelKit";
-            labelKit.Size = new Size(108, 19);
-            labelKit.TabIndex = 4;
-            labelKit.Text = "Drumkitauswahl";
-            // 
-            // comboKit
-            // 
-            comboKit.AccessibleDescription = "Die Klänge dieses Projekts. In der Liste steht der Ordner des Kits in Klammern.";
-            comboKit.DrawMode = DrawMode.OwnerDrawFixed;
-            comboKit.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboKit.DropDownWidth = 200;
-            comboKit.ItemHeight = 19;
-            comboKit.Location = new Point(187, 37);
-            comboKit.MaxDropDownItems = 30;
-            comboKit.Name = "comboKit";
-            comboKit.Size = new Size(133, 25);
-            comboKit.TabIndex = 5;
-            comboKit.DrawItem += ComboKit_DrawItem;
-            comboKit.SelectedIndexChanged += ComboKit_SelectedIndexChanged;
             // 
             // captionSound
             // 
@@ -821,7 +792,7 @@
             captionSound.ForeColor = SystemColors.GrayText;
             captionSound.Location = new Point(0, 72);
             captionSound.Name = "captionSound";
-            captionSound.Size = new Size(324, 18);
+            captionSound.Size = new Size(179, 18);
             captionSound.TabIndex = 7;
             captionSound.Text = "Klang";
             captionSound.TextAlign = ContentAlignment.MiddleCenter;
@@ -829,11 +800,69 @@
             // dividerSound
             // 
             dividerSound.BackColor = SystemColors.ControlDark;
-            dividerSound.Location = new Point(867, 4);
+            dividerSound.Location = new Point(722, 4);
             dividerSound.Margin = new Padding(0, 4, 0, 4);
             dividerSound.Name = "dividerSound";
             dividerSound.Size = new Size(1, 82);
             dividerSound.TabIndex = 7;
+            // 
+            // groupDrumkit
+            // 
+            groupDrumkit.Controls.Add(comboKit);
+            groupDrumkit.Controls.Add(buttonSelectKits);
+            groupDrumkit.Controls.Add(captionDrumkit);
+            groupDrumkit.Location = new Point(723, 0);
+            groupDrumkit.Margin = new Padding(0);
+            groupDrumkit.Name = "groupDrumkit";
+            groupDrumkit.Size = new Size(140, 90);
+            groupDrumkit.TabIndex = 8;
+            // 
+            // comboKit
+            // 
+            comboKit.AccessibleDescription = "Die Klänge dieses Projekts. In der Liste steht der Ordner des Kits in Klammern.";
+            comboKit.AccessibleName = "Drumkit";
+            comboKit.DrawMode = DrawMode.OwnerDrawFixed;
+            comboKit.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboKit.DropDownWidth = 200;
+            comboKit.ItemHeight = 19;
+            comboKit.Location = new Point(8, 5);
+            comboKit.MaxDropDownItems = 30;
+            comboKit.Name = "comboKit";
+            comboKit.Size = new Size(124, 25);
+            comboKit.TabIndex = 0;
+            comboKit.DrawItem += ComboKit_DrawItem;
+            comboKit.SelectedIndexChanged += ComboKit_SelectedIndexChanged;
+            // 
+            // buttonSelectKits
+            // 
+            buttonSelectKits.AccessibleDescription = "Legt fest, welche Kits in der Auswahl darüber erscheinen.";
+            buttonSelectKits.Location = new Point(8, 35);
+            buttonSelectKits.Name = "buttonSelectKits";
+            buttonSelectKits.Size = new Size(124, 29);
+            buttonSelectKits.TabIndex = 1;
+            buttonSelectKits.Text = "Kits verwalten…";
+            buttonSelectKits.UseVisualStyleBackColor = true;
+            buttonSelectKits.Click += ButtonSelectKits_Click;
+            // 
+            // captionDrumkit
+            // 
+            captionDrumkit.Dock = DockStyle.Bottom;
+            captionDrumkit.ForeColor = SystemColors.GrayText;
+            captionDrumkit.Location = new Point(0, 72);
+            captionDrumkit.Name = "captionDrumkit";
+            captionDrumkit.Size = new Size(140, 18);
+            captionDrumkit.TabIndex = 2;
+            captionDrumkit.Text = "Drumkit";
+            captionDrumkit.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerDrumkit
+            // 
+            dividerDrumkit.BackColor = SystemColors.ControlDark;
+            dividerDrumkit.Location = new Point(863, 4);
+            dividerDrumkit.Margin = new Padding(0, 4, 0, 4);
+            dividerDrumkit.Name = "dividerDrumkit";
+            dividerDrumkit.Size = new Size(1, 82);
+            dividerDrumkit.TabIndex = 9;
             // 
             // groupPattern
             // 
@@ -844,11 +873,11 @@
             groupPattern.Controls.Add(comboMeter);
             groupPattern.Controls.Add(buttonClearPattern);
             groupPattern.Controls.Add(captionPattern);
-            groupPattern.Location = new Point(868, 0);
+            groupPattern.Location = new Point(864, 0);
             groupPattern.Margin = new Padding(0);
             groupPattern.Name = "groupPattern";
             groupPattern.Size = new Size(160, 90);
-            groupPattern.TabIndex = 8;
+            groupPattern.TabIndex = 10;
             // 
             // radioPattern1
             // 
@@ -942,11 +971,11 @@
             // dividerPattern
             // 
             dividerPattern.BackColor = SystemColors.ControlDark;
-            dividerPattern.Location = new Point(1028, 4);
+            dividerPattern.Location = new Point(1024, 4);
             dividerPattern.Margin = new Padding(0, 4, 0, 4);
             dividerPattern.Name = "dividerPattern";
             dividerPattern.Size = new Size(1, 82);
-            dividerPattern.TabIndex = 9;
+            dividerPattern.TabIndex = 11;
             // 
             // groupSequence
             // 
@@ -954,11 +983,11 @@
             groupSequence.Controls.Add(checkBoxRepeat);
             groupSequence.Controls.Add(textBoxSequence);
             groupSequence.Controls.Add(captionSequence);
-            groupSequence.Location = new Point(1029, 0);
+            groupSequence.Location = new Point(1025, 0);
             groupSequence.Margin = new Padding(0);
             groupSequence.Name = "groupSequence";
             groupSequence.Size = new Size(222, 90);
-            groupSequence.TabIndex = 10;
+            groupSequence.TabIndex = 12;
             // 
             // checkBoxSequence
             // 
@@ -1015,9 +1044,9 @@
             // tabPageSettings
             // 
             tabPageSettings.Controls.Add(flowSettings);
-            tabPageSettings.Location = new Point(4, 24);
+            tabPageSettings.Location = new Point(4, 26);
             tabPageSettings.Name = "tabPageSettings";
-            tabPageSettings.Size = new Size(1252, 96);
+            tabPageSettings.Size = new Size(1252, 94);
             tabPageSettings.TabIndex = 2;
             tabPageSettings.Text = "Einstellungen";
             // 
@@ -1033,7 +1062,7 @@
             flowSettings.Dock = DockStyle.Fill;
             flowSettings.Location = new Point(0, 0);
             flowSettings.Name = "flowSettings";
-            flowSettings.Size = new Size(1252, 96);
+            flowSettings.Size = new Size(1252, 94);
             flowSettings.TabIndex = 0;
             // 
             // groupProjects
@@ -1229,57 +1258,70 @@
             groupKits.Controls.Add(buttonOwnKits);
             groupKits.Controls.Add(labelInstalledKits);
             groupKits.Controls.Add(buttonInstalledKits);
+            groupKits.Controls.Add(lineKitFolders);
             groupKits.Controls.Add(buttonReloadKits);
-            groupKits.Controls.Add(labelKitCount);
+            groupKits.Controls.Add(buttonKitGuide);
             groupKits.Controls.Add(captionKits);
             groupKits.Location = new Point(690, 0);
             groupKits.Margin = new Padding(0);
             groupKits.Name = "groupKits";
-            groupKits.Size = new Size(314, 90);
+            groupKits.Size = new Size(280, 90);
             groupKits.TabIndex = 4;
             // 
             // labelOwnKits
             // 
             labelOwnKits.AutoSize = true;
-            labelOwnKits.Location = new Point(8, 8);
+            labelOwnKits.Location = new Point(8, 40);
             labelOwnKits.Name = "labelOwnKits";
             labelOwnKits.Size = new Size(49, 19);
-            labelOwnKits.TabIndex = 0;
+            labelOwnKits.TabIndex = 2;
             labelOwnKits.Text = "Eigene";
             // 
             // buttonOwnKits
             // 
-            buttonOwnKits.Location = new Point(78, 3);
+            buttonOwnKits.AccessibleName = "Ordner für eigene Kits öffnen";
+            buttonOwnKits.Image = (Image)resources.GetObject("buttonOwnKits.Image");
+            buttonOwnKits.Location = new Point(78, 35);
             buttonOwnKits.Name = "buttonOwnKits";
-            buttonOwnKits.Size = new Size(70, 29);
-            buttonOwnKits.TabIndex = 1;
-            buttonOwnKits.Text = "Öffnen";
+            buttonOwnKits.Size = new Size(34, 29);
+            buttonOwnKits.TabIndex = 3;
+            toolTip.SetToolTip(buttonOwnKits, "Ordner für eigene Kits öffnen");
             buttonOwnKits.UseVisualStyleBackColor = true;
             buttonOwnKits.Click += ButtonOwnKits_Click;
             // 
             // labelInstalledKits
             // 
             labelInstalledKits.AutoSize = true;
-            labelInstalledKits.Location = new Point(8, 40);
+            labelInstalledKits.Location = new Point(8, 8);
             labelInstalledKits.Name = "labelInstalledKits";
             labelInstalledKits.Size = new Size(65, 19);
-            labelInstalledKits.TabIndex = 2;
+            labelInstalledKits.TabIndex = 0;
             labelInstalledKits.Text = "Installiert";
             // 
             // buttonInstalledKits
             // 
-            buttonInstalledKits.Location = new Point(78, 35);
+            buttonInstalledKits.AccessibleName = "Ordner der installierten Kits öffnen";
+            buttonInstalledKits.Image = (Image)resources.GetObject("buttonInstalledKits.Image");
+            buttonInstalledKits.Location = new Point(78, 3);
             buttonInstalledKits.Name = "buttonInstalledKits";
-            buttonInstalledKits.Size = new Size(70, 29);
-            buttonInstalledKits.TabIndex = 3;
-            buttonInstalledKits.Text = "Öffnen";
+            buttonInstalledKits.Size = new Size(34, 29);
+            buttonInstalledKits.TabIndex = 1;
+            toolTip.SetToolTip(buttonInstalledKits, "Ordner der installierten Kits öffnen");
             buttonInstalledKits.UseVisualStyleBackColor = true;
             buttonInstalledKits.Click += ButtonInstalledKits_Click;
+            // 
+            // lineKitFolders
+            // 
+            lineKitFolders.BackColor = SystemColors.ScrollBar;
+            lineKitFolders.Location = new Point(122, 6);
+            lineKitFolders.Name = "lineKitFolders";
+            lineKitFolders.Size = new Size(1, 56);
+            lineKitFolders.TabIndex = 7;
             // 
             // buttonReloadKits
             // 
             buttonReloadKits.AccessibleDescription = "Sucht die Kits erneut, etwa nach dem Kopieren eines neuen Ordners.";
-            buttonReloadKits.Location = new Point(166, 3);
+            buttonReloadKits.Location = new Point(132, 3);
             buttonReloadKits.Name = "buttonReloadKits";
             buttonReloadKits.Size = new Size(140, 29);
             buttonReloadKits.TabIndex = 4;
@@ -1287,15 +1329,16 @@
             buttonReloadKits.UseVisualStyleBackColor = true;
             buttonReloadKits.Click += ButtonReloadKits_Click;
             // 
-            // labelKitCount
+            // buttonKitGuide
             // 
-            labelKitCount.AutoSize = true;
-            labelKitCount.ForeColor = SystemColors.GrayText;
-            labelKitCount.Location = new Point(166, 40);
-            labelKitCount.Name = "labelKitCount";
-            labelKitCount.Size = new Size(105, 19);
-            labelKitCount.TabIndex = 5;
-            labelKitCount.Text = "0 Kits gefunden";
+            buttonKitGuide.AccessibleDescription = "Erklärt, wie du eigene Kits anlegst und ihre Klänge aufbereitest.";
+            buttonKitGuide.Location = new Point(132, 35);
+            buttonKitGuide.Name = "buttonKitGuide";
+            buttonKitGuide.Size = new Size(140, 29);
+            buttonKitGuide.TabIndex = 5;
+            buttonKitGuide.Text = "Anleitung…";
+            buttonKitGuide.UseVisualStyleBackColor = true;
+            buttonKitGuide.Click += ButtonKitGuide_Click;
             // 
             // captionKits
             // 
@@ -1303,15 +1346,15 @@
             captionKits.ForeColor = SystemColors.GrayText;
             captionKits.Location = new Point(0, 72);
             captionKits.Name = "captionKits";
-            captionKits.Size = new Size(314, 18);
+            captionKits.Size = new Size(280, 18);
             captionKits.TabIndex = 6;
-            captionKits.Text = "Kits";
+            captionKits.Text = "Drumkits";
             captionKits.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dividerKits
             // 
             dividerKits.BackColor = SystemColors.ControlDark;
-            dividerKits.Location = new Point(1004, 4);
+            dividerKits.Location = new Point(970, 4);
             dividerKits.Margin = new Padding(0, 4, 0, 4);
             dividerKits.Name = "dividerKits";
             dividerKits.Size = new Size(1, 82);
@@ -1322,10 +1365,10 @@
             groupAudio.Controls.Add(labelAudioDevice);
             groupAudio.Controls.Add(comboAudioDevice);
             groupAudio.Controls.Add(captionAudio);
-            groupAudio.Location = new Point(1005, 0);
+            groupAudio.Location = new Point(971, 0);
             groupAudio.Margin = new Padding(0);
             groupAudio.Name = "groupAudio";
-            groupAudio.Size = new Size(242, 90);
+            groupAudio.Size = new Size(276, 90);
             groupAudio.TabIndex = 6;
             // 
             // labelAudioDevice
@@ -1346,7 +1389,7 @@
             comboAudioDevice.DropDownWidth = 340;
             comboAudioDevice.Location = new Point(8, 37);
             comboAudioDevice.Name = "comboAudioDevice";
-            comboAudioDevice.Size = new Size(226, 25);
+            comboAudioDevice.Size = new Size(260, 25);
             comboAudioDevice.TabIndex = 1;
             comboAudioDevice.DropDown += ComboAudioDevice_DropDown;
             comboAudioDevice.SelectedIndexChanged += ComboAudioDevice_SelectedIndexChanged;
@@ -1357,7 +1400,7 @@
             captionAudio.ForeColor = SystemColors.GrayText;
             captionAudio.Location = new Point(0, 72);
             captionAudio.Name = "captionAudio";
-            captionAudio.Size = new Size(242, 18);
+            captionAudio.Size = new Size(276, 18);
             captionAudio.TabIndex = 2;
             captionAudio.Text = "Audio";
             captionAudio.TextAlign = ContentAlignment.MiddleCenter;
@@ -1378,6 +1421,7 @@
             panelFileCommands.Controls.Add(buttonCloseProject);
             panelFileCommands.Controls.Add(lineCommands);
             panelFileCommands.Controls.Add(buttonOtherFolder);
+            panelFileCommands.Controls.Add(buttonDefaultFolder);
             panelFileCommands.Controls.Add(buttonDemos);
             panelFileCommands.Controls.Add(lineWindowCommands);
             panelFileCommands.Controls.Add(buttonResetLayout);
@@ -1498,6 +1542,26 @@
             buttonOtherFolder.UseVisualStyleBackColor = false;
             buttonOtherFolder.Click += ButtonOtherFolder_Click;
             // 
+            // buttonDefaultFolder
+            // 
+            buttonDefaultFolder.AccessibleDescription = "Zeigt wieder die Projekte im Speicherort aus den Einstellungen.";
+            buttonDefaultFolder.BackColor = Color.Transparent;
+            buttonDefaultFolder.FlatAppearance.BorderSize = 0;
+            buttonDefaultFolder.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonDefaultFolder.FlatStyle = FlatStyle.Flat;
+            buttonDefaultFolder.Image = (Image)resources.GetObject("buttonDefaultFolder.Image");
+            buttonDefaultFolder.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonDefaultFolder.Location = new Point(0, 225);
+            buttonDefaultFolder.Name = "buttonDefaultFolder";
+            buttonDefaultFolder.Padding = new Padding(16, 0, 0, 0);
+            buttonDefaultFolder.Size = new Size(239, 36);
+            buttonDefaultFolder.TabIndex = 6;
+            buttonDefaultFolder.Text = "Standardordner";
+            buttonDefaultFolder.TextAlign = ContentAlignment.MiddleLeft;
+            buttonDefaultFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonDefaultFolder.UseVisualStyleBackColor = false;
+            buttonDefaultFolder.Click += ButtonDefaultFolder_Click;
+            // 
             // buttonDemos
             // 
             buttonDemos.AccessibleDescription = "Öffnet eines der installierten Demo-Projekte.";
@@ -1507,12 +1571,12 @@
             buttonDemos.FlatStyle = FlatStyle.Flat;
             buttonDemos.Image = (Image)resources.GetObject("buttonDemos.Image");
             buttonDemos.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonDemos.Location = new Point(0, 225);
+            buttonDemos.Location = new Point(0, 265);
             buttonDemos.Name = "buttonDemos";
             buttonDemos.Padding = new Padding(16, 0, 0, 0);
             buttonDemos.Size = new Size(239, 36);
-            buttonDemos.TabIndex = 6;
-            buttonDemos.Text = "Demos öffnen";
+            buttonDemos.TabIndex = 7;
+            buttonDemos.Text = "Demos öffnen▸";
             buttonDemos.TextAlign = ContentAlignment.MiddleLeft;
             buttonDemos.TextImageRelation = TextImageRelation.ImageBeforeText;
             buttonDemos.UseVisualStyleBackColor = false;
@@ -1521,10 +1585,10 @@
             // lineWindowCommands
             // 
             lineWindowCommands.BackColor = SystemColors.ScrollBar;
-            lineWindowCommands.Location = new Point(16, 269);
+            lineWindowCommands.Location = new Point(16, 309);
             lineWindowCommands.Name = "lineWindowCommands";
             lineWindowCommands.Size = new Size(208, 1);
-            lineWindowCommands.TabIndex = 7;
+            lineWindowCommands.TabIndex = 8;
             // 
             // buttonResetLayout
             // 
@@ -1535,11 +1599,11 @@
             buttonResetLayout.FlatStyle = FlatStyle.Flat;
             buttonResetLayout.Image = (Image)resources.GetObject("buttonResetLayout.Image");
             buttonResetLayout.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonResetLayout.Location = new Point(0, 278);
+            buttonResetLayout.Location = new Point(0, 318);
             buttonResetLayout.Name = "buttonResetLayout";
             buttonResetLayout.Padding = new Padding(16, 0, 0, 0);
             buttonResetLayout.Size = new Size(239, 36);
-            buttonResetLayout.TabIndex = 8;
+            buttonResetLayout.TabIndex = 9;
             buttonResetLayout.Text = "Fensterlayout zurücksetzen";
             buttonResetLayout.TextAlign = ContentAlignment.MiddleLeft;
             buttonResetLayout.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1555,11 +1619,11 @@
             buttonFileAbout.FlatStyle = FlatStyle.Flat;
             buttonFileAbout.Image = (Image)resources.GetObject("buttonFileAbout.Image");
             buttonFileAbout.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonFileAbout.Location = new Point(0, 318);
+            buttonFileAbout.Location = new Point(0, 358);
             buttonFileAbout.Name = "buttonFileAbout";
             buttonFileAbout.Padding = new Padding(16, 0, 0, 0);
             buttonFileAbout.Size = new Size(239, 36);
-            buttonFileAbout.TabIndex = 9;
+            buttonFileAbout.TabIndex = 10;
             buttonFileAbout.Text = "Über";
             buttonFileAbout.TextAlign = ContentAlignment.MiddleLeft;
             buttonFileAbout.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1575,11 +1639,11 @@
             buttonExit.FlatStyle = FlatStyle.Flat;
             buttonExit.Image = (Image)resources.GetObject("buttonExit.Image");
             buttonExit.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonExit.Location = new Point(0, 358);
+            buttonExit.Location = new Point(0, 398);
             buttonExit.Name = "buttonExit";
             buttonExit.Padding = new Padding(16, 0, 0, 0);
             buttonExit.Size = new Size(239, 36);
-            buttonExit.TabIndex = 10;
+            buttonExit.TabIndex = 11;
             buttonExit.Text = "Beenden";
             buttonExit.TextAlign = ContentAlignment.MiddleLeft;
             buttonExit.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1593,7 +1657,7 @@
             lineFileCommands.Location = new Point(239, 0);
             lineFileCommands.Name = "lineFileCommands";
             lineFileCommands.Size = new Size(1, 605);
-            lineFileCommands.TabIndex = 11;
+            lineFileCommands.TabIndex = 12;
             // 
             // buttonUndo
             // 
@@ -1863,9 +1927,9 @@
             ((System.ComponentModel.ISupportInitialize)numericTrainerBars).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerTarget).EndInit();
             groupSound.ResumeLayout(false);
-            groupSound.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)trackBarSwing).EndInit();
             ((System.ComponentModel.ISupportInitialize)trackBarVolume).EndInit();
+            groupDrumkit.ResumeLayout(false);
             groupPattern.ResumeLayout(false);
             groupSequence.ResumeLayout(false);
             groupSequence.PerformLayout();
@@ -1915,6 +1979,7 @@
         private Button buttonFileAbout;
         private Button buttonExit;
         private Button buttonOtherFolder;
+        private Button buttonDefaultFolder;
         private Button buttonDemos;
         private TabPage tabPageStart;
         private FlowLayoutPanel flowStart;
@@ -1951,11 +2016,12 @@
         private Label labelVolume;
         private Label labelVolumeValue;
         private TrackBar trackBarVolume;
-        private Panel lineKit;
-        private Label labelKit;
-        private ComboBox comboKit;
         private Label captionSound;
         private Panel dividerSound;
+        private Panel groupDrumkit;
+        private ComboBox comboKit;
+        private Label captionDrumkit;
+        private Panel dividerDrumkit;
         private Panel groupPattern;
         private RadioButton radioPattern1;
         private RadioButton radioPattern2;
@@ -1997,8 +2063,10 @@
         private Button buttonOwnKits;
         private Label labelInstalledKits;
         private Button buttonInstalledKits;
+        private Panel lineKitFolders;
         private Button buttonReloadKits;
-        private Label labelKitCount;
+        private Button buttonKitGuide;
+        private Button buttonSelectKits;
         private Label captionKits;
         private Panel dividerKits;
         private Panel groupAudio;

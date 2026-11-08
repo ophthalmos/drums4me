@@ -29,6 +29,8 @@ AppPublisher=Wilhelm Happe
 AppCopyright=© 2026 Wilhelm Happe
 UsePreviousAppDir=yes
 DefaultDirName={autopf}\{#appName}
+; Die Ordnerseite erscheint immer. Bei einem Update zeigt sie den bisherigen Ordner nur an (siehe InitializeWizard).
+DisableDirPage=no
 DefaultGroupName={#appName}
 DisableWelcomePage=yes
 DisableReadyPage=yes
@@ -53,11 +55,17 @@ Name: de; MessagesFile: "compiler:Languages\German.isl"
 
 [Messages]
 de.WinVersionTooLowError=Dieses Programm benötigt Windows 10 (Version 1607) oder höher.
+de.SelectDirLabel3=drums4me wird in diesen Ordner installiert.
+de.SelectDirBrowseLabel=Klicke auf „Weiter“, um fortzufahren. Mit „Durchsuchen“ wählst du einen anderen Ordner.
 de.ConfirmUninstall=Bist du sicher, dass du %1 entfernen möchtest? Deine Projekte, Kits und Einstellungen bleiben erhalten. Vor einem Update ist keine Deinstallation erforderlich.
 
 [CustomMessages]
 de.Run={#appName} starten
 de.DesktopIcon=Verknüpfung auf dem Desktop anlegen
+de.UpdateDirLabel=drums4me ist schon installiert. Das Update kommt in denselben Ordner.
+de.UpdateBrowseLabel=Klicke auf „Weiter“, um fortzufahren.
+de.UpdatePageName=Ziel-Ordner
+de.UpdatePageDescription=Hier liegt drums4me bereits.
 
 [Tasks]
 Name: desktopicon; Description: "{cm:DesktopIcon}"; Flags: unchecked
@@ -81,3 +89,35 @@ Root: HKA; Subkey: "Software\Classes\{#appName}.Project\shell\open\command"; Val
 
 [Run]
 Filename: "{app}\{#appName}.exe"; Description: "{cm:Run}"; Flags: nowait postinstall skipifsilent runasoriginaluser
+
+[Code]
+{ Ein Update gehört in den bisherigen Ordner, sonst bliebe die alte Installation daneben liegen. }
+function IsUpdate: Boolean;
+begin
+  Result := WizardForm.PrevAppDir <> '';
+end;
+
+{ Beim Update zeigt die Ordnerseite den Ordner nur an: Feld schreibgeschützt, ohne Durchsuchen. }
+procedure InitializeWizard;
+begin
+  if IsUpdate then
+  begin
+    WizardForm.SelectDirLabel.Caption := CustomMessage('UpdateDirLabel');
+    WizardForm.SelectDirBrowseLabel.Caption := CustomMessage('UpdateBrowseLabel');
+    WizardForm.DirEdit.ReadOnly := True;
+    WizardForm.DirEdit.TabStop := False;
+    WizardForm.DirBrowseButton.Visible := False;
+    WizardForm.DirEdit.Width := WizardForm.SelectDirPage.Width - WizardForm.DirEdit.Left;
+  end;
+end;
+
+{ Sonst stünde der Fokus im Ordnerfeld und der Pfad wäre markiert, als sollte man ihn ändern. }
+procedure CurPageChanged(CurPageID: Integer);
+begin
+  if (CurPageID = wpSelectDir) and IsUpdate then
+  begin
+    WizardForm.PageNameLabel.Caption := CustomMessage('UpdatePageName');
+    WizardForm.PageDescriptionLabel.Caption := CustomMessage('UpdatePageDescription');
+    WizardForm.ActiveControl := WizardForm.NextButton;
+  end;
+end;

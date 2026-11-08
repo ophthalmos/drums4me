@@ -18,7 +18,7 @@ Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das P
 - Rückgängig und Wiederholen, beim Schließen eine Liste der tatsächlichen Änderungen
 - Projekte als `.d4m`-Dateien, die zuletzt benutzte Datei wird auf Wunsch beim Start geladen
 - Fenstergröße und -lage bleiben von Sitzung zu Sitzung erhalten
-- Registerkarten statt Menü: Datei mit Befehlsspalte (Neu, Speichern, Schließen, Demos, Fensterlayout zurücksetzen, Beenden) und Projektübersicht mit Kontextmenü (im Editor bearbeiten, Dateipfad kopieren, Umbenennen, Duplizieren, Löschen in den Papierkorb, im Ordner anzeigen – auch in Directory Opus –, Eigenschaften), Suche, Filtern nach Kit und Taktart und sortierbaren Spalten, auch für andere Ordner; Start mit allen Bedienelementen zum Üben; Einstellungen mit Wahl des Ausgabegeräts, etwa eines Audio-Interfaces
+- Registerkarten statt Menü: Datei mit Befehlsspalte (Neu, Speichern, Schließen, anderer Ordner und zurück zum Standardordner, Demos, Fensterlayout zurücksetzen, Beenden) und Projektübersicht mit Kontextmenü (im Editor bearbeiten, Dateipfad kopieren, Umbenennen, Duplizieren, Löschen in den Papierkorb, im Ordner anzeigen – auch in Directory Opus –, Eigenschaften), Suche, Filtern nach Kit und Taktart und sortierbaren Spalten, auch für andere Ordner; Start mit allen Bedienelementen zum Üben, darunter der Auswahl, welche Kits in der Liste erscheinen; Einstellungen mit Wahl des Ausgabegeräts, etwa eines Audio-Interfaces
 
 ## Kits
 

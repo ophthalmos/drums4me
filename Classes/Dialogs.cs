@@ -9,6 +9,7 @@ internal static class Dialogs
 {
     private const string NAudioUrl = "https://naudio.github.io/NAudio/";
     private const string LicenseUrl = "https://www.gnu.org/licenses/gpl-3.0.html";
+    private const string HydrogenKitsUrl = "https://github.com/hydrogen-music/hydrogen/tree/main/data/drumkits";
 
     public static void Error(IWin32Window owner, string heading, string text = "") => Show(owner, TaskDialogIcon.Error, heading, text);
 
@@ -56,6 +57,68 @@ internal static class Dialogs
         return TaskDialog.ShowDialog(owner, page) == delete;
     }
 
+    /// <summary>
+    /// Die Anleitung für eigene Kits, ganz ohne Aufklappen. Fehlen alle Kits, steht das in der Überschrift.
+    /// „Ordner öffnen“ lässt den Dialog offen, damit man beim Kopieren weiterlesen kann.
+    /// </summary>
+    public static void ShowKitGuide(IWin32Window owner, string kitFolder, bool noKitsFound = false)
+    {
+        var openFolder = new TaskDialogButton("Ordner öffnen") { AllowCloseDialog = false };
+        openFolder.Click += (_, _) =>
+        {
+            try
+            {
+                Directory.CreateDirectory(kitFolder);
+                Process.Start(new ProcessStartInfo(kitFolder) { UseShellExecute = true });
+            }
+            catch (Exception ex) when (ex is Win32Exception or IOException or UnauthorizedAccessException)
+            {
+                Debug.WriteLine($"Kit-Ordner nicht geöffnet: {ex.Message}");
+            }
+        };
+
+        var page = new TaskDialogPage
+        {
+            Caption = AppSettings.AppName,
+            Heading = noKitsFound ? "Es wurden keine Kits gefunden." : "So legst du eigene Kits an",
+            Text = (noKitsFound ? "Installiere ein Kit-Paket oder lege ein eigenes Kit an.\n\n" : string.Empty)
+                + "Ein Kit ist ein Ordner mit bis zu acht WAV-Dateien, eine Datei je Spur. Lege ihn im Ordner\n"
+                + "für eigene Kits an:\n"
+                + $"{kitFolder}\n"
+                + "Klicke danach auf der Karte Einstellungen auf „Kits neu einlesen“.\n\n"
+                + "Reihenfolge und Namen\n"
+                + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
+                + "Die Spuren folgen dem Alphabet der Dateinamen. Mit einer Zahl am Anfang legst du die\n"
+                + "Reihenfolge fest, etwa „1 Crash.wav“.Die Zahl wird nicht angezeigt, der Rest des Namens wird\n"
+                + "zum Spurnamen. Dasselbe gilt für die Ordnernamen der Kits.\n"
+                + "Bei eigenen Kits kannst du eine Spur später noch umbenennen (Rechtsklick auf Namen im Raster).\n\n"
+                + "Empfohlene Belegung\n"
+                + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
+                + "Damit ein Pattern nach einem Kit-Wechsel passt, sind alle mitgelieferten Kits so aufgebaut:\n"
+                + "1 Becken, 2 bis 4 Toms oder Percussion, 5 offene Hi-Hat, 6 geschlossene Hi-Hat, 7 Snare, 8 Kick.\n\n"
+                + "Klänge aufbereiten\n"
+                + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
+                + "Abtastrate und Bittiefe sind beliebig, drums4me rechnet selbst um und mischt Stereo zu Mono.\n"
+                + "Schneide Stille am Anfang ab, sonst kommt der Schlag zu spät. Kürze lange Ausklänge von Becken\n"
+                + "und offener Hi-Hat, denn drums4me stoppt eine klingende Hi-Hat nicht.\n\n"
+                + "Mehrere Kits ordnen\n"
+                + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
+                + "Ein Ordner ohne eigene WAV-Dateien, aber mit Kit-Ordnern, ergibt eine sog. Kits-Sammlung.",
+            Icon = TaskDialogIcon.None,
+            EnableLinks = true,
+            AllowCancel = true,
+            Buttons = { openFolder, TaskDialogButton.Close },
+            DefaultButton = TaskDialogButton.Close,
+            Footnote = new TaskDialogFootnote
+            {
+                Text = $"Freie Klänge gibt es zum Beispiel bei <a href=\"{HydrogenKitsUrl}\">Hydrogen</a>. "
+                    + $"Achte vor einer Weitergabe auf die Lizenz.",
+            },
+        };
+        page.LinkClicked += Page_LinkClicked;
+        TaskDialog.ShowDialog(owner, page);
+    }
+
     public static void ShowAbout(Form owner)
     {
         var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3);
@@ -91,7 +154,7 @@ internal static class Dialogs
                 + "Alt+Plus, Alt+Minus: Lautstärke um 5 %\n\n"
                 + "Befehle\n"
                 + "Strg+N: Neu\n"
-                + "Strg+O: Karte Datei, Esc: zurück zur Karte Start\n"
+                + "Strg+O oder Alt+D: Karte Datei, Esc: zurück zur Karte Start\n"
                 + "Strg+F: Projekte suchen\n"
                 + "In der Projektliste: F2 umbenennen, Entf in den Papierkorb, Alt+Eingabe Eigenschaften,\n"
                 + "Strg+E im Editor bearbeiten, Strg+Umschalt+C Dateipfad kopieren\n"

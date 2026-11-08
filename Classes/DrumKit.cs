@@ -22,9 +22,10 @@ internal sealed partial class DrumKit
     private readonly float[][] _samples = new float[Project.TrackCount][];
     private bool _loaded;
 
-    private DrumKit(string name, string[] files, bool isOwn, string? collection = null)
+    private DrumKit(string name, string folder, string[] files, bool isOwn, string? collection = null)
     {
         Name = name;
+        Folder = folder;
         IsOwn = isOwn;
         Collection = collection;
         _files = files;
@@ -37,9 +38,12 @@ internal sealed partial class DrumKit
     }
 
     /// <summary>Stumme Rückfallebene, falls der Kit-Ordner leer ist.</summary>
-    public static DrumKit Empty { get; } = new("(kein Kit)", [], false);
+    public static DrumKit Empty { get; } = new("(kein Kit)", string.Empty, [], false);
 
     public string Name { get; }
+
+    /// <summary>Der Ordner mit den Klängen. Leer beim stummen Ersatz-Kit.</summary>
+    public string Folder { get; }
 
     /// <summary>Liegt das Kit im Ordner des Benutzers? Nur dort darf das Programm Dateien umbenennen.</summary>
     public bool IsOwn { get; }
@@ -83,7 +87,7 @@ internal sealed partial class DrumKit
             var files = TrackFiles(folder);
             if (files.Length > 0)
             {
-                kits.Add(new DrumKit(CleanName(Path.GetFileName(folder)), files, isOwn));
+                kits.Add(new DrumKit(CleanName(Path.GetFileName(folder)), folder, files, isOwn));
                 continue;
             }
 
@@ -93,7 +97,7 @@ internal sealed partial class DrumKit
                 files = TrackFiles(kitFolder);
                 if (files.Length > 0)
                 {
-                    kits.Add(new DrumKit(CleanName(Path.GetFileName(kitFolder)), files, isOwn, Path.GetFileName(folder)));
+                    kits.Add(new DrumKit(CleanName(Path.GetFileName(kitFolder)), kitFolder, files, isOwn, Path.GetFileName(folder)));
                 }
             }
         }

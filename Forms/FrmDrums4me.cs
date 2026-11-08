@@ -105,9 +105,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
             // Die Trenner innerhalb eines Bereichs sollen auch auf Dunkel schwächer sein als die Bereichsgrenzen.
             lineFlash.BackColor = Color.FromArgb(56, 56, 56);
-            lineKit.BackColor = lineFlash.BackColor;
             lineCommands.BackColor = lineFlash.BackColor;
             lineWindowCommands.BackColor = lineFlash.BackColor;
+            lineKitFolders.BackColor = lineFlash.BackColor;
+
         }
         Directory.CreateDirectory(KitFolder);
         ApplyProjectFolder();
@@ -273,6 +274,9 @@ public partial class FrmDrums4me : Form, IMessageFilter
         {
             Keys.Control | Keys.N => () => ButtonNew_Click(this, EventArgs.Empty),
             Keys.Control | Keys.O => () => ribbonTabs.SelectedTab = projectBrowser.Visible ? tabPageStart : tabPageFile,
+
+            // Wie in den Office-Programmen: Alt+D öffnet die Karte Datei, Esc führt zurück.
+            Keys.Alt | Keys.D => () => ribbonTabs.SelectedTab = tabPageFile,
             Keys.Control | Keys.F => FocusSearch,
             Keys.Control | Keys.S => () => SaveProject(),
             Keys.Control | Keys.Shift | Keys.S => () => SaveProjectAs(),
@@ -306,6 +310,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         {
             var chosen = otherFolderDialog.SelectedPath;
             _otherFolder = string.Equals(chosen, _projectFolder, StringComparison.OrdinalIgnoreCase) ? null : chosen;
+            UpdateDefaultFolderButton();
             UseWaitCursor = true;
             try
             {
@@ -318,6 +323,26 @@ public partial class FrmDrums4me : Form, IMessageFilter
             FocusProjectList();
         }
     }
+    /// <summary>Zurück vom anderen Ordner zum Speicherort aus den Einstellungen, ohne dessen Pfad kennen zu müssen.</summary>
+    private void ButtonDefaultFolder_Click(object? sender, EventArgs e)
+    {
+        _otherFolder = null;
+        UpdateDefaultFolderButton();
+        RefreshProjectBrowser();
+        FocusProjectList();
+    }
+
+    /// <summary>
+    /// Der Hinweis in der Statuszeile nennt den Pfad. Der Knopf bleibt immer bedienbar: Gesperrte flache Knöpfe
+    /// malt der Dunkelmodus mit hellem Hintergrund. Im Speicherort liest ein Klick die Liste einfach neu ein.
+    /// </summary>
+    private void UpdateDefaultFolderButton()
+    {
+        buttonDefaultFolder.AccessibleDescription = _otherFolder is null
+            ? $"Zeigt die Projekte im Speicherort aus den Einstellungen: {_projectFolder}"
+            : $"Zeigt wieder die Projekte im Speicherort aus den Einstellungen: {_projectFolder}";
+    }
+
     /// <summary>Ein langer Pfad würde die Anzahl aus der Statuszeile drängen. Dann steht nur der Ordnername da, der ganze Pfad im Tooltip.</summary>
     private void ProjectBrowser_CountChanged(object? sender, EventArgs e)
     {
@@ -555,13 +580,16 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
     }
 
-    /// <summary>Spielt über das gewählte Gerät. Ist es nicht angeschlossen, über den Windows-Standard, damit das Üben nicht daran scheitert.</summary>
+    /// <summary>
+    /// Spielt über das gewählte Gerät. Ist es nicht angeschlossen, über den Windows-Standard, damit das Üben nicht daran scheitert.
+    /// Die Auswahl stellt sich dann ebenfalls auf den Windows-Standard um, siehe <see cref="FillAudioDevices"/>.
+    /// </summary>
     private WasapiPlayer CreateOutput(out MMDevice? device)
     {
         device = AudioDevices.Open(_settings.AudioDeviceId);
         if (device is null && !string.IsNullOrEmpty(_settings.AudioDeviceId))
         {
-            ShowNotice($"„{_settings.AudioDeviceName}“ ist nicht angeschlossen, gespielt wird über den Windows-Standard.");
+            FillAudioDevices();
         }
 
         var builder = new WasapiPlayerBuilder();
@@ -1304,8 +1332,8 @@ public partial class FrmDrums4me : Form, IMessageFilter
         UpdateTrainerStatus();
         _project.PrepareSequencePatterns();
 
-        var kit = _kits.Find(IsProjectKit) ?? _kits.FirstOrDefault() ?? DrumKit.Empty;
-        comboKit.SelectedItem = kit;
+        var kit = _kits.Find(IsProjectKit) ?? _kits.Find(other => !IsHiddenKit(other)) ?? _kits.FirstOrDefault() ?? DrumKit.Empty;
+        FillKitList(kit);
         _updatingUi = false;
 
         UseKit(kit);
@@ -1332,12 +1360,26 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
     // ==================== Kits ====================
 
-    private void ScanKits()
+    /// <summary>Liest die Kits neu ein. In die Auswahlliste kommen sie erst mit dem Projekt, siehe <see cref="FillKitList"/>.</summary>
+    private void ScanKits() => _kits = DrumKit.Scan(SharedKitFolder, KitFolder);
+
+    /// <summary>
+    /// Die Auswahlliste zeigt nur die Kits, die du nicht ausgeblendet hast. Das Kit des Projekts steht immer darin,
+    /// auch wenn es ausgeblendet ist, sonst wäre unklar, womit das Projekt gerade klingt.
+    /// </summary>
+    private void FillKitList(DrumKit current)
     {
-        _kits = DrumKit.Scan(SharedKitFolder, KitFolder);
+        var wasUpdating = _updatingUi;
+        _updatingUi = true;
+        comboKit.BeginUpdate();
         comboKit.Items.Clear();
-        comboKit.Items.AddRange([.. _kits]);
+        comboKit.Items.AddRange([.. _kits.Where(kit => kit == current || !IsHiddenKit(kit))]);
+        comboKit.SelectedItem = current;
+        comboKit.EndUpdate();
+        _updatingUi = wasUpdating;
     }
+
+    private bool IsHiddenKit(DrumKit kit) => _settings.HiddenKits?.Contains(kit.Name, StringComparer.OrdinalIgnoreCase) == true;
 
     /// <summary>Die aufgeklappte Liste nennt auch den Ordner des Kits. Im geschlossenen Feld ist dafür zu wenig Platz.</summary>
     private void ComboKit_DrawItem(object? sender, DrawItemEventArgs e)
@@ -1375,8 +1417,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
         stepGrid.Invalidate();
     }
 
-    private void ShowNoKitsMessage() =>
-        Dialogs.Info(this, "Es wurden keine Kits gefunden.", $"Installiere ein Kit-Paket, oder lege im Ordner für eigene Kits für jedes Kit einen Unterordner mit bis zu acht WAV-Dateien an:\n{KitFolder}\n\nDu öffnest ihn auf der Karte „Einstellungen“.\n\nDie Spuren erscheinen in alphabetischer Reihenfolge der Dateinamen. Mit einer Zahl am Anfang des Namens legst du die Reihenfolge selbst fest, zum Beispiel „1 Crash.wav“. Die Zahl wird nicht angezeigt.");
+    /// <summary>Ohne Kits erscheint gleich die Anleitung, dieselbe wie hinter „Anleitung…“ in den Einstellungen.</summary>
+    private void ShowNoKitsMessage() => Dialogs.ShowKitGuide(this, KitFolder, noKitsFound: true);
+
+    private void ButtonKitGuide_Click(object? sender, EventArgs e) => Dialogs.ShowKitGuide(this, KitFolder);
 
     // ==================== Dateien ====================
 
@@ -1616,13 +1660,21 @@ public partial class FrmDrums4me : Form, IMessageFilter
     }
 
     /// <summary>Liest die Geräte bei jedem Aufklappen neu, damit ein gerade angestecktes Interface gleich erscheint.</summary>
+    /// <summary>
+    /// Ist das gewählte Gerät nicht mehr da, gilt dauerhaft wieder der Windows-Standard. Die Auswahl soll nie ein Gerät
+    /// zeigen, über das gar nicht gespielt wird. Kommt das Gerät zurück, wählst du es einfach wieder aus.
+    /// </summary>
     private void FillAudioDevices()
     {
         var choices = AudioDevices.List();
         var id = _settings.AudioDeviceId;
         if (!string.IsNullOrEmpty(id) && !choices.Exists(choice => choice.Id == id))
         {
-            choices.Add(new AudioDeviceChoice(id, $"{_settings.AudioDeviceName} (nicht angeschlossen)"));
+            ShowNotice($"„{_settings.AudioDeviceName}“ ist nicht mehr angeschlossen. drums4me spielt jetzt über den Windows-Standard.");
+            _settings.AudioDeviceId = null;
+            _settings.AudioDeviceName = null;
+            _settings.Save();
+            id = null;
         }
 
         _updatingUi = true;
@@ -1697,12 +1749,36 @@ public partial class FrmDrums4me : Form, IMessageFilter
         ShowKitCount();
     }
 
-    private void ShowKitCount() => labelKitCount.Text = _kits.Count switch
+    /// <summary>Die Zahl der Kits steht in der Statuszeile, sobald die Maus auf „Kits auswählen“ zeigt.</summary>
+    private void ShowKitCount()
     {
-        0 => "Keine Kits gefunden",
-        1 => "1 Kit gefunden",
-        _ => $"{_kits.Count} Kits gefunden",
-    };
+        var shown = _kits.Count(kit => !IsHiddenKit(kit));
+        var found = _kits.Count switch
+        {
+            0 => "Keine Kits gefunden.",
+            1 => "1 Kit gefunden.",
+            _ => shown == _kits.Count ? $"{_kits.Count} Kits gefunden, alle in der Auswahl." : $"{_kits.Count} Kits gefunden, {shown} davon in der Auswahl.",
+        };
+        buttonSelectKits.AccessibleDescription = $"Legt fest, welche Kits in der Auswahl darüber erscheinen. {found}";
+        toolTip.SetToolTip(buttonSelectKits, found);
+    }
+
+    /// <summary>Kits, die gerade nicht installiert sind, bleiben ausgeblendet, falls sie wiederkommen.</summary>
+    private void ButtonSelectKits_Click(object? sender, EventArgs e)
+    {
+        using var dialog = new FrmKits { OwnKitFolder = KitFolder };
+        dialog.Fill(_kits, _settings.HiddenKits ?? []);
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        var known = new HashSet<string>(_kits.Select(kit => kit.Name), StringComparer.OrdinalIgnoreCase);
+        _settings.HiddenKits = [.. (_settings.HiddenKits ?? []).Where(name => !known.Contains(name)), .. dialog.HiddenKits];
+        _settings.Save();
+        FillKitList(_kit);
+        ShowKitCount();
+    }
 
     /// <summary>Stellt den Projektordner ein. Ist der gewählte Ordner nicht erreichbar, gilt vorerst der Standardordner.</summary>
     private void ApplyProjectFolder()
@@ -1719,6 +1795,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
 
         _otherFolder = null;
+        UpdateDefaultFolderButton();
         saveFileDialog.InitialDirectory = _projectFolder;
         textBoxProjectFolder.Text = _projectFolder;
     }
