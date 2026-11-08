@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 # Setup entsteht aus Installer.iss
 drums4meSetup.exe
+/drums4me-Demo.mp4
