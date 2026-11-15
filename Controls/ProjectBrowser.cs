@@ -19,7 +19,6 @@ public sealed partial class ProjectBrowser : UserControl
     private const string SortUp = " ▲";
     private const string SortDown = " ▼";
 
-    private static readonly CultureInfo German = CultureInfo.GetCultureInfo("de-DE");
 
     private readonly Dictionary<ColumnHeader, string> _titles = [];
     private readonly Dictionary<string, int> _defaultWidths;
@@ -34,6 +33,8 @@ public sealed partial class ProjectBrowser : UserControl
     public ProjectBrowser()
     {
         InitializeComponent();
+        Lng.Apply(this);
+        Lng.Apply(projectMenu);
         foreach (ColumnHeader column in listProjects.Columns)
         {
             _titles[column] = column.Text;
@@ -183,8 +184,8 @@ public sealed partial class ProjectBrowser : UserControl
         listProjects.EndUpdate();
 
         CountText = shown.Count == _entries.Count
-            ? (_entries.Count == 1 ? "1 Projekt" : $"{_entries.Count} Projekte")
-            : $"{shown.Count} von {_entries.Count} Projekten";
+            ? (_entries.Count == 1 ? Lng.T("1 Projekt") : string.Format(Lng.T("{0} Projekte"), _entries.Count))
+            : string.Format(Lng.T("{0} von {1} Projekten"), shown.Count, _entries.Count);
         CountChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -202,8 +203,8 @@ public sealed partial class ProjectBrowser : UserControl
                 : column == columnModified ? ModifiedText(entry.Modified, DateTime.Now)
                 : column == columnTempo ? (entry.Unreadable ? string.Empty : entry.Bpm.ToString())
                 : column == columnMeter ? entry.MeterText
-                : entry.Unreadable ? "(nicht lesbar)"
-                : entry.KitMissing ? $"{entry.KitName} (fehlt)"
+                : entry.Unreadable ? Lng.T("(nicht lesbar)")
+                : entry.KitMissing ? string.Format(Lng.T("{0} (fehlt)"), entry.KitName)
                 : entry.KitName;
             var subItem = item.SubItems.Add(text);
             if (column == columnKit && (entry.KitMissing || entry.Unreadable))
@@ -220,10 +221,10 @@ public sealed partial class ProjectBrowser : UserControl
         var daysAgo = (now.Date - modified.Date).Days;
         var day = daysAgo switch
         {
-            0 => "Heute",
-            1 => "Gestern",
-            >= 2 and <= WeekdayDays => modified.ToString("dddd", German),
-            _ => modified.ToString("dd.MM.yyyy"),
+            0 => Lng.T("Heute"),
+            1 => Lng.T("Gestern"),
+            >= 2 and <= WeekdayDays => modified.ToString("dddd", Lng.FormatCulture),
+            _ => Lng.IsEnglish ? modified.ToString("d", CultureInfo.CurrentCulture) : modified.ToString("dd.MM.yyyy"),
         };
         return $"{day} {modified:HH:mm}";
     }
@@ -336,7 +337,7 @@ public sealed partial class ProjectBrowser : UserControl
         }
         catch (Win32Exception ex)
         {
-            Dialogs.Error((IWin32Window?)FindForm() ?? this, "Der Editor ließ sich nicht starten.", ex.Message);
+            Dialogs.Error((IWin32Window?)FindForm() ?? this, Lng.T("Der Editor ließ sich nicht starten."), ex.Message);
         }
     }
 
@@ -353,12 +354,12 @@ public sealed partial class ProjectBrowser : UserControl
         try
         {
             Clipboard.SetText(entry.FilePath);
-            NoticeRequested?.Invoke(this, "Der Dateipfad steht in der Zwischenablage.");
+            NoticeRequested?.Invoke(this, Lng.T("Der Dateipfad steht in der Zwischenablage."));
         }
         catch (ExternalException ex)
         {
             // Ein anderes Programm hält die Zwischenablage gerade fest.
-            Dialogs.Error((IWin32Window?)FindForm() ?? this, "Der Dateipfad ließ sich nicht kopieren.", ex.Message);
+            Dialogs.Error((IWin32Window?)FindForm() ?? this, Lng.T("Der Dateipfad ließ sich nicht kopieren."), ex.Message);
         }
     }
 

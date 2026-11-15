@@ -35,17 +35,17 @@ internal static partial class ProjectFiles
 
         if (name.Length == 0)
         {
-            problem = "Der Name darf nicht leer sein.";
+            problem = Lng.T("Der Name darf nicht leer sein.");
             return false;
         }
         if (name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
         {
-            problem = "Ein Name darf keines dieser Zeichen enthalten: \\ / : * ? \" < > |";
+            problem = Lng.T("Ein Name darf keines dieser Zeichen enthalten:") + " \\ / : * ? \" < > |";
             return false;
         }
         if (name.EndsWith('.'))
         {
-            problem = "Ein Name darf nicht mit einem Punkt enden.";
+            problem = Lng.T("Ein Name darf nicht mit einem Punkt enden.");
             return false;
         }
 
@@ -54,7 +54,7 @@ internal static partial class ProjectFiles
         // Nur die Groß- und Kleinschreibung zu ändern, ist erlaubt.
         if (File.Exists(target) && !string.Equals(target, path, StringComparison.OrdinalIgnoreCase))
         {
-            problem = $"In diesem Ordner gibt es schon ein Projekt „{name}“.";
+            problem = string.Format(Lng.T("In diesem Ordner gibt es schon ein Projekt „{0}“."), name);
             return false;
         }
         return true;
@@ -64,7 +64,7 @@ internal static partial class ProjectFiles
     public static string DuplicateTarget(string path)
     {
         var folder = Path.GetDirectoryName(path)!;
-        var name = Path.GetFileNameWithoutExtension(path) + " - Kopie";
+        var name = Path.GetFileNameWithoutExtension(path) + Lng.T(" - Kopie");
         var target = Path.Combine(folder, name + Extension);
         for (var number = 2; File.Exists(target); number++)
         {
@@ -106,7 +106,7 @@ internal static partial class ProjectFiles
             }
             if (result != 0)
             {
-                throw new IOException($"Windows meldet den Fehler 0x{result:X}. Vielleicht ist die Datei gerade in einem anderen Programm geöffnet.");
+                throw new IOException(string.Format(Lng.T("Windows meldet den Fehler 0x{0:X}. Vielleicht ist die Datei gerade in einem anderen Programm geöffnet."), result));
             }
         }
         finally

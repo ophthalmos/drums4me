@@ -15,6 +15,8 @@ public partial class FrmTempo : Form
     private const int WmKeyDown = 0x0100;
     private const long KeyRepeatFlag = 1L << 30;   // gesetzt, wenn eine Taste nur gedrückt gehalten wird
     private const double GoodEnoughSeconds = 20;
+    private const double SettledSeconds = 3;   // so lange muss die Erkennung denselben Wert zeigen
+    private const int SettledTaps = 4;         // und so viele Schläge braucht ein getipptes Tempo
 
     // KSDATAFORMAT_SUBTYPE_IEEE_FLOAT: So meldet Windows Gleitkomma-Ton im erweiterten Format.
     private static readonly Guid IeeeFloatSubFormat = new("00000003-0000-0010-8000-00aa00389b71");
@@ -30,11 +32,14 @@ public partial class FrmTempo : Form
     private double _factor = 1;
     private double? _estimate;
     private bool _sure;
+    private int _heardBpm;
+    private double _heardSince;
     private string? _captureProblem;
 
     public FrmTempo()
     {
         InitializeComponent();
+        Lng.Apply(this);
     }
 
     /// <summary>Das ermittelte Tempo im Bereich, den das Programm unterstützt.</summary>
@@ -83,7 +88,7 @@ public partial class FrmTempo : Form
                 || (format is WaveFormatExtensible extensible && extensible.SubFormat == IeeeFloatSubFormat);
             if (_bytesPerSample is not (2 or 3 or 4) || (_isFloat && _bytesPerSample != 4))
             {
-                throw new NotSupportedException($"Das Tonformat mit {format.BitsPerSample} Bit wird nicht unterstützt.");
+                throw new NotSupportedException(string.Format(Lng.T("Das Tonformat mit {0} Bit wird nicht unterstützt."), format.BitsPerSample));
             }
 
             _detector = new TempoDetector(format.SampleRate);
@@ -168,9 +173,25 @@ public partial class FrmTempo : Form
         {
             _estimate = estimate.Bpm;
             _sure = estimate.IsSure;
+
+            // Seit wann zeigt die Erkennung denselben Wert? Daran hängt, ob das Ergebnis als gefestigt gilt.
+            var rounded = (int)Math.Round(estimate.Bpm);
+            if (rounded != _heardBpm)
+            {
+                _heardBpm = rounded;
+                _heardSince = Now;
+            }
         }
         ShowState();
     }
+
+    /// <summary>
+    /// Steht das Ergebnis? Beim Mithören muss der Rhythmus eindeutig sein und der Wert sich einige Sekunden gehalten haben,
+    /// beim Tippen braucht es ein paar Schläge. Bis dahin erscheint die Zahl grau.
+    /// </summary>
+    private bool IsSettled => _tap.HasTempo
+        ? _tap.TapCount >= SettledTaps
+        : _estimate is not null && _sure && Now - _heardSince >= SettledSeconds;
 
     // ==================== Tippen ====================
 
@@ -195,7 +216,7 @@ public partial class FrmTempo : Form
     {
         flashTimer.Stop();
         labelBpm.BackColor = SystemColors.Control;
-        labelBpm.ForeColor = SystemColors.ControlText;
+        ShowState();   // setzt auch die Schriftfarbe wieder passend zum Ergebnis
     }
 
     // ==================== Anzeige und Bedienung ====================
@@ -203,36 +224,50 @@ public partial class FrmTempo : Form
     private void ShowState()
     {
         var hasResult = Source is not null;
+        var hadResult = buttonApply.Enabled;
         labelBpm.Text = hasResult ? $"{Bpm} BPM" : "– BPM";
+        if (!flashTimer.Enabled)
+        {
+            labelBpm.ForeColor = hasResult && IsSettled ? SystemColors.ControlText : SystemColors.GrayText;
+        }
         labelStatus.Text = StatusText();
         buttonApply.Enabled = hasResult;
 
         // Halb und Doppelt nur, solange das Ergebnis im Bereich des Programms bleibt. Sonst stünde dort ein abgeschnittener Wert.
+        // Die Knöpfe nennen ihr Ergebnis, damit man die Alternative sieht, ohne sie erst auszuprobieren.
         var shown = (Source ?? 0) * _factor;
         buttonHalf.Enabled = hasResult && shown / 2 >= Project.MinBpm;
         buttonDouble.Enabled = hasResult && shown * 2 <= Project.MaxBpm;
+        buttonHalf.Text = buttonHalf.Enabled ? string.Format(Lng.T("Halb ({0})"), (int)Math.Round(shown / 2)) : Lng.T("Halb");
+        buttonDouble.Text = buttonDouble.Enabled ? string.Format(Lng.T("Doppelt ({0})"), (int)Math.Round(shown * 2)) : Lng.T("Doppelt");
+
+        // Der Fokus zeigt die Hauptaktion: ohne Ergebnis „Abbrechen“ (das regelt die Tabulatorfolge), mit Ergebnis „Übernehmen“.
+        if (hasResult && !hadResult && ActiveControl == buttonCancel)
+        {
+            buttonApply.Focus();
+        }
     }
 
     private string StatusText()
     {
         if (_tap.TapCount > 0)
         {
-            return _tap.IsExpired(Now) ? "Pause erkannt: Der nächste Schlag beginnt neu."
-                : _tap.TapCount == 1 ? "1 Schlag: Tippe im Takt weiter."
-                : $"{_tap.TapCount} Schläge: Das getippte Tempo gilt.";
+            return _tap.IsExpired(Now) ? Lng.T("Pause erkannt: Der nächste Schlag beginnt neu.")
+                : _tap.TapCount == 1 ? Lng.T("1 Schlag: Tippe im Takt weiter.")
+                : string.Format(Lng.T("{0} Schläge: Das getippte Tempo gilt."), _tap.TapCount);
         }
 
         if (_captureProblem is not null)
         {
-            return $"Tippe mit der Leertaste, mithören geht nicht: {_captureProblem}";
+            return string.Format(Lng.T("Tippe mit der Leertaste, mithören geht nicht: {0}"), _captureProblem);
         }
 
         var heard = _detector?.HeardSeconds ?? 0;
-        return heard <= 0 ? "Warte auf Ton oder auf deinen ersten Schlag."
-            : _estimate is null ? $"Höre zu: {heard:F0} s. Das erste Ergebnis kommt gleich."
-            : !_sure ? $"Höre zu: {heard:F0} s. Der Rhythmus ist nicht eindeutig, prüfe das Ergebnis."
-            : heard < GoodEnoughSeconds ? $"Höre zu: {heard:F0} s. Das Ergebnis wird noch genauer."
-            : $"Höre zu: {heard:F0} s. Stimmt nur das halbe oder doppelte Tempo? Dann korrigiere es.";
+        return heard <= 0 ? Lng.T("Warte auf Ton oder auf deinen ersten Schlag.")
+            : _estimate is null ? string.Format(Lng.T("Höre zu: {0:F0} s. Das erste Ergebnis kommt gleich."), heard)
+            : !_sure ? string.Format(Lng.T("Höre zu: {0:F0} s. Der Rhythmus ist nicht eindeutig, prüfe das Ergebnis."), heard)
+            : heard < GoodEnoughSeconds ? string.Format(Lng.T("Höre zu: {0:F0} s. Das Ergebnis wird noch genauer."), heard)
+            : string.Format(Lng.T("Höre zu: {0:F0} s. Stimmt nur das halbe oder doppelte Tempo? Dann korrigiere es."), heard);
     }
 
     private void ButtonHalf_Click(object? sender, EventArgs e)
@@ -253,6 +288,7 @@ public partial class FrmTempo : Form
         _detector?.Reset();
         _estimate = null;
         _sure = false;
+        _heardBpm = 0;
         _factor = 1;
         ShowState();
     }

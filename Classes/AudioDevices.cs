@@ -12,7 +12,7 @@ internal sealed record AudioDeviceChoice(string? Id, string Name)
 /// <summary>Die Ausgabegeräte von Windows, etwa Lautsprecher oder ein Audio-Interface für den Kopfhörer.</summary>
 internal static class AudioDevices
 {
-    public const string DefaultName = "Windows-Standard";
+    public static string DefaultName => Lng.T("Windows-Standard");
 
     /// <summary>Alle angeschlossenen Ausgabegeräte, alphabetisch, vorneweg der Windows-Standard.</summary>
     public static List<AudioDeviceChoice> List()

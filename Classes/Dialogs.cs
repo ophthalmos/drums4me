@@ -20,15 +20,15 @@ internal static class Dialogs
     /// <summary>Fragt nach dem Speichern. Liefert Yes (speichern), No (verwerfen) oder Cancel (abbrechen).</summary>
     public static DialogResult AskSaveChanges(IWin32Window owner, string projectName, IReadOnlyList<string> changes)
     {
-        var save = new TaskDialogButton("Speichern");
-        var discard = new TaskDialogButton("Nicht speichern");
+        var save = new TaskDialogButton(Lng.T("Speichern"));
+        var discard = new TaskDialogButton(Lng.T("Nicht speichern"));
         var page = new TaskDialogPage
         {
             Caption = AppSettings.AppName,
-            Heading = "Möchtest du die Änderungen speichern?",
+            Heading = Lng.T("Möchtest du die Änderungen speichern?"),
             Text = ProjectChanges.Summarize(projectName, changes),
             AllowCancel = true,
-            Buttons = { save, discard, TaskDialogButton.Cancel },
+            Buttons = { save, discard, CancelButton() },
             DefaultButton = save,
         };
 
@@ -40,18 +40,42 @@ internal static class Dialogs
         return result == discard ? DialogResult.No : DialogResult.Cancel;
     }
 
-    /// <summary>Fragt, bevor ein Projekt in den Papierkorb wandert. Liefert true, wenn es weg soll.</summary>
-    public static bool AskMoveToRecycleBin(IWin32Window owner, string projectName, bool isOpen)
+    /// <summary>
+    /// Bietet nach einem Wechsel von Sprache oder Darstellung den Neustart an. Liefert true für „Jetzt neu starten“.
+    /// <paramref name="language"/> legt die Sprache der Frage fest, ohne Angabe die laufende. Nach einem Sprachwechsel
+    /// erscheint sie schon in der neuen Sprache, denn die soll man ja lesen können.
+    /// </summary>
+    public static bool AskRestart(IWin32Window owner, string reason, string? language = null)
     {
-        var delete = new TaskDialogButton("In den Papierkorb");
+        var english = (language ?? Lng.CultureCode) == "en";
+        string Text(string german, string englishText) => english ? englishText : german;
+        var restart = new TaskDialogButton(Text("Jetzt neu starten", "Restart now"));
+        var later = new TaskDialogButton(Text("Später", "Later"));
         var page = new TaskDialogPage
         {
             Caption = AppSettings.AppName,
-            Heading = $"„{projectName}“ in den Papierkorb verschieben?",
-            Text = "Von dort kannst du das Projekt wiederherstellen."
-                + (isOpen ? "\n\nEs ist gerade geöffnet und bleibt es, bis du es schließt. Speichern legt dann eine neue Datei an." : string.Empty),
+            Heading = Text("drums4me jetzt neu starten?", "Restart drums4me now?"),
+            Text = reason,
+            Icon = TaskDialogIcon.Information,
             AllowCancel = true,
-            Buttons = { delete, TaskDialogButton.Cancel },
+            Buttons = { restart, later },
+            DefaultButton = restart,
+        };
+        return TaskDialog.ShowDialog(owner, page) == restart;
+    }
+
+    /// <summary>Fragt, bevor ein Projekt in den Papierkorb wandert. Liefert true, wenn es weg soll.</summary>
+    public static bool AskMoveToRecycleBin(IWin32Window owner, string projectName, bool isOpen)
+    {
+        var delete = new TaskDialogButton(Lng.T("In den Papierkorb"));
+        var page = new TaskDialogPage
+        {
+            Caption = AppSettings.AppName,
+            Heading = string.Format(Lng.T("„{0}“ in den Papierkorb verschieben?"), projectName),
+            Text = Lng.T("Von dort kannst du das Projekt wiederherstellen.")
+                + (isOpen ? "\n\n" + Lng.T("Es ist gerade geöffnet und bleibt es, bis du es schließt. Speichern legt dann eine neue Datei an.") : string.Empty),
+            AllowCancel = true,
+            Buttons = { delete, CancelButton() },
             DefaultButton = delete,
         };
         return TaskDialog.ShowDialog(owner, page) == delete;
@@ -63,7 +87,8 @@ internal static class Dialogs
     /// </summary>
     public static void ShowKitGuide(IWin32Window owner, string kitFolder, bool noKitsFound = false)
     {
-        var openFolder = new TaskDialogButton("Ordner öffnen") { AllowCloseDialog = false };
+        var openFolder = new TaskDialogButton(Lng.T("Ordner öffnen")) { AllowCloseDialog = false };
+        var close = new TaskDialogButton(Lng.T("Schließen"));
         openFolder.Click += (_, _) =>
         {
             try
@@ -80,16 +105,16 @@ internal static class Dialogs
         var page = new TaskDialogPage
         {
             Caption = AppSettings.AppName,
-            Heading = noKitsFound ? "Es wurden keine Kits gefunden." : "So legst du eigene Kits an",
-            Text = (noKitsFound ? "Installiere ein Kit-Paket oder lege ein eigenes Kit an.\n\n" : string.Empty)
-                + "Ein Kit ist ein Ordner mit bis zu acht WAV-Dateien, eine Datei je Spur. Lege ihn im Ordner\n"
+            Heading = noKitsFound ? Lng.T("Es wurden keine Kits gefunden.") : Lng.T("So legst du eigene Kits an"),
+            Text = (noKitsFound ? Lng.T("Installiere ein Kit-Paket oder lege ein eigenes Kit an.") + "\n\n" : string.Empty)
+                + string.Format(Lng.T("KitGuide", "Ein Kit ist ein Ordner mit bis zu acht WAV-Dateien, eine Datei je Spur. Lege ihn im Ordner\n"
                 + "für eigene Kits an:\n"
-                + $"{kitFolder}\n"
+                + "{0}\n"
                 + "Klicke danach auf der Karte Einstellungen auf „Kits neu einlesen“.\n\n"
                 + "Reihenfolge und Namen\n"
                 + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
                 + "Die Spuren folgen dem Alphabet der Dateinamen. Mit einer Zahl am Anfang legst du die\n"
-                + "Reihenfolge fest, etwa „1 Crash.wav“.Die Zahl wird nicht angezeigt, der Rest des Namens wird\n"
+                + "Reihenfolge fest, etwa „1 Crash.wav“. Die Zahl wird nicht angezeigt, der Rest des Namens wird\n"
                 + "zum Spurnamen. Dasselbe gilt für die Ordnernamen der Kits.\n"
                 + "Bei eigenen Kits kannst du eine Spur später noch umbenennen (Rechtsklick auf Namen im Raster).\n\n"
                 + "Empfohlene Belegung\n"
@@ -99,20 +124,21 @@ internal static class Dialogs
                 + "Klänge aufbereiten\n"
                 + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
                 + "Abtastrate und Bittiefe sind beliebig, drums4me rechnet selbst um und mischt Stereo zu Mono.\n"
-                + "Schneide Stille am Anfang ab, sonst kommt der Schlag zu spät. Kürze lange Ausklänge von Becken\n"
-                + "und offener Hi-Hat, denn drums4me stoppt eine klingende Hi-Hat nicht.\n\n"
+                + "Schneide Stille am Anfang ab, sonst kommt der Schlag zu spät. Kürze lange Ausklänge von Becken.\n"
+                + "Eine offene Hi-Hat stoppt drums4me selbst, sobald ein anderer Hi-Hat-Schlag folgt. Dafür müssen\n"
+                + "die Spurnamen passen, etwa „Hat Open“ und „Hat Closed“ oder „Hi-Hat offen“ und „Hi-Hat“.\n\n"
                 + "Mehrere Kits ordnen\n"
                 + "‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n"
-                + "Ein Ordner ohne eigene WAV-Dateien, aber mit Kit-Ordnern, ergibt eine sog. Kits-Sammlung.",
+                + "Ein Ordner ohne eigene WAV-Dateien, aber mit Kit-Ordnern, ergibt eine sog. Kits-Sammlung."), kitFolder),
             Icon = TaskDialogIcon.None,
             EnableLinks = true,
             AllowCancel = true,
-            Buttons = { openFolder, TaskDialogButton.Close },
-            DefaultButton = TaskDialogButton.Close,
+            Buttons = { openFolder, close },
+            DefaultButton = close,
             Footnote = new TaskDialogFootnote
             {
-                Text = $"Freie Klänge gibt es zum Beispiel bei <a href=\"{HydrogenKitsUrl}\">Hydrogen</a>. "
-                    + $"Achte vor einer Weitergabe auf die Lizenz.",
+                Text = string.Format(Lng.T("Freie Klänge gibt es zum Beispiel bei {0}. Achte vor einer Weitergabe auf die Lizenz."),
+                    $"<a href=\"{HydrogenKitsUrl}\">Hydrogen</a>"),
             },
         };
         page.LinkClicked += Page_LinkClicked;
@@ -125,17 +151,17 @@ internal static class Dialogs
         var copyright = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright;
         var page = new TaskDialogPage
         {
-            Caption = $"Über {AppSettings.AppName}",
+            Caption = string.Format(Lng.T("Über {0}"), AppSettings.AppName),
             Heading = $"{AppSettings.AppName} {version}",
-            Text = $"Step-Sequencer und Metronom\n\n{copyright}\n\n"
-                + $"Freie Software unter der <a href=\"{LicenseUrl}\">GNU General Public License, v3</a>.\n"
-                + "Du darfst das Programm unter deren Bedingungen weitergeben und ändern. Es kommt ohne jede Gewährleistung.\n\n"
-                + $"Verwendet <a href=\"{NAudioUrl}\">NAudio</a> von Mark Heath et al. (MIT-Lizenz).",
+            Text = Lng.T("Step-Sequencer und Metronom") + $"\n\n{copyright}\n\n"
+                + string.Format(Lng.T("Freie Software unter der {0}."), $"<a href=\"{LicenseUrl}\">GNU General Public License, v3</a>") + "\n"
+                + Lng.T("AboutTerms", "Du darfst das Programm unter deren Bedingungen weiter-\ngeben und ändern. Es kommt ohne jede Gewährleistung.") + "\n\n"
+                + string.Format(Lng.T("Verwendet {0} von Mark Heath et al. (MIT-Lizenz)."), $"<a href=\"{NAudioUrl}\">NAudio</a>"),
             Icon = owner.Icon is { } icon ? new TaskDialogIcon(icon) : TaskDialogIcon.Information,
             EnableLinks = true,
             AllowCancel = true,
             Buttons = { TaskDialogButton.OK },
-            Footnote = "              Die Kits gehören nicht zum Programm.\n              Die Rechte liegen bei ihren Urhebern.",
+            Footnote = "              " + Lng.T("Die Kits gehören nicht zum Programm.") + "\n              " + Lng.T("Die Rechte liegen bei ihren Urhebern."),
         };
         page.LinkClicked += Page_LinkClicked;
         TaskDialog.ShowDialog(owner, page);
@@ -146,8 +172,8 @@ internal static class Dialogs
         var page = new TaskDialogPage
         {
             Caption = AppSettings.AppName,
-            Heading = "Tastenkombinationen",
-            Text = "Wiedergabe und Tempo\n"
+            Heading = Lng.T("Tastenkombinationen"),
+            Text = Lng.T("Shortcuts", "Wiedergabe und Tempo\n"
                 + "Leertaste: Start und Stopp\n"
                 + "Plus, Minus: Tempo um 1 BPM\n"
                 + "Strg+Plus, Strg+Minus: Tempo um 5 BPM\n"
@@ -163,22 +189,29 @@ internal static class Dialogs
                 + "Strg+Z: Rückgängig\n"
                 + "Strg+Y: Wiederholen\n"
                 + "Strg+Entf: Pattern leeren\n"
+                + "Strg+C, Strg+V: markierte Zählzeit kopieren und einfügen, sonst das Pattern\n"
                 + "Strg+T: Tempo ermitteln (tippen oder mithören)\n"
                 + "Strg+Komma: Karte Einstellungen\n"
                 + "F1: diese Übersicht\n\n"
                 + "Maus im Raster\n"
+                + "Rechtsklick auf einen Schritt: Stärke wechseln (normal, betont, leise)\n"
+                + "Klick auf die Zahl einer Zählzeit: markieren, Ziehen auf eine andere: kopieren\n"
+                + "Strg + Klick auf einen Spurschalter: Nur diese Spur spielt\n"
                 + "Klick auf einen Spurnamen: Klang anhören\n"
                 + "Rechtsklick auf einen Spurnamen: weitere Möglichkeiten\n"
                 + "Strg + Ziehen an Volume oder Pitch: alle Spuren gemeinsam\n"
                 + "Doppelklick auf einen Regler: Standardwert\n"
-                + "Strg + Doppelklick auf Volume oder Pitch: Standardwert für alle Spuren",
+                + "Strg + Doppelklick auf Volume oder Pitch: Standardwert für alle Spuren"),
             Icon = owner.Icon is { } icon ? new TaskDialogIcon(icon) : TaskDialogIcon.Information,
             AllowCancel = true,
             Buttons = { TaskDialogButton.OK },
-            Footnote = "Beim Schreiben im Abfolge-Feld und in der Suche gehören Leertaste, Plus und Minus dem Text.",
+            Footnote = Lng.T("Beim Schreiben im Abfolge-Feld und in der Suche gehören Leertaste, Plus und Minus dem Text."),
         };
         TaskDialog.ShowDialog(owner, page);
     }
+
+    /// <summary>Die Standardknöpfe „Abbrechen“ und „Schließen“ beschriftet Windows in seiner eigenen Sprache, deshalb eigene.</summary>
+    private static TaskDialogButton CancelButton() => new(Lng.T("Abbrechen"));
 
     private static void Show(IWin32Window owner, TaskDialogIcon icon, string heading, string text)
     {

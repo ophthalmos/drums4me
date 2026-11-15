@@ -10,7 +10,6 @@ namespace Drums4me.Forms;
 
 public partial class FrmDrums4me : Form, IMessageFilter
 {
-    private const int OutputLatencyMs = 40;
     private const int MaxRestartTries = 5;
     private const int MaxDeviceLosses = 3;
     private const double DeviceLossWindowSeconds = 30;
@@ -19,10 +18,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private const int TempoBigStep = 5;
     private const int VolumeStep = 5;
     private const int TrainerDefaultRange = 20;
-    private const string RenameCaption = "&Umbenennen…";
-    private const string RenameLockedCaption = "Umbenennen (nur bei eigenen Kits)";
-    private const string CountInCaption = "Vorzählen";
-    private const string SequenceError = "Abfolge: Erlaubt sind nur die Ziffern 1 bis 4.";
+    private static string RenameCaption => Lng.T("&Umbenennen…");
+    private static string RenameLockedCaption => Lng.T("Umbenennen (nur bei eigenen Kits)");
+    private static string CountInCaption => Lng.T("Vorzählen");
+    private static string SequenceError => Lng.T("Abfolge: Erlaubt sind die Ziffern 0 bis 4 und Wiederholungen wie 1x8.");
     private const int WmMouseMove = 0x0200;
     private const int WmMouseLeave = 0x02A3;
 
@@ -48,7 +47,13 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private bool _sequenceActive;
     private const int MaxStatusPathLength = 60;
     private const int RibbonPagePadding = 4;
-    private const string AllFilterItems = "Alle";
+    private const int TrailingSpace = 12;   // so viel freier Platz muss hinter dem letzten Trenner bleiben
+    private const string TapSign = "♩ = ?";   // schmale Leerzeichen, damit die Zeile bei gleicher Breite größer sein kann
+    private const string TapWord = "Tap";
+    private const float TapSignScale = 1.5f;   // so viel größer als das Wort darunter
+    private const int TabMarkerHeight = 3;
+    private const int TabMarkerInset = 3;
+    private static string AllFilterItems => Lng.T("Alle");
     private const string PlaySymbol = "▶";
     private const string StopSymbol = "■";
 
@@ -63,7 +68,17 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private WasapiPlayer? _previewOutput;
     private MMDevice? _outputDevice;
     private MMDevice? _previewDevice;
+    private const int EmptyStepHintMs = 6000;   // so lange bleibt der Hinweis nach einem Rechtsklick auf einen leeren Schritt stehen
+
     private int _menuTrack;
+    private int _menuPattern;
+    private int _menuBeat;
+
+    // Was zuletzt kopiert wurde: ein PatternClip oder ein BeatClip. Die Ablage gilt nur im Programm.
+    private object? _clip;
+    private int _dragPattern = -1;   // das Pattern, dessen Knopf gerade gezogen wird
+    private Point _dragPatternStart;
+    private bool _draggingPattern;
     private long _playStart;
     private int _restartTries;
     private int _deviceLosses;
@@ -73,13 +88,35 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private string? _hoverHint;
     private string? _statusError;
     private string? _notice;
+    private readonly SystemColorMode _startColorMode;   // die Darstellung, mit der das Programm gestartet ist
+
+    /// <summary>Nach dem Schließen startet Program das Programm neu (nach einem Wechsel von Sprache oder Darstellung).</summary>
+    public bool RestartRequested { get; private set; }
+
+    /// <summary>Die Projektdatei, die beim Schließen offen war. Der Neustart öffnet sie wieder.</summary>
+    public string? OpenFile => _filePath;
 
     public FrmDrums4me()
     {
         InitializeComponent();
+        Lng.Apply(this, toolTip);
+        Lng.Apply(trackNameMenu);
+        Lng.Apply(demosMenu);
+        Lng.Apply(patternMenu);
+        Lng.Apply(beatMenu);
+        otherFolderDialog.Description = Lng.T(otherFolderDialog.Description);
+        projectFolderDialog.Description = Lng.T(projectFolderDialog.Description);
+        saveFileDialog.Filter = Lng.T(saveFileDialog.Filter);
+        saveFileDialog.Title = Lng.T(saveFileDialog.Title);
+        midiFileDialog.Filter = Lng.T(midiFileDialog.Filter);
+        midiFileDialog.Title = Lng.T(midiFileDialog.Title);
+        checkBoxOpenLast.Text = Lng.T("OpenLast", checkBoxOpenLast.Text);   // mehrzeilig, deshalb mit festem Schlüssel
+        labelTrainerEvery.Text = Lng.T("TrainerEvery", labelTrainerEvery.Text);   // „alle“: Der Schlüssel „Alle“ ist schon vergeben
+        buttonRedo.AccessibleName = Lng.T("Redo", buttonRedo.AccessibleName);   // „Wiederholen“ heißt sonst „Repeat“ wie bei der Abfolge
+        _startColorMode = _settings.ColorMode;
         _savedProject = _project.Snapshot();
         _history = new UndoHistory(_project);
-        _engine = new SequencerEngine(EngineState.From(_project, _kit));
+        _engine = new SequencerEngine(CurrentState());
     }
 
     /// <summary>Startet mit der angegebenen Datei statt mit der zuletzt benutzten.</summary>
@@ -104,22 +141,29 @@ public partial class FrmDrums4me : Form, IMessageFilter
             statusTime.BorderSides = ToolStripStatusLabelBorderSides.None;
 
             // Die Trenner innerhalb eines Bereichs sollen auch auf Dunkel schwächer sein als die Bereichsgrenzen.
-            lineFlash.BackColor = Color.FromArgb(56, 56, 56);
-            lineCommands.BackColor = lineFlash.BackColor;
-            lineWindowCommands.BackColor = lineFlash.BackColor;
-            lineKitFolders.BackColor = lineFlash.BackColor;
+            lineCommands.BackColor = Color.FromArgb(56, 56, 56);
+            lineWindowCommands.BackColor = lineCommands.BackColor;
+            lineKitFolders.BackColor = lineCommands.BackColor;
+            lineLatency.BackColor = lineCommands.BackColor;
 
         }
         Directory.CreateDirectory(KitFolder);
         ApplyProjectFolder();
         checkBoxFlash.Checked = _settings.FlashOnBar;
+        TopMost = _settings.AlwaysOnTop;
+        ShowQuickSwitches();
+        _settings.CountInVolume = Math.Clamp(_settings.CountInVolume, (int)numericClickVolume.Minimum, (int)numericClickVolume.Maximum);
+        numericClickVolume.Value = _settings.CountInVolume;
+        _settings.OutputLatencyMs = Math.Clamp(_settings.OutputLatencyMs, (int)numericLatency.Minimum, (int)numericLatency.Maximum);
+        numericLatency.Value = _settings.OutputLatencyMs;
         checkBoxOpenLast.Checked = _settings.OpenLastFile;
         FillAudioDevices();
         projectBrowser.SetColumnWidths(_settings.ColumnWidths);
         comboMeter.Items.AddRange([.. Meter.All]);
         ShowColorMode();
-        buttonOwnKits.AccessibleDescription = $"Öffnet den Ordner für eigene Kits: {KitFolder}";
-        buttonInstalledKits.AccessibleDescription = $"Öffnet den Ordner der installierten Kits: {SharedKitFolder}";
+        ShowLanguage();
+        buttonOwnKits.AccessibleDescription = string.Format(Lng.T("Öffnet den Ordner für eigene Kits: {0}"), KitFolder);
+        buttonInstalledKits.AccessibleDescription = string.Format(Lng.T("Öffnet den Ordner der installierten Kits: {0}"), SharedKitFolder);
 
         ActiveControl = buttonPlay;
         ScanKits();
@@ -138,6 +182,25 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         UpdateRibbonHeight();
         PlaceFileCommands();
+        PlaceTabMarker();
+    }
+
+    /// <summary>
+    /// Eine Linie in der Akzentfarbe zeigt, welche Karte offen ist. Windows hebt die offene Karte nur durch einen etwas
+    /// anderen Grund hervor, im Dunkelmodus sogar durch den dunkleren. Die Linie liegt am unteren Rand des Reiters.
+    /// </summary>
+    private void PlaceTabMarker()
+    {
+        if (ribbonTabs.SelectedIndex < 0)
+        {
+            return;
+        }
+
+        var tab = ribbonTabs.GetTabRect(ribbonTabs.SelectedIndex);
+        var inset = LogicalToDeviceUnits(TabMarkerInset);
+        var height = LogicalToDeviceUnits(TabMarkerHeight);
+        tabMarker.BackColor = Theme.Accent;
+        tabMarker.SetBounds(ribbonTabs.Left + tab.Left + inset, ribbonTabs.Top + tab.Bottom - height, tab.Width - (2 * inset), height);
     }
 
     /// <summary>
@@ -163,10 +226,26 @@ public partial class FrmDrums4me : Form, IMessageFilter
         // Auf der Karte „Datei“ hält ein Innenabstand die Gruppen rechts der Befehlsspalte.
         var page = ribbonTabs.DisplayRectangle;
         var width = page.Width - ribbonTabs.SelectedTab.Padding.Horizontal;
+        ShowTrailingDivider(flow, width);
         var height = (ribbonTabs.Height - page.Height) + flow.GetPreferredSize(new Size(width, 0)).Height + RibbonPagePadding;
         if (ribbonTabs.Height != height)
         {
             ribbonTabs.Height = height;
+        }
+    }
+
+    /// <summary>
+    /// Der Trenner nach der letzten Gruppe schließt die Karte nach rechts ab. Er erscheint nur, wenn dahinter
+    /// sichtbar freier Platz bleibt. Reicht die Breite knapp nicht, stünde er sonst allein in einer neuen Bandzeile.
+    /// </summary>
+    private void ShowTrailingDivider(FlowLayoutPanel flow, int width)
+    {
+        var divider = (Control)flow.Controls[^1];
+        var used = flow.Controls.Cast<Control>().Where(control => control != divider).Sum(control => control.Width + control.Margin.Horizontal);
+        var visible = used + divider.Width + LogicalToDeviceUnits(TrailingSpace) <= width;
+        if (divider.Visible != visible)
+        {
+            divider.Visible = visible;
         }
     }
 
@@ -261,7 +340,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
         };
         if (volumeChange != 0 && CanEditProject)
         {
-            trackBarVolume.Value = Math.Clamp(trackBarVolume.Value + volumeChange, trackBarVolume.Minimum, trackBarVolume.Maximum);
+            // Einen Regler dafür gibt es im Band nicht mehr, die Statuszeile zeigt den neuen Wert.
+            _project.VolumePercent = Math.Clamp(_project.VolumePercent + volumeChange, 0, 100);
+            ProjectEdited("volume");
+            ShowNotice(string.Format(Lng.T("Gesamtlautstärke: {0} %"), _project.VolumePercent));
             return true;
         }
         return base.ProcessCmdKey(ref msg, keyData);
@@ -286,6 +368,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
             // In Textfeldern löscht Strg+Entf das nächste Wort, das soll so bleiben.
             Keys.Control | Keys.Delete when CanEditProject && !IsTyping => () => ButtonClearPattern_Click(this, EventArgs.Empty),
+
+            // In Text- und Zahlenfeldern kopieren diese Tasten wie gewohnt den Text.
+            Keys.Control | Keys.C when CanEditProject && !IsTyping && ActiveControl is not NumericUpDown => CopySelection,
+            Keys.Control | Keys.V when CanEditProject && !IsTyping && ActiveControl is not NumericUpDown => PasteClip,
             Keys.Control | Keys.Oemcomma => () => ribbonTabs.SelectedTab = tabPageSettings,
             Keys.F1 => () => Dialogs.ShowShortcuts(this),
             _ => null,
@@ -339,8 +425,8 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private void UpdateDefaultFolderButton()
     {
         buttonDefaultFolder.AccessibleDescription = _otherFolder is null
-            ? $"Zeigt die Projekte im Speicherort aus den Einstellungen: {_projectFolder}"
-            : $"Zeigt wieder die Projekte im Speicherort aus den Einstellungen: {_projectFolder}";
+            ? string.Format(Lng.T("Zeigt die Projekte im Speicherort aus den Einstellungen: {0}"), _projectFolder)
+            : string.Format(Lng.T("Zeigt wieder die Projekte im Speicherort aus den Einstellungen: {0}"), _projectFolder);
     }
 
     /// <summary>Ein langer Pfad würde die Anzahl aus der Statuszeile drängen. Dann steht nur der Ordnername da, der ganze Pfad im Tooltip.</summary>
@@ -348,7 +434,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
     {
         var folder = BrowserFolder;
         var shown = folder.Length <= MaxStatusPathLength ? folder : $"…\\{Path.GetFileName(folder.TrimEnd('\\'))}";
-        statusProjects.Text = $"{projectBrowser.CountText} in {shown}";
+        statusProjects.Text = string.Format(Lng.T("{0} in {1}"), projectBrowser.CountText, shown);
         statusProjects.ToolTipText = folder;
     }
 
@@ -368,6 +454,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
     /// <summary>Die Karte „Datei“ zeigt statt des Rasters die Projektliste. Bearbeiten ist währenddessen gesperrt, man sieht ja nichts davon.</summary>
     private void RibbonTabs_SelectedIndexChanged(object? sender, EventArgs e)
     {
+        PlaceTabMarker();
         UpdateRibbonHeight();
         var show = ribbonTabs.SelectedTab == tabPageFile;
         if (show != projectBrowser.Visible)
@@ -408,7 +495,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
     {
         if (!ProjectFiles.TryGetRenameTarget(e.FilePath, e.NewName, out var target, out var problem))
         {
-            Dialogs.Warning(this, "Das Projekt wurde nicht umbenannt.", problem);
+            Dialogs.Warning(this, Lng.T("Das Projekt wurde nicht umbenannt."), problem);
             return;
         }
         if (target == e.FilePath)
@@ -422,7 +509,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Dialogs.Error(this, "Das Projekt wurde nicht umbenannt.", ex.Message);
+            Dialogs.Error(this, Lng.T("Das Projekt wurde nicht umbenannt."), ex.Message);
             return;
         }
 
@@ -448,13 +535,13 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Dialogs.Error(this, "Das Projekt wurde nicht kopiert.", ex.Message);
+            Dialogs.Error(this, Lng.T("Das Projekt wurde nicht kopiert."), ex.Message);
             return;
         }
 
         RefreshProjectBrowser(target);
         FocusProjectList();
-        ShowNotice($"„{Path.GetFileNameWithoutExtension(target)}“ angelegt. Mit F2 gibst du ihm einen Namen.");
+        ShowNotice(string.Format(Lng.T("„{0}“ angelegt. Mit F2 gibst du ihm einen Namen."), Path.GetFileNameWithoutExtension(target)));
     }
 
     /// <summary>Ein gelöschtes offenes Projekt bleibt offen, nur ohne Datei. Schließen fragt dann, ob du es speichern willst.</summary>
@@ -478,7 +565,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         catch (IOException ex)
         {
-            Dialogs.Error(this, "Das Projekt wurde nicht gelöscht.", ex.Message);
+            Dialogs.Error(this, Lng.T("Das Projekt wurde nicht gelöscht."), ex.Message);
             return;
         }
 
@@ -495,7 +582,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         RefreshProjectBrowser(neighbor);
         FocusProjectList();
-        ShowNotice($"„{name}“ liegt jetzt im Papierkorb.");
+        ShowNotice(string.Format(Lng.T("„{0}“ liegt jetzt im Papierkorb."), name));
     }
 
     private void ProjectBrowser_NoticeRequested(object? sender, string text) => ShowNotice(text);
@@ -600,7 +687,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         return builder
             .WithSharedMode()
             .WithEventSync()
-            .WithLatency(OutputLatencyMs)
+            .WithLatency(_settings.OutputLatencyMs)
             .WithMmcssThreadPriority("Pro Audio")
             .Build();
     }
@@ -618,7 +705,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
             _engine.Rewind();
 
             // Schon beim Vorzählen ist das Pattern zu sehen, mit dem die Abfolge beginnt.
-            if (_sequenceActive && _project.ActiveSequence is [var first, ..] && first != _project.ActivePattern)
+            if (_sequenceActive && _project.FirstSequencePattern is { } first && first != _project.ActivePattern)
             {
                 ShowPattern(first);
             }
@@ -627,9 +714,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
             output.Play();
             _output = output;
             _outputDevice = device;
+            KeepScreenOn(true);
             buttonPlay.Text = StopSymbol;
-            buttonPlay.AccessibleName = "Stopp";
-            toolTip.SetToolTip(buttonPlay, "Stopp (Leertaste)");
+            buttonPlay.AccessibleName = Lng.T("Stopp");
+            toolTip.SetToolTip(buttonPlay, Lng.T("Stopp (Leertaste)"));
             _trainerBpm = _project.Bpm;
             _playStart = Stopwatch.GetTimestamp();
             playheadTimer.Start();
@@ -643,7 +731,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
             device?.Dispose();
             if (reportErrors)
             {
-                Dialogs.Error(this, "Die Audioausgabe konnte nicht gestartet werden.", ex.Message);
+                Dialogs.Error(this, Lng.T("Die Audioausgabe konnte nicht gestartet werden."), ex.Message);
             }
             return false;
         }
@@ -662,13 +750,14 @@ public partial class FrmDrums4me : Form, IMessageFilter
         _output = null;
         _outputDevice?.Dispose();
         _outputDevice = null;
+        KeepScreenOn(false);
         playheadTimer.Stop();
         stepGrid.PlayStep = -1;
         stepGrid.BarFlash = false;
         ShowCountIn(0);
         buttonPlay.Text = PlaySymbol;
-        buttonPlay.AccessibleName = "Start";
-        toolTip.SetToolTip(buttonPlay, "Start (Leertaste)");
+        buttonPlay.AccessibleName = Lng.T("Start");
+        toolTip.SetToolTip(buttonPlay, Lng.T("Start (Leertaste)"));
         UpdatePatternButtons();
         UpdatePatternCaption();
         UpdateTrainerStatus();
@@ -701,7 +790,11 @@ public partial class FrmDrums4me : Form, IMessageFilter
             return;
         }
 
-        var sound = EngineState.From(_project, _kit).Tracks[track];
+        PreviewSound(EngineState.From(_project, _kit).Tracks[track]);
+    }
+
+    private void PreviewSound(EngineTrack sound)
+    {
         if (_output is not null || _previewOutput is not null)
         {
             _engine.Preview(sound);
@@ -725,7 +818,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         {
             output?.Dispose();
             device?.Dispose();
-            Dialogs.Error(this, "Die Audioausgabe konnte nicht gestartet werden.", ex.Message);
+            Dialogs.Error(this, Lng.T("Die Audioausgabe konnte nicht gestartet werden."), ex.Message);
         }
     }
 
@@ -775,13 +868,13 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         if (++_deviceLosses > MaxDeviceLosses)
         {
-            Dialogs.Warning(this, "Die Audioausgabe wurde unterbrochen.", e.Exception.Message);
+            Dialogs.Warning(this, Lng.T("Die Audioausgabe wurde unterbrochen."), e.Exception.Message);
             return;
         }
 
         _deviceLossMessage = e.Exception.Message;
         _restartTries = 0;
-        ShowNotice("Das Ausgabegerät ist weggefallen. Die Wiedergabe startet gleich neu …");
+        ShowNotice(Lng.T("Das Ausgabegerät ist weggefallen. Die Wiedergabe startet gleich neu …"));
         restartTimer.Start();
     }
 
@@ -799,13 +892,13 @@ public partial class FrmDrums4me : Form, IMessageFilter
             restartTimer.Stop();
             if (string.IsNullOrEmpty(_settings.AudioDeviceId))
             {
-                ShowNotice("Das Ausgabegerät ist weggefallen, die Wiedergabe läuft über den Windows-Standard weiter.");
+                ShowNotice(Lng.T("Das Ausgabegerät ist weggefallen, die Wiedergabe läuft über den Windows-Standard weiter."));
             }
         }
         else if (_restartTries >= MaxRestartTries)
         {
             restartTimer.Stop();
-            Dialogs.Warning(this, "Die Audioausgabe wurde unterbrochen.", _deviceLossMessage ?? string.Empty);
+            Dialogs.Warning(this, Lng.T("Die Audioausgabe wurde unterbrochen."), _deviceLossMessage ?? string.Empty);
         }
     }
     private void PlayheadTimer_Tick(object? sender, EventArgs e)
@@ -847,8 +940,8 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
         var time = TimeSpan.FromSeconds((now - _playStart) / Stopwatch.Frequency);
         var clock = time.TotalHours >= 1 ? time.ToString(@"h\:mm\:ss") : time.ToString(@"m\:ss");
-        SetStatusText(statusBars, $"Takt {_engine.BarsPlayed}");
-        SetStatusText(statusTime, $"Spielzeit {clock}");
+        SetStatusText(statusBars, string.Format(Lng.T("Takt {0}"), _engine.BarsPlayed));
+        SetStatusText(statusTime, string.Format(Lng.T("Spielzeit {0}"), clock));
     }
 
     private static void SetStatusText(ToolStripStatusLabel label, string text)
@@ -941,7 +1034,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
     private void ShowCountIn(int bar)
     {
-        var text = bar > 0 ? $"Takt {bar}/{_project.CountInBars}" : CountInCaption;
+        var text = bar > 0 ? string.Format(Lng.T("Takt {0}/{1}"), bar, _project.CountInBars) : CountInCaption;
         if (labelCountIn.Text != text)
         {
             labelCountIn.Text = text;
@@ -1004,8 +1097,8 @@ public partial class FrmDrums4me : Form, IMessageFilter
     {
         var text = !_project.TrainerEnabled || _trainerBpm == 0
             ? string.Empty
-            : "Tempotrainer: " + (_output is null ? "zuletzt" : "jetzt") + $" {_trainerBpm} BPM"
-                + (_trainerBpm >= _project.TrainerTargetBpm ? ", Ziel erreicht" : string.Empty);
+            : string.Format(_output is null ? Lng.T("Tempotrainer: zuletzt {0} BPM") : Lng.T("Tempotrainer: jetzt {0} BPM"), _trainerBpm)
+                + (_trainerBpm >= _project.TrainerTargetBpm ? Lng.T(", Ziel erreicht") : string.Empty);
 
         SetStatusText(statusTrainer, text);
         statusTrainer.Visible = text.Length > 0;
@@ -1021,7 +1114,136 @@ public partial class FrmDrums4me : Form, IMessageFilter
     }
 
     /// <summary>Die Beschriftung steht über dem Schalter, ein Klick darauf schaltet wie bei einer gewöhnlichen Checkbox.</summary>
-    private void LabelFlash_Click(object? sender, EventArgs e) => checkBoxFlash.Checked = !checkBoxFlash.Checked;
+    private void NumericClickVolume_ValueChanged(object? sender, EventArgs e)
+    {
+        var volume = (int)numericClickVolume.Value;
+        if (_settings.CountInVolume != volume)
+        {
+            _settings.CountInVolume = volume;
+            _settings.Save();
+            PublishState();
+            PreviewSound(SequencerEngine.CountInClick(volume / 100f));   // so hört man gleich, wie laut das Vorzählen jetzt ist
+        }
+    }
+
+    private void NumericLatency_ValueChanged(object? sender, EventArgs e)
+    {
+        var latency = (int)numericLatency.Value;
+        buttonLatencyDefault.Enabled = latency != AppSettings.DefaultOutputLatencyMs;
+        if (_settings.OutputLatencyMs == latency)
+        {
+            return;
+        }
+
+        _settings.OutputLatencyMs = latency;
+        _settings.Save();
+
+        // Eine laufende Wiedergabe beginnt mit dem neuen Puffer von vorn.
+        StopPreview();
+        if (_output is not null)
+        {
+            StopPlayback();
+            StartPlayback();
+        }
+    }
+
+    private void ButtonLatencyDefault_Click(object? sender, EventArgs e) => numericLatency.Value = AppSettings.DefaultOutputLatencyMs;
+
+    private void ButtonTopMost_Click(object? sender, EventArgs e)
+    {
+        _settings.AlwaysOnTop = !_settings.AlwaysOnTop;
+        _settings.Save();
+        TopMost = _settings.AlwaysOnTop;
+        ShowQuickSwitches();
+    }
+
+    private void ButtonKeepScreenOn_Click(object? sender, EventArgs e)
+    {
+        _settings.KeepScreenOn = !_settings.KeepScreenOn;
+        _settings.Save();
+        KeepScreenOn(_output is not null);
+        ShowQuickSwitches();
+    }
+
+    /// <summary>Die beiden Knöpfe sind Schalter: Zeichen und Hinweis zeigen, ob sie gerade ein- oder ausgeschaltet sind.</summary>
+    private void ShowQuickSwitches()
+    {
+        toolTip.SetToolTip(buttonTopMost, _settings.AlwaysOnTop ? Lng.T("Immer im Vordergrund: ein") : Lng.T("Immer im Vordergrund: aus"));
+        toolTip.SetToolTip(buttonKeepScreenOn, _settings.KeepScreenOn ? Lng.T("Bildschirm beim Spielen anlassen: ein") : Lng.T("Bildschirm beim Spielen anlassen: aus"));
+        buttonTopMost.Invalidate();
+        buttonKeepScreenOn.Invalidate();
+    }
+
+    // Die beiden Schalter in der Leiste der Schnellbefehle zeichnen ihr Zeichen selbst. So folgt es dem Zustand,
+    // der Bildschirmauflösung und der dunklen Darstellung, was ein fertiges Bild nicht könnte. Eingeschaltet trägt
+    // das Zeichen die Akzentfarbe. Es sind Knöpfe wie ihre Nachbarn: Als Schalter-Controls zeichnete die dunkle
+    // Darstellung sie selbst, und das Zeichen fehlte.
+
+    /// <summary>Eine Pinnnadel: schräg, solange das Fenster frei ist, senkrecht eingesteckt, wenn es im Vordergrund bleibt.</summary>
+    private void ButtonTopMost_Paint(object? sender, PaintEventArgs e)
+    {
+        var state = e.Graphics.Save();
+        var graphics = BeginGlyph(buttonTopMost, _settings.AlwaysOnTop, e.Graphics, out var pen, out var brush);
+        if (!_settings.AlwaysOnTop)
+        {
+            graphics.RotateTransform(45f);
+        }
+        graphics.DrawLine(pen, -3f, -6.5f, 3f, -6.5f);          // Kopf
+        graphics.FillRectangle(brush, -1.8f, -6f, 3.6f, 5.5f);  // Schaft
+        graphics.DrawLine(pen, -4.5f, -0.5f, 4.5f, -0.5f);      // Kragen
+        graphics.DrawLine(pen, 0f, 0f, 0f, 6.5f);               // Nadel
+        pen.Dispose();
+        brush.Dispose();
+        e.Graphics.Restore(state);
+    }
+
+    /// <summary>Ein Bildschirm: hell gefüllt, wenn er beim Spielen an bleibt, sonst nur der Umriss.</summary>
+    private void ButtonKeepScreenOn_Paint(object? sender, PaintEventArgs e)
+    {
+        var state = e.Graphics.Save();
+        var graphics = BeginGlyph(buttonKeepScreenOn, _settings.KeepScreenOn, e.Graphics, out var pen, out var brush);
+        var screen = new RectangleF(-6.5f, -6f, 13f, 9f);
+        if (_settings.KeepScreenOn)
+        {
+            graphics.FillRectangle(brush, screen);
+        }
+        graphics.DrawRectangle(pen, screen.X, screen.Y, screen.Width, screen.Height);
+        graphics.DrawLine(pen, 0f, 3.5f, 0f, 6f);       // Fuß
+        graphics.DrawLine(pen, -3.5f, 6.5f, 3.5f, 6.5f);
+        pen.Dispose();
+        brush.Dispose();
+        e.Graphics.Restore(state);
+    }
+
+    /// <summary>Stellt die Zeichenfläche so ein, dass die Mitte des Schalters der Ursprung ist und eine Einheit ein Pixel bei 100 %.</summary>
+    private static Graphics BeginGlyph(Button box, bool on, Graphics graphics, out Pen pen, out SolidBrush brush)
+    {
+        // Auf dem dunklen Knopf wäre die Akzentfarbe von Windows oft zu dunkel, dort gilt ein helleres Blau.
+        var color = !on ? SystemColors.ControlText : Application.IsDarkModeEnabled ? Color.FromArgb(104, 172, 244) : Theme.Accent;
+        pen = new Pen(color, 1.5f) { StartCap = System.Drawing.Drawing2D.LineCap.Round, EndCap = System.Drawing.Drawing2D.LineCap.Round };
+        brush = new SolidBrush(color);
+        var scale = box.DeviceDpi / 96f;
+        graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        graphics.TranslateTransform(box.Width / 2f, box.Height / 2f);
+        graphics.ScaleTransform(scale, scale);
+        return graphics;
+    }
+
+    /// <summary>Auf einem leeren Schritt gibt es keine Stärke zu wechseln. Statt nichts zu tun, sagt das Programm, wie es geht.</summary>
+    private void StepGrid_EmptyStepRightClicked(object? sender, MouseEventArgs e) =>
+        toolTip.Show(Lng.T("Hier steht noch kein Schlag. Ein Linksklick setzt einen. Der Rechtsklick wechselt dann seine Stärke: normal, betont, leise."),
+            stepGrid, e.X + 14, e.Y + 18, EmptyStepHintMs);
+
+    /// <summary>Der Hinweis zum leeren Schritt soll nicht stehen bleiben, wenn es im Raster schon weitergeht.</summary>
+    private void StepGrid_MouseDown(object? sender, MouseEventArgs e) => toolTip.Hide(stepGrid);
+
+    /// <summary>
+    /// Beim Üben berührt niemand Maus oder Tastatur, Windows schaltete deshalb mitten im Spielen den Bildschirm ab.
+    /// Der Wunsch gilt nur, solange die Wiedergabe läuft, und nur, wenn er in den Einstellungen eingeschaltet ist.
+    /// </summary>
+    private void KeepScreenOn(bool playing) => NativeMethods.SetThreadExecutionState(
+        playing && _settings.KeepScreenOn ? NativeMethods.ExecutionContinuous | NativeMethods.ExecutionDisplayRequired : NativeMethods.ExecutionContinuous);
+
 
     private void CheckBoxFlash_CheckedChanged(object? sender, EventArgs e)
     {
@@ -1059,7 +1281,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
         var length = _project.ActiveSequence.Length;
         var index = _output is null ? -1 : _engine.CurrentSequenceIndex;
         var position = _sequenceActive && index >= 0 && index < length ? $"{index + 1}/{length}" : string.Empty;
-        stepGrid.SetPatternCaption($"Pattern {_project.ActivePattern + 1}", position);
+
+        // In einem stummen Takt der Abfolge steht dort „Pause“. Das Raster zeigt weiter das Pattern davor.
+        var silent = _output is not null && _engine.IsSilentBar;
+        stepGrid.SetPatternCaption(silent ? Lng.T("Pause") : $"Pattern {_project.ActivePattern + 1}", position);
     }
 
     private void ComboMeter_SelectedIndexChanged(object? sender, EventArgs e)
@@ -1106,23 +1331,28 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
     }
 
-    private void TrackBarSwing_ValueChanged(object? sender, EventArgs e)
+    /// <summary>
+    /// Der Knopf zeichnet seine Beschriftung selbst: oben groß die Frage nach dem Tempo, wie man sie aus Noten kennt,
+    /// darunter in normaler Größe das Wort, das Musiker für die Funktion kennen. Ein Knopf hat sonst nur eine Schriftgröße.
+    /// </summary>
+    private void ButtonTap_Paint(object? sender, PaintEventArgs e)
     {
-        labelSwingValue.Text = $"{trackBarSwing.Value} %";
-        if (!_updatingUi)
-        {
-            _project.SwingPercent = trackBarSwing.Value;
-            ProjectEdited("swing");
-        }
+        const TextFormatFlags Flags = TextFormatFlags.HorizontalCenter | TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix;
+        using var large = new Font(buttonTap.Font.FontFamily, buttonTap.Font.SizeInPoints * TapSignScale);
+        var sign = TextRenderer.MeasureText(e.Graphics, TapSign, large, Size.Empty, Flags);
+        var word = TextRenderer.MeasureText(e.Graphics, TapWord, buttonTap.Font, Size.Empty, Flags);
+        var top = (buttonTap.Height - sign.Height - word.Height) / 2;
+        var color = buttonTap.Enabled ? buttonTap.ForeColor : SystemColors.GrayText;
+        TextRenderer.DrawText(e.Graphics, TapSign, large, new Rectangle(0, top, buttonTap.Width, sign.Height), color, Flags);
+        TextRenderer.DrawText(e.Graphics, TapWord, buttonTap.Font, new Rectangle(0, top + sign.Height, buttonTap.Width, word.Height), color, Flags);
     }
 
-    private void TrackBarVolume_ValueChanged(object? sender, EventArgs e)
+    private void RadioSwing_CheckedChanged(object? sender, EventArgs e)
     {
-        labelVolumeValue.Text = $"{trackBarVolume.Value} %";
-        if (!_updatingUi)
+        if (!_updatingUi && sender is RadioButton { Checked: true })
         {
-            _project.VolumePercent = trackBarVolume.Value;
-            ProjectEdited("volume");
+            _project.Swing = radioSwingSixteenths.Checked ? SwingFeel.Sixteenths : radioSwingEighths.Checked ? SwingFeel.Eighths : SwingFeel.Straight;
+            ProjectEdited();
         }
     }
 
@@ -1211,8 +1441,210 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         stepGrid.Invalidate();
         ProjectEdited();
-        ShowNotice("Pattern geleert. Strg+Z holt es zurück.");
+        ShowNotice(Lng.T("Pattern geleert. Strg+Z holt es zurück."));
     }
+
+    // ==================== Kopieren und Einfügen ====================
+
+    /// <summary>Ein kopiertes Pattern samt Taktart.</summary>
+    private sealed record PatternClip(StepLevel[][] Steps, string MeterName, int Source);
+
+    /// <summary>Eine kopierte Zählzeit, je Spur eine Zeile.</summary>
+    private sealed record BeatClip(StepLevel[][] Steps, int Source);
+
+    /// <summary>Strg+C: die markierte Zählzeit, sonst das gezeigte Pattern.</summary>
+    private void CopySelection()
+    {
+        if (stepGrid.SelectedBeat >= 0)
+        {
+            CopyBeat(stepGrid.SelectedBeat);
+        }
+        else
+        {
+            CopyPattern(_project.ActivePattern);
+        }
+    }
+
+    /// <summary>Strg+V: Ein kopiertes Pattern ersetzt das gezeigte, eine kopierte Zählzeit die markierte.</summary>
+    private void PasteClip()
+    {
+        switch (_clip)
+        {
+            case PatternClip pattern:
+                PastePattern(_project.ActivePattern, pattern);
+                break;
+            case BeatClip when stepGrid.SelectedBeat >= 0:
+                PasteBeat(stepGrid.SelectedBeat);
+                break;
+            case BeatClip:
+                ShowNotice(Lng.T("Markiere zuerst die Zählzeit, in die eingefügt werden soll: Klick auf ihre Zahl über dem Raster."));
+                break;
+            default:
+                ShowNotice(Lng.T("Noch nichts kopiert. Strg+C kopiert die markierte Zählzeit, sonst das Pattern."));
+                break;
+        }
+    }
+
+    private PatternClip ClipOf(int index)
+    {
+        var pattern = _project.Patterns[index];
+        return new PatternClip([.. pattern.Steps.Select(row => (StepLevel[])row.Clone())], pattern.MeterName, index);
+    }
+
+    private void CopyPattern(int index)
+    {
+        _clip = ClipOf(index);
+        ShowNotice(string.Format(Lng.T("Pattern {0} kopiert. Einfügen: Strg+V oder Rechtsklick auf ein Pattern."), index + 1));
+    }
+
+    /// <summary>Überschreibt ein Pattern samt Taktart und zeigt es, damit man sieht, was angekommen ist.</summary>
+    private void PastePattern(int target, PatternClip clip)
+    {
+        var pattern = _project.Patterns[target];
+        for (var track = 0; track < Project.TrackCount; track++)
+        {
+            Array.Copy(clip.Steps[track], pattern.Steps[track], Project.MaxStepCount);
+        }
+        pattern.MeterName = clip.MeterName;
+        pattern.Used = true;
+        ShowPattern(target);
+        ProjectEdited();
+        ShowNotice(string.Format(Lng.T("Pattern {0} nach Pattern {1} kopiert. Strg+Z holt den alten Inhalt zurück."), clip.Source + 1, target + 1));
+    }
+
+    private void ClearPattern(int index)
+    {
+        var pattern = _project.Patterns[index];
+        foreach (var row in pattern.Steps)
+        {
+            Array.Clear(row);
+        }
+        pattern.Used = true;   // sonst übernähme es beim ersten Aufruf wieder den Inhalt des aktuellen Patterns
+        stepGrid.Invalidate();
+        ProjectEdited();
+        ShowNotice(string.Format(Lng.T("Pattern {0} geleert. Strg+Z holt es zurück."), index + 1));
+    }
+
+    private void PatternMenu_Opening(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        _menuPattern = Array.IndexOf(PatternButtons, patternMenu.SourceControl as RadioButton);
+        pastePatternToolStripMenuItem.Enabled = _clip is PatternClip;
+        e.Cancel = _menuPattern < 0;
+    }
+
+    private void CopyPatternToolStripMenuItem_Click(object? sender, EventArgs e) => CopyPattern(_menuPattern);
+
+    private void PastePatternToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        if (_clip is PatternClip clip)
+        {
+            PastePattern(_menuPattern, clip);
+        }
+    }
+
+    private void ClearPatternToolStripMenuItem_Click(object? sender, EventArgs e) => ClearPattern(_menuPattern);
+
+    // Ein Pattern-Knopf lässt sich auf einen anderen ziehen. Die Maus bleibt dabei beim gezogenen Knopf,
+    // über welchem Knopf sie losgelassen wird, ergibt sich aus ihrer Lage in der Gruppe.
+    private void RadioPattern_MouseDown(object? sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Left && sender is RadioButton radio)
+        {
+            _dragPattern = Array.IndexOf(PatternButtons, radio);
+            _dragPatternStart = e.Location;
+            _draggingPattern = false;
+        }
+    }
+
+    private void RadioPattern_MouseMove(object? sender, MouseEventArgs e)
+    {
+        if (_dragPattern < 0 || sender is not RadioButton radio)
+        {
+            return;
+        }
+        if (!radio.Capture)
+        {
+            EndPatternDrag(radio);   // der Zug ging verloren, etwa an ein anderes Fenster
+            return;
+        }
+
+        var threshold = SystemInformation.DragSize;
+        _draggingPattern |= Math.Abs(e.X - _dragPatternStart.X) > threshold.Width || Math.Abs(e.Y - _dragPatternStart.Y) > threshold.Height;
+        if (_draggingPattern)
+        {
+            var target = PatternButtonAt(radio, e.Location);
+            radio.Cursor = target >= 0 && target != _dragPattern ? Cursors.Hand : Cursors.No;
+        }
+    }
+
+    private void RadioPattern_MouseUp(object? sender, MouseEventArgs e)
+    {
+        if (_dragPattern < 0 || sender is not RadioButton radio)
+        {
+            return;
+        }
+
+        var source = _dragPattern;
+        var target = _draggingPattern ? PatternButtonAt(radio, e.Location) : -1;
+        EndPatternDrag(radio);
+        if (target >= 0 && target != source)
+        {
+            PastePattern(target, ClipOf(source));
+        }
+    }
+
+    private void EndPatternDrag(RadioButton radio)
+    {
+        _dragPattern = -1;
+        _draggingPattern = false;
+        radio.Cursor = Cursors.Default;
+    }
+
+    private int PatternButtonAt(Control origin, Point location) =>
+        Array.IndexOf(PatternButtons, groupPattern.GetChildAtPoint(groupPattern.PointToClient(origin.PointToScreen(location))) as RadioButton);
+
+    private void StepGrid_BeatMenuRequested(object? sender, BeatEventArgs e)
+    {
+        _menuBeat = e.Beat;
+        pasteBeatToolStripMenuItem.Enabled = _clip is BeatClip;
+        beatMenu.Show(stepGrid, e.Location);
+    }
+
+    private void StepGrid_BeatCopied(object? sender, BeatEventArgs e) =>
+        ShowNotice(string.Format(Lng.T("Zählzeit {0} nach Zählzeit {1} kopiert. Strg+Z holt den alten Inhalt zurück."), e.Beat + 1, e.Target + 1));
+
+    private void CopyBeat(int beat)
+    {
+        _clip = new BeatClip(stepGrid.CopyBeat(beat), beat);
+        ShowNotice(string.Format(Lng.T("Zählzeit {0} kopiert. Einfügen: andere Zählzeit markieren, dann Strg+V oder Rechtsklick."), beat + 1));
+    }
+
+    private void PasteBeat(int beat)
+    {
+        if (_clip is BeatClip clip)
+        {
+            stepGrid.PasteBeat(beat, clip.Steps);
+            ShowNotice(string.Format(Lng.T("Zählzeit {0} nach Zählzeit {1} kopiert. Strg+Z holt den alten Inhalt zurück."), clip.Source + 1, beat + 1));
+        }
+    }
+
+    private void CopyBeatToolStripMenuItem_Click(object? sender, EventArgs e) => CopyBeat(_menuBeat);
+
+    private void PasteBeatToolStripMenuItem_Click(object? sender, EventArgs e) => PasteBeat(_menuBeat);
+
+    private void FillBeatsToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        stepGrid.FillBeats(_menuBeat);
+        ShowNotice(string.Format(Lng.T("Zählzeit {0} auf alle Zählzeiten übertragen. Strg+Z holt den alten Inhalt zurück."), _menuBeat + 1));
+    }
+
+    private void ClearBeatToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        stepGrid.ClearBeat(_menuBeat);
+        ShowNotice(string.Format(Lng.T("Zählzeit {0} geleert. Strg+Z holt sie zurück."), _menuBeat + 1));
+    }
+
+    // ==================== Rückmeldungen ====================
 
     /// <summary>Zeigt eine kurze Rückmeldung in der Statuszeile, die nach einigen Sekunden wieder verschwindet.</summary>
     private void ShowNotice(string text)
@@ -1301,8 +1733,56 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
         // Wiederholen hat nur Bedeutung, wenn eine Abfolge mit Inhalt eingeschaltet ist.
         checkBoxRepeat.Enabled = _sequenceActive;
-        _engine.Update(EngineState.From(_project, _kit));
+        _engine.Update(CurrentState());
         UpdatePatternButtons();
+    }
+
+    /// <summary>Der Stand für die Engine: das Projekt mit dem Kit, dazu die Lautstärke des Vorzählens aus den Einstellungen.</summary>
+    private EngineState CurrentState() => EngineState.From(_project, _kit) with { ClickGain = _settings.CountInVolume / 100f };
+
+    // ==================== Als Audiodatei speichern ====================
+
+    /// <summary>
+    /// Länge und Format fragt ein eigenes Fenster ab, das auch erklärt, was in die Datei kommt.
+    /// Die Länge merkt sich das Programm nur für Projekte ohne Abfolge, sonst ist ein Durchgang der Abfolge der Vorschlag.
+    /// </summary>
+    private void ButtonExportAudio_Click(object? sender, EventArgs e)
+    {
+        var name = _filePath is null ? Lng.T("Unbenannt") : Path.GetFileNameWithoutExtension(_filePath);
+        using var dialog = new FrmExport(_project, _settings.ExportBars, _settings.ExportFormat, name, _settings.ExportFolder ?? _projectFolder);
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        var path = dialog.FilePath;
+        _settings.ExportFormat = dialog.Format;
+        _settings.ExportFolder = Path.GetDirectoryName(path);
+        if (_project.ActiveSequence.Length == 0)
+        {
+            _settings.ExportBars = dialog.Bars;
+        }
+
+        try
+        {
+            // Gerechnet wird ohne Soundkarte, auch lange Stücke dauern nur Sekunden. Die Wiedergabe darf dabei weiterlaufen.
+            Cursor = Cursors.WaitCursor;
+            var result = AudioExport.Save(_project, _kit, dialog.Bars, path);
+            var bars = result.Bars == 1 ? Lng.T("1 Takt") : string.Format(Lng.T("{0} Takte"), result.Bars);
+            var seamless = result.IsLoop && dialog.Format != AudioExport.Mp3Extension;
+            ShowNotice(string.Format(Lng.T("„{0}“ gespeichert: {1}, {2}."), Path.GetFileName(path), bars, $"{(int)result.Duration.TotalMinutes}:{result.Duration.Seconds:00}")
+                + (seamless ? " " + Lng.T("Die Datei lässt sich nahtlos wiederholen.") : string.Empty));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException
+            or NotSupportedException or COMException or NAudio.MediaFoundation.MediaFoundationException)
+        {
+            // Etwa wenn Windows den MP3-Encoder nicht mitbringt (N-Ausgaben) oder die Datei gerade abgespielt wird.
+            Dialogs.Error(this, Lng.T("Die Audiodatei konnte nicht gespeichert werden."), ex.Message);
+        }
+        finally
+        {
+            Cursor = Cursors.Default;
+        }
     }
 
     /// <summary>Überträgt das geladene Projekt vollständig auf Oberfläche und Engine.</summary>
@@ -1310,10 +1790,9 @@ public partial class FrmDrums4me : Form, IMessageFilter
     {
         _updatingUi = true;
         numericTempo.Value = _project.Bpm;
-        trackBarSwing.Value = _project.SwingPercent;
-        trackBarVolume.Value = _project.VolumePercent;
-        labelSwingValue.Text = $"{_project.SwingPercent} %";
-        labelVolumeValue.Text = $"{_project.VolumePercent} %";
+        radioSwingStraight.Checked = _project.Swing == SwingFeel.Straight;
+        radioSwingEighths.Checked = _project.Swing == SwingFeel.Eighths;
+        radioSwingSixteenths.Checked = _project.Swing == SwingFeel.Sixteenths;
         PatternButtons[_project.ActivePattern].Checked = true;
         checkBoxSequence.Checked = _project.SequenceEnabled;
         textBoxSequence.Enabled = _project.SequenceEnabled;
@@ -1348,13 +1827,13 @@ public partial class FrmDrums4me : Form, IMessageFilter
         _kit = kit;
         if (failed.Count > 0)
         {
-            Dialogs.Warning(this, $"Diese Dateien aus „{kit.Name}“ konnten nicht gelesen werden:", string.Join("\n", failed));
+            Dialogs.Warning(this, string.Format(Lng.T("Diese Dateien aus „{0}“ konnten nicht gelesen werden:"), kit.Name), string.Join("\n", failed));
         }
     }
 
     private void UpdateTitle()
     {
-        var name = _filePath is null ? "Unbenannt" : Path.GetFileNameWithoutExtension(_filePath);
+        var name = _filePath is null ? Lng.T("Unbenannt") : Path.GetFileNameWithoutExtension(_filePath);
         Text = $"{AppSettings.AppName} – {name}{(_dirty ? " *" : string.Empty)}";
     }
 
@@ -1412,7 +1891,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
         {
-            Dialogs.Error(this, "Die Spur konnte nicht umbenannt werden.", ex.Message);
+            Dialogs.Error(this, Lng.T("Die Spur konnte nicht umbenannt werden."), ex.Message);
         }
         stepGrid.Invalidate();
     }
@@ -1455,7 +1934,49 @@ public partial class FrmDrums4me : Form, IMessageFilter
             RefreshProjectBrowser();
             FocusProjectList();
         }
-        ShowNotice(name is null ? "Projekt geschlossen, das Raster ist leer." : $"„{name}“ geschlossen, das Raster ist leer.");
+        ShowNotice(name is null ? Lng.T("Projekt geschlossen, das Raster ist leer.") : string.Format(Lng.T("„{0}“ geschlossen, das Raster ist leer."), name));
+    }
+
+    /// <summary>
+    /// Macht aus dem Schlagzeug einer MIDI-Datei ein neues Projekt mit dem gerade gewählten Kit. Welche Takte zu Patterns
+    /// werden, wählt man im Fenster dazu. Das bisherige Projekt bleibt, bis dort „Importieren“ gedrückt ist.
+    /// </summary>
+    private void ButtonImportMidi_Click(object? sender, EventArgs e)
+    {
+        midiFileDialog.InitialDirectory = _settings.MidiFolder ?? string.Empty;
+        midiFileDialog.FileName = string.Empty;
+        if (midiFileDialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+        _settings.MidiFolder = Path.GetDirectoryName(midiFileDialog.FileName);
+        _settings.Save();
+
+        MidiImport midi;
+        try
+        {
+            midi = MidiImport.Read(midiFileDialog.FileName, _kit);
+        }
+        catch (Exception ex) when (ex is InvalidDataException or IOException or UnauthorizedAccessException)
+        {
+            Dialogs.Error(this, Lng.T("Die MIDI-Datei lässt sich nicht importieren."), ex.Message);
+            return;
+        }
+
+        using var dialog = new FrmMidi(midi, _kit);
+        if (dialog.ShowDialog(this) != DialogResult.OK || !ConfirmDiscard())
+        {
+            return;
+        }
+
+        var chosen = dialog.Chosen;
+        ReplaceProject(midi.CreateProject(chosen, _kit.Name));
+        if (projectBrowser.Visible)
+        {
+            ShowProjectBrowser(false);
+        }
+        var patterns = chosen.Count == 1 ? Lng.T("1 Pattern") : string.Format(Lng.T("{0} Patterns"), chosen.Count);
+        ShowNotice(string.Format(Lng.T("„{0}“ importiert: {1}, {2} BPM. Das Projekt ist noch nicht gespeichert."), midi.Name, patterns, midi.Bpm));
     }
 
     /// <summary>Ein neues, ungespeichertes Projekt ohne Vorgeschichte.</summary>
@@ -1477,7 +1998,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         Size = _defaultSize;
         CenterToScreen();
         projectBrowser.ResetColumnWidths();
-        ShowNotice("Fensterlayout zurückgesetzt.");
+        ShowNotice(Lng.T("Fensterlayout zurückgesetzt."));
     }
 
     private void ButtonExit_Click(object? sender, EventArgs e) => Close();
@@ -1596,11 +2117,11 @@ public partial class FrmDrums4me : Form, IMessageFilter
         {
             var reason = ex switch
             {
-                JsonException => "Die Datei ist keine gültige drums4me-Projektdatei.",
-                FileNotFoundException or DirectoryNotFoundException => "Die Datei wurde nicht gefunden.",
+                JsonException => Lng.T("Die Datei ist keine gültige drums4me-Projektdatei."),
+                FileNotFoundException or DirectoryNotFoundException => Lng.T("Die Datei wurde nicht gefunden."),
                 _ => ex.Message,
             };
-            Dialogs.Error(this, $"Das Projekt „{Path.GetFileName(path)}“ konnte nicht geöffnet werden.", reason);
+            Dialogs.Error(this, string.Format(Lng.T("Das Projekt „{0}“ konnte nicht geöffnet werden."), Path.GetFileName(path)), reason);
             if (path == _settings.LastFile)
             {
                 RememberFile(null);   // sonst käme die Meldung bei jedem Start wieder
@@ -1610,7 +2131,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
         // Geöffnet wird am Anfang, nicht bei dem Pattern, das beim Speichern zufällig zu sehen war:
         // mit Abfolge bei dem Pattern, mit dem sie beginnt, sonst bei Pattern 1.
-        _project.ActivePattern = _project.ActiveSequence is [var first, ..] ? first : 0;
+        _project.ActivePattern = _project.FirstSequencePattern ?? 0;
 
         _filePath = path;
         _dirty = false;
@@ -1627,7 +2148,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         if (missingKit)
         {
-            Dialogs.Info(this, $"Das Kit „{wantedKit}“ wurde nicht gefunden.", $"Stattdessen wird „{_kit.Name}“ benutzt.");
+            Dialogs.Info(this, string.Format(Lng.T("Das Kit „{0}“ wurde nicht gefunden."), wantedKit), string.Format(Lng.T("Stattdessen wird „{0}“ benutzt."), _kit.Name));
         }
         return true;
     }
@@ -1670,7 +2191,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         var id = _settings.AudioDeviceId;
         if (!string.IsNullOrEmpty(id) && !choices.Exists(choice => choice.Id == id))
         {
-            ShowNotice($"„{_settings.AudioDeviceName}“ ist nicht mehr angeschlossen. drums4me spielt jetzt über den Windows-Standard.");
+            ShowNotice(string.Format(Lng.T("„{0}“ ist nicht mehr angeschlossen. drums4me spielt jetzt über den Windows-Standard."), _settings.AudioDeviceName));
             _settings.AudioDeviceId = null;
             _settings.AudioDeviceName = null;
             _settings.Save();
@@ -1721,6 +2242,53 @@ public partial class FrmDrums4me : Form, IMessageFilter
         {
             _settings.ColorMode = radioDark.Checked ? SystemColorMode.Dark : radioLight.Checked ? SystemColorMode.Classic : SystemColorMode.System;
             _settings.Save();
+            if (_settings.ColorMode != _startColorMode)
+            {
+                OfferRestart(Lng.T("Die neue Darstellung gilt ab dem nächsten Start."));
+            }
+        }
+    }
+
+    private void ShowLanguage()
+    {
+        _updatingUi = true;
+        radioGerman.Checked = _settings.Language != "en";
+        radioEnglish.Checked = _settings.Language == "en";
+        _updatingUi = false;
+    }
+
+    private void RadioLanguage_CheckedChanged(object? sender, EventArgs e)
+    {
+        if (!_updatingUi && sender is RadioButton { Checked: true })
+        {
+            _settings.Language = radioEnglish.Checked ? "en" : "de";
+            _settings.Save();
+            if (_settings.Language != Lng.CultureCode)
+            {
+                // Die Meldung erscheint in der gewählten Sprache, denn die soll man ja lesen können.
+                OfferRestart(_settings.Language == "en"
+                    ? "The new language takes effect the next time drums4me starts."
+                    : "Die neue Sprache gilt ab dem nächsten Start.", _settings.Language);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Bietet an, das Programm gleich neu zu starten. Gibt es ungespeicherte Änderungen, fragt das Schließen wie gewohnt nach;
+    /// bricht man dort ab, bleibt alles, wie es ist. Das offene Projekt wird nach dem Neustart wieder geöffnet.
+    /// </summary>
+    private void OfferRestart(string reason, string? language = null)
+    {
+        if (!Dialogs.AskRestart(this, reason, language))
+        {
+            return;
+        }
+
+        RestartRequested = true;
+        Close();
+        if (!IsDisposed && Visible)
+        {
+            RestartRequested = false;   // Schließen abgebrochen
         }
     }
 
@@ -1738,7 +2306,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         else
         {
-            Dialogs.Info(this, "Es ist noch kein Kit-Paket installiert.", $"Nach der Installation eines Pakets liegen die Kits hier:\n{SharedKitFolder}");
+            Dialogs.Info(this, Lng.T("Es ist noch kein Kit-Paket installiert."), Lng.T("Nach der Installation eines Pakets liegen die Kits hier:") + "\n" + SharedKitFolder);
         }
     }
 
@@ -1755,11 +2323,11 @@ public partial class FrmDrums4me : Form, IMessageFilter
         var shown = _kits.Count(kit => !IsHiddenKit(kit));
         var found = _kits.Count switch
         {
-            0 => "Keine Kits gefunden.",
-            1 => "1 Kit gefunden.",
-            _ => shown == _kits.Count ? $"{_kits.Count} Kits gefunden, alle in der Auswahl." : $"{_kits.Count} Kits gefunden, {shown} davon in der Auswahl.",
+            0 => Lng.T("Keine Kits gefunden."),
+            1 => Lng.T("1 Kit gefunden."),
+            _ => shown == _kits.Count ? string.Format(Lng.T("{0} Kits gefunden, alle in der Auswahl."), _kits.Count) : string.Format(Lng.T("{0} Kits gefunden, {1} davon in der Auswahl."), _kits.Count, shown),
         };
-        buttonSelectKits.AccessibleDescription = $"Legt fest, welche Kits in der Auswahl darüber erscheinen. {found}";
+        buttonSelectKits.AccessibleDescription = Lng.T("Legt fest, welche Kits in der Auswahl darüber erscheinen.") + " " + found;
         toolTip.SetToolTip(buttonSelectKits, found);
     }
 
@@ -1804,7 +2372,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
 
     private bool SaveProjectAs()
     {
-        saveFileDialog.FileName = _filePath is null ? "Unbenannt" : Path.GetFileName(_filePath);
+        saveFileDialog.FileName = _filePath is null ? Lng.T("Unbenannt") : Path.GetFileName(_filePath);
         return saveFileDialog.ShowDialog(this) == DialogResult.OK && WriteProject(saveFileDialog.FileName);
     }
 
@@ -1817,7 +2385,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            Dialogs.Error(this, "Das Projekt konnte nicht gespeichert werden.", ex.Message);
+            Dialogs.Error(this, Lng.T("Das Projekt konnte nicht gespeichert werden."), ex.Message);
             return false;
         }
 
@@ -1840,7 +2408,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
             return true;
         }
 
-        var name = _filePath is null ? "Unbenannt" : Path.GetFileNameWithoutExtension(_filePath);
+        var name = _filePath is null ? Lng.T("Unbenannt") : Path.GetFileNameWithoutExtension(_filePath);
         return Dialogs.AskSaveChanges(this, name, CurrentChanges()) switch
         {
             DialogResult.Yes => SaveProject(),

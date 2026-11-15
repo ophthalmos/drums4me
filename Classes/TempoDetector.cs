@@ -14,15 +14,22 @@ internal sealed class TempoDetector
     private const int FftSize = 1 << FftOrder;
     private const double HopSeconds = 0.0058;
     private const int MinBpm = 40;
-    private const int MaxBpm = 240;
     private const double MaxSeconds = 45;
     private const double MinSeconds = 6;
     private const float SilenceLevel = 0.0005f;
     private const double SureStrength = 0.18;
     private const double MaxPauseSeconds = 2.5;
-    private const double PulseShare = 0.55;
+    private const double PulseShare = 0.40;   // so stark wie dieser Anteil der stärksten Wiederholung muss der feinste Notenwert sein
+    private const double PeakShare = 0.30;    // und so stark ein Abstand, der nur ersatzweise in Frage kommt
     private const double PreferredMin = 50;
     private const double PreferredMax = 210;
+
+    // Bandzahl und PulseShare sind an Songs und Übungsstücken mit bekanntem Tempo ausgemessen (November 2026):
+    // 128 Bänder und 0,40 trafen am besten, von 96 bis 200 Bändern und 0,35 bis 0,45 ändert sich wenig.
+    private const int BandCount = 128;
+    private const double BandMinHertz = 40;
+    private const double BandMaxHertz = 16000;
+    private const float Compression = 20000f;
 
     private readonly object _lock = new();
     private readonly int _hop;
@@ -30,7 +37,8 @@ internal sealed class TempoDetector
     private readonly int _maxFrames;
     private readonly float[] _window = new float[FftSize];
     private readonly Complex[] _fft = new Complex[FftSize];
-    private readonly float[] _previous = new float[FftSize / 2];
+    private readonly float[] _previous = new float[BandCount];
+    private readonly int[] _bandStart = new int[BandCount + 1];
     private readonly float[] _pending = new float[FftSize];
     private readonly List<float> _envelope = [];
     private int _pendingCount;
@@ -48,6 +56,21 @@ internal sealed class TempoDetector
         for (var i = 0; i < FftSize; i++)
         {
             _window[i] = 0.5f - (0.5f * MathF.Cos(2f * MathF.PI * i / (FftSize - 1)));
+        }
+
+        // Die Bänder sind nach der Mel-Skala verteilt, also unten schmal und oben breit, wie das Ohr Tonhöhen unterscheidet.
+        // Jedes Band zählt gleich viel. Bei gleich breiten Frequenzlinien lägen drei Viertel über 5 kHz, und Becken und
+        // Hi-Hat übertönten Kick, Bass und Snare, an denen man den Takt erkennt. So ist es noch ein Drittel.
+        // Bis etwa 1 kHz ist ein Band eine einzelne Frequenzlinie, feiner löst die Analyse nicht auf.
+        static double Mel(double hertz) => 2595.0 * Math.Log10(1.0 + (hertz / 700.0));
+        static double Hertz(double mel) => 700.0 * (Math.Pow(10.0, mel / 2595.0) - 1.0);
+        var lowest = Mel(BandMinHertz);
+        var highest = Mel(Math.Min(BandMaxHertz, sampleRate / 2.0));
+        var binWidth = sampleRate / (double)FftSize;
+        for (var band = 0; band <= BandCount; band++)
+        {
+            var bin = (int)Math.Round(Hertz(lowest + ((highest - lowest) * band / BandCount)) / binWidth);
+            _bandStart[band] = Math.Clamp(band == 0 ? Math.Max(1, bin) : Math.Max(_bandStart[band - 1] + 1, bin), 1, FftSize / 2);
         }
     }
 
@@ -145,17 +168,23 @@ internal sealed class TempoDetector
         }
         FastFourierTransform.FFT(true, FftOrder, _fft);
 
-        // Zusammengepresste Beträge, damit leise Hi-Hats neben der lauten Kick mitzählen
+        // Je Band der zusammengepresste Pegel, damit leise Einsätze neben lauten mitzählen. Ein Einsatz ist der Anstieg im Band.
         var flux = 0f;
-        for (var bin = 1; bin < FftSize / 2; bin++)
+        for (var band = 0; band < BandCount; band++)
         {
-            var magnitude = MathF.Log(1f + (20000f * MathF.Sqrt((_fft[bin].X * _fft[bin].X) + (_fft[bin].Y * _fft[bin].Y))));
-            var rise = magnitude - _previous[bin];
+            var sum = 0f;
+            for (var bin = _bandStart[band]; bin < _bandStart[band + 1]; bin++)
+            {
+                sum += MathF.Sqrt((_fft[bin].X * _fft[bin].X) + (_fft[bin].Y * _fft[bin].Y));
+            }
+
+            var bandLevel = MathF.Log(1f + (Compression * sum));
+            var rise = bandLevel - _previous[band];
             if (rise > 0)
             {
                 flux += rise;
             }
-            _previous[bin] = magnitude;
+            _previous[band] = bandLevel;
         }
 
         AddFlux(flux);
@@ -192,7 +221,6 @@ internal sealed class TempoDetector
         }
 
         var onset = Flatten(envelope);
-        var minLag = (int)(60.0 * _frameRate / MaxBpm);
         var maxLag = Math.Min((int)(60.0 * _frameRate / MinBpm), (onset.Length / 2) - 1);
         var longest = Math.Min(maxLag * 4, onset.Length - 2);
         var acf = Autocorrelate(onset, longest + 1);
@@ -201,28 +229,34 @@ internal sealed class TempoDetector
             return null;
         }
 
+        var from = (int)(0.085 * _frameRate);
+        var to = Math.Min(maxLag, longest);
+        var strongest = 0.0;
+        for (var lag = from; lag <= to; lag++)
+        {
+            strongest = Math.Max(strongest, acf[lag]);
+        }
+
         // Der kleinste deutliche Abstand ist der feinste Notenwert, etwa Achtel oder Sechzehntel.
         // Das Tempo muss ein einfaches Vielfaches davon sein. Das verhindert Treffer wie 80 statt 120 BPM.
-        var pulse = Refine(acf, FindPulse(acf, (int)(0.085 * _frameRate), Math.Min(maxLag, longest)), longest);
-        var ternary = IsTernary(acf, (int)Math.Round(pulse), longest);
-        int[] multiples = ternary ? [1, 3, 6, 12] : [1, 2, 4, 8];
-        var bestLag = (int)Math.Round(pulse);
+        var pulse = Refine(acf, FindPulse(acf, from, to, strongest), longest);
+        var bestLag = pulse;
         var bestScore = double.MinValue;
-        foreach (var multiple in multiples)
+
+        void Try(double lag)
         {
-            var lag = (int)Math.Round(pulse * multiple);
             var bpmHere = 60.0 * _frameRate / lag;
             if (bpmHere < PreferredMin || bpmHere > PreferredMax || lag * 2 > longest)
             {
-                continue;
+                return;
             }
 
             // Wiederholt sich der Rhythmus auf mehreren Vielfachen, ist es ein tragender Abstand.
             double on = 0;
             var count = 0;
-            for (var k = 1; k <= 4 && k * lag <= longest; k++)
+            for (var k = 1; k <= 4 && (int)Math.Round(k * lag) <= longest; k++)
             {
-                on += acf[(int)Math.Round(k * pulse * multiple)];
+                on += acf[(int)Math.Round(k * lag)];
                 count++;
             }
             var score = on / count / acf[0];
@@ -237,21 +271,43 @@ internal sealed class TempoDetector
             }
         }
 
+        var ternary = IsTernary(acf, pulse, longest);
+        if (!ternary)
+        {
+            // Bei Rhythmen wie 3+3+2 ist der feinste deutliche Abstand selbst ein punktierter Wert. Der Schlag liegt dann
+            // bei vier Dritteln davon. Er zählt nur mit, wenn dort wirklich eine eigene Wiederholung steht.
+            foreach (var dotted in new[] { 2.0 / 3, 4.0 / 3, 8.0 / 3 })
+            {
+                if (IsPeak(acf, pulse * dotted, longest, strongest))
+                {
+                    Try(pulse * dotted);
+                }
+            }
+        }
+
+        foreach (var multiple in ternary ? new[] { 1, 3, 6, 12 } : [1, 2, 4, 8])
+        {
+            Try(pulse * multiple);
+        }
+
+        // Nichts im üblichen Tempobereich: Der feinste deutliche Abstand war schon länger als ein Schlag, etwa ein halber
+        // Takt bei sparsamem Schlagzeug. Dann liegt der Schlag bei der Hälfte oder einem Viertel.
+        if (bestScore == double.MinValue)
+        {
+            Try(pulse / 2);
+            Try(pulse / 4);
+        }
+
         // Genauer wird es über den möglichst fernen Vielfachen: Dort fällt ein kleiner Fehler stärker ins Gewicht.
-        var refined = Refine(acf, bestLag, longest);
+        var lagIndex = Math.Clamp((int)Math.Round(bestLag), 1, longest);
+        var refined = Refine(acf, lagIndex, longest);
         var bpm = 60.0 * _frameRate / refined;
-        var strength = Math.Clamp(acf[bestLag] / acf[0], 0, 1);
+        var strength = Math.Clamp(acf[lagIndex] / acf[0], 0, 1);
         return new TempoEstimate(bpm, strength, strength >= SureStrength);
     }
 
-    private static int FindPulse(double[] acf, int from, int to)
+    private static int FindPulse(double[] acf, int from, int to, double strongest)
     {
-        var strongest = 0.0;
-        for (var lag = from; lag <= to; lag++)
-        {
-            strongest = Math.Max(strongest, acf[lag]);
-        }
-
         for (var lag = from + 1; lag < to; lag++)
         {
             // Ein echter Notenwert kehrt auch im doppelten Abstand wieder, ein Nachhall im Klang selbst nicht.
@@ -265,16 +321,49 @@ internal sealed class TempoDetector
         return Math.Max(from, 1);
     }
 
-    /// <summary>Teilt sich der Rhythmus in Dreien, etwa im 6/8-Takt oder Shuffle?</summary>
-    private static bool IsTernary(double[] acf, int pulse, int longest)
+    /// <summary>Steht bei diesem Abstand eine eigene, deutliche Wiederholung, also eine Spitze der Autokorrelation?</summary>
+    private static bool IsPeak(double[] acf, double lag, int longest, double strongest)
     {
-        if (pulse * 6 > longest)
+        var center = (int)Math.Round(lag);
+        if (center < 3 || center + 3 > longest)
         {
             return false;
         }
-        var three = acf[pulse * 3] + acf[pulse * 6];
-        var two = acf[pulse * 2] + acf[pulse * 4];
-        return three > 1.25 * two;
+
+        var top = center;
+        for (var index = center - 2; index <= center + 2; index++)
+        {
+            if (acf[index] > acf[top])
+            {
+                top = index;
+            }
+        }
+        return acf[top] >= strongest * PeakShare && acf[top] >= acf[top - 1] && acf[top] >= acf[top + 1];
+    }
+
+    /// <summary>
+    /// Teilt sich der Rhythmus in Dreien, etwa im 6/8-Takt oder Shuffle? Dann wiederholen sich drei und sechs feinste
+    /// Notenwerte besser als zwei und vier, und auch der Takt passt dazu: Zwölf (vier Dreiergruppen) wiederholen sich besser
+    /// als acht oder sechzehn. Bei 3+3+2 im geraden Takt gilt nur das Erste, deshalb reicht es allein nicht.
+    /// </summary>
+    private static bool IsTernary(double[] acf, double pulse, int longest)
+    {
+        var whole = (int)Math.Round(pulse);
+        if (whole * 6 > longest || acf[whole * 3] + acf[whole * 6] <= 1.25 * (acf[whole * 2] + acf[whole * 4]))
+        {
+            return false;
+        }
+        if ((int)Math.Round(pulse * 16) + 1 > longest)
+        {
+            return true;   // zu wenig Ton für die Probe am Takt
+        }
+
+        double At(double lag)
+        {
+            var index = (int)Math.Round(lag);
+            return Math.Max(acf[index], Math.Max(acf[index - 1], acf[index + 1]));
+        }
+        return At(pulse * 12) > At(pulse * 16) && At(pulse * 12) > At(pulse * 8);
     }
 
     /// <summary>Entfernt langsame Lautstärkeänderungen, nur die Einsätze selbst bleiben.</summary>

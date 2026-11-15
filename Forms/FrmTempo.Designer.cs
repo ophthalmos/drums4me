@@ -75,8 +75,8 @@ namespace Drums4me.Forms
             buttonHalf.Enabled = false;
             buttonHalf.Location = new Point(12, 186);
             buttonHalf.Name = "buttonHalf";
-            buttonHalf.Size = new Size(70, 32);
-            buttonHalf.TabIndex = 3;
+            buttonHalf.Size = new Size(88, 32);
+            buttonHalf.TabIndex = 5;
             buttonHalf.Text = "Halb";
             buttonHalf.UseVisualStyleBackColor = true;
             buttonHalf.Click += ButtonHalf_Click;
@@ -84,20 +84,20 @@ namespace Drums4me.Forms
             // buttonDouble
             //
             buttonDouble.Enabled = false;
-            buttonDouble.Location = new Point(88, 186);
+            buttonDouble.Location = new Point(106, 186);
             buttonDouble.Name = "buttonDouble";
-            buttonDouble.Size = new Size(70, 32);
-            buttonDouble.TabIndex = 4;
+            buttonDouble.Size = new Size(108, 32);
+            buttonDouble.TabIndex = 6;
             buttonDouble.Text = "Doppelt";
             buttonDouble.UseVisualStyleBackColor = true;
             buttonDouble.Click += ButtonDouble_Click;
             //
             // buttonReset
             //
-            buttonReset.Location = new Point(164, 186);
+            buttonReset.Location = new Point(220, 186);
             buttonReset.Name = "buttonReset";
             buttonReset.Size = new Size(116, 32);
-            buttonReset.TabIndex = 5;
+            buttonReset.TabIndex = 7;
             buttonReset.Text = "Neu beginnen";
             buttonReset.UseVisualStyleBackColor = true;
             buttonReset.Click += ButtonReset_Click;
@@ -109,7 +109,7 @@ namespace Drums4me.Forms
             buttonApply.Location = new Point(354, 186);
             buttonApply.Name = "buttonApply";
             buttonApply.Size = new Size(108, 32);
-            buttonApply.TabIndex = 6;
+            buttonApply.TabIndex = 3;
             buttonApply.Text = "Übernehmen";
             buttonApply.UseVisualStyleBackColor = true;
             //
@@ -119,7 +119,7 @@ namespace Drums4me.Forms
             buttonCancel.Location = new Point(468, 186);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new Size(90, 32);
-            buttonCancel.TabIndex = 7;
+            buttonCancel.TabIndex = 4;
             buttonCancel.Text = "Abbrechen";
             buttonCancel.UseVisualStyleBackColor = true;
             //

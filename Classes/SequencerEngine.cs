@@ -2,11 +2,11 @@ using NAudio.Wave;
 
 namespace Drums4me.Classes;
 
-/// <summary>Klangdaten und Mischwerte einer Spur für die Engine.</summary>
-internal sealed record EngineTrack(float[] Samples, float GainLeft, float GainRight, double Rate);
+/// <summary>Klangdaten und Mischwerte einer Spur für die Engine. Die Tonhöhe steckt schon in den Klangdaten.</summary>
+internal sealed record EngineTrack(float[] Samples, float GainLeft, float GainRight, HatRole Hat = HatRole.None, bool Muted = false);
 
 /// <summary>Unveränderlicher Stand, den die Oberfläche als Ganzes an den Audio-Thread übergibt.</summary>
-internal sealed record EngineState(double Bpm, double Swing, float Volume, bool[][][] Patterns, int ActivePattern, int[] Sequence, bool RepeatSequence, int CountInBars, Meter[] Meters, EngineTrack[] Tracks, int TrainerStepBpm, int TrainerEveryBars, int TrainerTargetBpm)
+internal sealed record EngineState(double Bpm, SwingFeel Swing, float Volume, StepLevel[][][] Patterns, int ActivePattern, int[] Sequence, bool RepeatSequence, int CountInBars, Meter[] Meters, EngineTrack[] Tracks, int TrainerStepBpm, int TrainerEveryBars, int TrainerTargetBpm, float ClickGain = 1f)
 {
     public static EngineState From(Project project, DrumKit kit)
     {
@@ -16,24 +16,24 @@ internal sealed record EngineState(double Bpm, double Swing, float Volume, bool[
             var settings = project.Tracks[track];
             var angle = (settings.Pan + 1f) * MathF.PI / 4f;   // gleichbleibende Lautheit über das Panorama
             tracks[track] = new EngineTrack(
-                kit.SamplesOf(track),
+                kit.SamplesOf(track, settings.Pitch),
                 settings.Volume * MathF.Cos(angle),
                 settings.Volume * MathF.Sin(angle),
-                Math.Pow(2.0, settings.Pitch / 12.0));
+                kit.HatRoleOf(track),
+                settings.Muted);
         }
 
-        var patterns = new bool[Project.PatternCount][][];
+        var patterns = new StepLevel[Project.PatternCount][][];
         for (var pattern = 0; pattern < Project.PatternCount; pattern++)
         {
-            patterns[pattern] = new bool[Project.TrackCount][];
+            patterns[pattern] = new StepLevel[Project.TrackCount][];
             for (var track = 0; track < Project.TrackCount; track++)
             {
-                patterns[pattern][track] = (bool[])project.Patterns[pattern].Steps[track].Clone();
+                patterns[pattern][track] = (StepLevel[])project.Patterns[pattern].Steps[track].Clone();
             }
         }
 
-        // Bei 100 % dauern gerade Schritte das 1,5-Fache und ungerade die Hälfte.
-        return new EngineState(project.Bpm, project.SwingPercent / 200.0, project.VolumePercent / 100f,
+        return new EngineState(project.Bpm, project.Swing, project.VolumePercent / 100f,
             patterns, project.ActivePattern, project.ActiveSequence, project.SequenceRepeat, project.CountInBars, [.. project.Patterns.Select(pattern => pattern.Meter)], tracks,
             project.TrainerEnabled ? project.TrainerStepBpm : 0, project.TrainerEveryBars, project.TrainerTargetBpm);
     }
@@ -48,6 +48,13 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
     private const int MaxVoices = 32;
     private const int RewindToStart = 1;
     private const int RewindToSilence = 2;
+
+    // Ein leiser Schlag (Ghost Note) liegt etwa 10 dB unter dem normalen, ein betonter etwa 3 dB darüber.
+    private const float SoftGain = 0.3f;
+    private const float AccentGain = 1.4f;
+
+    // So schnell verklingt eine offene Hi-Hat, wenn ein anderer Hi-Hat-Schlag sie stoppt (15 ms). Ohne Ausblenden knackte es.
+    private const float ChokeFadeStep = 1f / (DrumKit.SampleRate * 15 / 1000);
 
     // Stille nach dem letzten Sound, damit auch der Rest im Ausgabepuffer noch zu hören ist.
     private const int TrailingSilenceSamples = DrumKit.SampleRate / 5;
@@ -81,6 +88,10 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
     private volatile int _currentBpm;
     private EngineTrack? _pendingPreview;
     private volatile int _barsPlayed;
+    private bool _silentBar;
+    private volatile bool _isSilentBar;
+    private long _barStart = -1;
+    private long _endPosition = -1;
 
     public WaveFormat WaveFormat { get; } = WaveFormat.CreateIeeeFloatWaveFormat(DrumKit.SampleRate, 2);
 
@@ -104,6 +115,15 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
 
     /// <summary>Der gerade gespielte Takt seit dem Start, 0 vor dem ersten Takt. Vorzählen zählt nicht mit.</summary>
     public int BarsPlayed => _barsPlayed;
+
+    /// <summary>Gerade läuft ein stummer Takt der Abfolge.</summary>
+    public bool IsSilentBar => _isSilentBar;
+
+    /// <summary>Wo der laufende Takt im Audiostrom begonnen hat, in Samples. Anders als <see cref="LastBarStart"/> auch für stumme Takte. -1 vor dem ersten Takt.</summary>
+    public long CurrentBarStart => Interlocked.Read(ref _barStart);
+
+    /// <summary>Wo eine Abfolge ohne Wiederholung geendet hat, in Samples: die Taktgrenze nach ihrem letzten Takt. -1, solange sie läuft.</summary>
+    public long EndPosition => Interlocked.Read(ref _endPosition);
 
     /// <summary>Die Abfolge ohne Wiederholung ist zu Ende, und alle Sounds sind ausgeklungen.</summary>
     public bool IsFinished => _isFinished;
@@ -133,6 +153,7 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
         _currentPattern = -1;
         _currentSequenceIndex = -1;
         _isFinished = false;
+        _isSilentBar = false;
         _countInBar = 0;
         _barsPlayed = 0;
         Interlocked.Exchange(ref _lastBarStart, -1);
@@ -190,7 +211,9 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
     private void ResetTransport(EngineState state)
     {
         // Vorgezählt wird in der Taktart des Patterns, mit dem die Wiedergabe beginnt.
-        _playingPattern = state.Sequence.Length > 0 ? state.Sequence[0] : state.ActivePattern;
+        _playingPattern = FirstPattern(state);
+        _silentBar = false;
+        _isSilentBar = false;
         _countInMeter = state.Meters[_playingPattern];
         _countInStepsLeft = state.CountInBars * _countInMeter.Steps;
         _countInBar = 0;
@@ -208,7 +231,22 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
         _trainerOffset = 0;
         _barsPlayed = 0;
         Interlocked.Exchange(ref _lastBarStart, -1);
+        Interlocked.Exchange(ref _barStart, -1);
+        Interlocked.Exchange(ref _endPosition, -1);
         Array.Clear(_voices);
+    }
+
+    /// <summary>Das Pattern, mit dem die Wiedergabe beginnt: in einer Abfolge das erste, das kein stummer Takt ist.</summary>
+    private static int FirstPattern(EngineState state)
+    {
+        foreach (var entry in state.Sequence)
+        {
+            if (entry != Project.SilentBar)
+            {
+                return entry;
+            }
+        }
+        return state.ActivePattern;
     }
 
     /// <summary>
@@ -221,6 +259,7 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
         if (sequence.Length == 0)
         {
             _sequenceIndex = -1;
+            _silentBar = false;
 
             // Bei einer anderen Taktart wartet der Wechsel auf den Taktanfang, damit kein Takt abreißt.
             if (step == 0 || ReferenceEquals(state.Meters[state.ActivePattern], state.Meters[_playingPattern]))
@@ -235,7 +274,14 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
                 return false;
             }
             _sequenceIndex = (_sequenceIndex + 1) % sequence.Length;
-            _playingPattern = sequence[_sequenceIndex];
+
+            // Ein stummer Takt hat kein eigenes Pattern. Er dauert so lange wie ein Takt des Patterns davor.
+            var entry = sequence[_sequenceIndex];
+            _silentBar = entry == Project.SilentBar;
+            if (!_silentBar)
+            {
+                _playingPattern = entry;
+            }
         }
         return true;
     }
@@ -253,20 +299,23 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
         switch (_countInMeter.ClickLevels[step])
         {
             case Meter.ClickBar:
-                StartVoice(AccentClick);
+                StartVoice(AccentClick, state.ClickGain);
                 break;
             case Meter.ClickGroup:
-                StartVoice(GroupClick);
+                StartVoice(GroupClick, state.ClickGain);
                 break;
             case Meter.ClickBeat:
-                StartVoice(BeatClick);
+                StartVoice(BeatClick, state.ClickGain);
                 break;
         }
 
         _countInStepsLeft--;
-        _nextStepPos += StepLength(state, step);
+        _nextStepPos += StepLength(state, _countInMeter, step);
         _nextStep = (step + 1) % _countInMeter.Steps;
     }
+
+    /// <summary>Der Klick auf die Eins in der eingestellten Lautstärke, zum Anhören beim Einstellen.</summary>
+    public static EngineTrack CountInClick(float gain) => AccentClick with { GainLeft = AccentClick.GainLeft * gain, GainRight = AccentClick.GainRight * gain };
 
     private static EngineTrack CreateClick(float frequency, float level)
     {
@@ -278,7 +327,7 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
         }
 
         var centered = MathF.Cos(MathF.PI / 4f);
-        return new EngineTrack(samples, centered, centered, 1.0);
+        return new EngineTrack(samples, centered, centered);
     }
 
     private void TriggerStep(EngineState state)
@@ -299,30 +348,42 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
         if (!SelectPattern(state, step))
         {
             _sequenceEnded = true;
+            Interlocked.Exchange(ref _endPosition, _samplePos);
             _currentStep = -1;
             return;
         }
 
+        // Im stummen Takt läuft nur die Zeit weiter: kein Klang, kein Lauflicht und kein Taktblitz, an denen man sich
+        // festhalten könnte. Gezählt wird er wie jeder andere Takt, auch für den Tempotrainer.
         if (step == 0)
         {
-            Interlocked.Exchange(ref _lastBarStart, _samplePos);
+            Interlocked.Exchange(ref _barStart, _samplePos);
+            if (!_silentBar)
+            {
+                Interlocked.Exchange(ref _lastBarStart, _samplePos);
+            }
             _barsPlayed++;
             AdvanceTrainer(state);
         }
 
-        var steps = state.Patterns[_playingPattern];
-        for (var track = 0; track < Project.TrackCount; track++)
+        if (!_silentBar)
         {
-            if (steps[track][step])
+            var steps = state.Patterns[_playingPattern];
+            for (var track = 0; track < Project.TrackCount; track++)
             {
-                StartVoice(state.Tracks[track]);
+                var level = steps[track][step];
+                if (level != StepLevel.Off && !state.Tracks[track].Muted)   // stumm heißt auch: stoppt keine offene Hi-Hat
+                {
+                    StartVoice(state.Tracks[track], level == StepLevel.Soft ? SoftGain : level == StepLevel.Accent ? AccentGain : 1f);
+                }
             }
         }
 
-        _currentStep = step;
+        _currentStep = _silentBar ? -1 : step;
+        _isSilentBar = _silentBar;
         _currentPattern = _playingPattern;
         _currentSequenceIndex = _sequenceIndex;
-        _nextStepPos += StepLength(state, step);
+        _nextStepPos += StepLength(state, state.Meters[_playingPattern], step);
         _nextStep = (step + 1) % state.Meters[_playingPattern].Steps;
     }
 
@@ -351,19 +412,24 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
     private double EffectiveBpm(EngineState state) =>
         state.TrainerStepBpm == 0 ? state.Bpm : Math.Max(state.Bpm, Math.Min(state.Bpm + _trainerOffset, state.TrainerTargetBpm));
 
-    private double StepLength(EngineState state, int step)
+    private double StepLength(EngineState state, Meter meter, int step)
     {
         var bpm = EffectiveBpm(state);
         _currentBpm = (int)bpm;
         var sixteenth = 60.0 * DrumKit.SampleRate / bpm / 4.0;
-        return step % 2 == 0 ? sixteenth * (1.0 + state.Swing) : sixteenth * (1.0 - state.Swing);
+        return sixteenth * meter.StepFactor(state.Swing, step);
     }
 
-    private void StartVoice(EngineTrack track)
+    private void StartVoice(EngineTrack track, float gain = 1f)
     {
         if (track.Samples.Length == 0)
         {
             return;
+        }
+
+        if (track.Hat == HatRole.Closing)
+        {
+            ChokeOpenHats();
         }
 
         // Freien Platz suchen, sonst den ältesten Sound ablösen.
@@ -384,11 +450,28 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
         _voices[slot] = new Voice
         {
             Samples = track.Samples,
-            Rate = track.Rate,
-            GainLeft = track.GainLeft,
-            GainRight = track.GainRight,
+            GainLeft = track.GainLeft * gain,
+            GainRight = track.GainRight * gain,
             StartedAt = _samplePos,
+            IsOpenHat = track.Hat == HatRole.Open,
+            Fade = 1f,
         };
+    }
+
+    /// <summary>
+    /// Wie am Schlagzeug: Ein Hi-Hat-Schlag beendet die noch klingende offene Hi-Hat. Stehen beide auf demselben Schritt,
+    /// bleibt die offene, sonst hinge es von der Reihenfolge der Spuren ab, ob man sie hört.
+    /// </summary>
+    private void ChokeOpenHats()
+    {
+        for (var slot = 0; slot < MaxVoices; slot++)
+        {
+            ref var voice = ref _voices[slot];
+            if (voice.IsOpenHat && voice.Samples is not null && voice.StartedAt < _samplePos)
+            {
+                voice.FadeStep = ChokeFadeStep;
+            }
+        }
     }
 
     private void MixFrame(float volume, Span<float> frame)
@@ -404,19 +487,24 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
                 continue;
             }
 
-            var position = (int)voice.Position;
-            if (position >= samples.Length)
+            if (voice.Position >= samples.Length)
             {
                 voice.Samples = null;
                 continue;
             }
 
-            var fraction = (float)(voice.Position - position);
-            var next = position + 1 < samples.Length ? samples[position + 1] : 0f;
-            var sample = samples[position] + ((next - samples[position]) * fraction);
+            var sample = samples[voice.Position++];
+            if (voice.FadeStep > 0f)
+            {
+                sample *= voice.Fade;
+                voice.Fade -= voice.FadeStep;
+                if (voice.Fade <= 0f)
+                {
+                    voice.Samples = null;
+                }
+            }
             left += sample * voice.GainLeft;
             right += sample * voice.GainRight;
-            voice.Position += voice.Rate;
         }
 
         frame[0] = Math.Clamp(left * volume, -1f, 1f);
@@ -426,10 +514,12 @@ internal sealed class SequencerEngine(EngineState state) : ISampleProvider
     private struct Voice
     {
         public float[]? Samples;
-        public double Position;
-        public double Rate;
+        public int Position;
         public float GainLeft;
         public float GainRight;
         public long StartedAt;
+        public bool IsOpenHat;
+        public float Fade;       // 1 = volle Lautstärke; sinkt nur, während die Stimme gestoppt wird
+        public float FadeStep;   // 0 = klingt normal aus
     }
 }

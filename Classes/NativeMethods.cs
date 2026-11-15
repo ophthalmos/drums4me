@@ -18,4 +18,14 @@ internal static partial class NativeMethods
     [LibraryImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static partial bool AllowSetForegroundWindow(uint processId);
+
+    /// <summary>Der Wunsch gilt, bis er zurückgenommen wird.</summary>
+    internal const uint ExecutionContinuous = 0x80000000;
+
+    /// <summary>Windows soll den Bildschirm nicht abschalten.</summary>
+    internal const uint ExecutionDisplayRequired = 0x00000002;
+
+    /// <summary>Sagt Windows, was der aufrufende Thread gerade braucht. Der Wunsch endet mit dem Thread.</summary>
+    [LibraryImport("kernel32.dll")]
+    internal static partial uint SetThreadExecutionState(uint flags);
 }

@@ -45,6 +45,7 @@
             groupStartup = new Panel();
             checkBoxOpenLast = new CheckBox();
             captionStartup = new Label();
+            dividerStartup = new Panel();
             tabPageStart = new TabPage();
             flowStart = new FlowLayoutPanel();
             groupPlay = new Panel();
@@ -63,7 +64,7 @@
             dividerTempo = new Panel();
             groupTrainer = new Panel();
             checkBoxTrainer = new CheckBox();
-            labelTrainerStep = new Label();
+            labelTrainerStepBpm = new Label();
             numericTrainerStep = new NumericUpDown();
             labelTrainerBars = new Label();
             labelTrainerEvery = new Label();
@@ -73,15 +74,12 @@
             labelTrainerBpm = new Label();
             captionTrainer = new Label();
             dividerTrainer = new Panel();
-            groupSound = new Panel();
-            labelSwing = new Label();
-            trackBarSwing = new TrackBar();
-            labelSwingValue = new Label();
-            labelVolume = new Label();
-            trackBarVolume = new TrackBar();
-            labelVolumeValue = new Label();
-            captionSound = new Label();
-            dividerSound = new Panel();
+            groupSwing = new Panel();
+            radioSwingStraight = new RadioButton();
+            radioSwingEighths = new RadioButton();
+            radioSwingSixteenths = new RadioButton();
+            captionSwing = new Label();
+            dividerSwing = new Panel();
             groupDrumkit = new Panel();
             comboKit = new ComboBox();
             buttonSelectKits = new Button();
@@ -101,6 +99,7 @@
             checkBoxRepeat = new CheckBox();
             textBoxSequence = new TextBox();
             captionSequence = new Label();
+            dividerSequence = new Panel();
             tabPageSettings = new TabPage();
             flowSettings = new FlowLayoutPanel();
             groupProjects = new Panel();
@@ -114,12 +113,14 @@
             radioSystem = new RadioButton();
             radioLight = new RadioButton();
             radioDark = new RadioButton();
-            labelAppearanceHint = new Label();
-            lineFlash = new Panel();
-            labelFlash = new Label();
             checkBoxFlash = new CheckBox();
             captionAppearance = new Label();
             dividerAppearance = new Panel();
+            groupLanguage = new Panel();
+            radioGerman = new RadioButton();
+            radioEnglish = new RadioButton();
+            captionLanguage = new Label();
+            dividerLanguage = new Panel();
             groupKits = new Panel();
             labelOwnKits = new Label();
             buttonOwnKits = new Button();
@@ -134,21 +135,41 @@
             labelAudioDevice = new Label();
             comboAudioDevice = new ComboBox();
             captionAudio = new Label();
+            dividerAudio = new Panel();
+            groupPlayback = new Panel();
+            labelClickVolume = new Label();
+            buttonKeepScreenOn = new Button();
+            captionPlayback = new Label();
+            dividerPlayback = new Panel();
+            groupFlash = new Panel();
+            captionFlash = new Label();
+            dividerFlash = new Panel();
+            numericClickVolume = new NumericUpDown();
+            labelClickVolumeUnit = new Label();
+            lineLatency = new Panel();
+            labelLatency = new Label();
+            numericLatency = new NumericUpDown();
+            labelLatencyUnit = new Label();
+            buttonLatencyDefault = new Button();
+            buttonTopMost = new Button();
             ribbonImages = new ImageList(components);
             panelFileCommands = new Panel();
             buttonNew = new Button();
             buttonSave = new Button();
             buttonSaveAs = new Button();
+            buttonExportAudio = new Button();
             buttonCloseProject = new Button();
             lineCommands = new Panel();
             buttonOtherFolder = new Button();
             buttonDefaultFolder = new Button();
             buttonDemos = new Button();
+            buttonImportMidi = new Button();
             lineWindowCommands = new Panel();
             buttonResetLayout = new Button();
             buttonFileAbout = new Button();
             buttonExit = new Button();
             lineFileCommands = new Panel();
+            tabMarker = new Panel();
             buttonUndo = new Button();
             buttonRedo = new Button();
             buttonQuickSave = new Button();
@@ -172,10 +193,20 @@
             renameTrackToolStripMenuItem = new ToolStripMenuItem();
             demosMenu = new ContextMenuStrip(components);
             noDemosToolStripMenuItem = new ToolStripMenuItem();
+            patternMenu = new ContextMenuStrip(components);
+            copyPatternToolStripMenuItem = new ToolStripMenuItem();
+            pastePatternToolStripMenuItem = new ToolStripMenuItem();
+            clearPatternToolStripMenuItem = new ToolStripMenuItem();
+            beatMenu = new ContextMenuStrip(components);
+            copyBeatToolStripMenuItem = new ToolStripMenuItem();
+            pasteBeatToolStripMenuItem = new ToolStripMenuItem();
+            fillBeatsToolStripMenuItem = new ToolStripMenuItem();
+            clearBeatToolStripMenuItem = new ToolStripMenuItem();
             pendingOpenTimer = new System.Windows.Forms.Timer(components);
             otherFolderDialog = new FolderBrowserDialog();
             projectFolderDialog = new FolderBrowserDialog();
             saveFileDialog = new SaveFileDialog();
+            midiFileDialog = new OpenFileDialog();
             ribbonTabs.SuspendLayout();
             tabPageFile.SuspendLayout();
             flowFile.SuspendLayout();
@@ -191,9 +222,7 @@
             ((System.ComponentModel.ISupportInitialize)numericTrainerStep).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerBars).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerTarget).BeginInit();
-            groupSound.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)trackBarSwing).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)trackBarVolume).BeginInit();
+            groupSwing.SuspendLayout();
             groupDrumkit.SuspendLayout();
             groupPattern.SuspendLayout();
             groupSequence.SuspendLayout();
@@ -201,12 +230,19 @@
             flowSettings.SuspendLayout();
             groupProjects.SuspendLayout();
             groupAppearance.SuspendLayout();
+            groupLanguage.SuspendLayout();
             groupKits.SuspendLayout();
             groupAudio.SuspendLayout();
+            groupPlayback.SuspendLayout();
+            groupFlash.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericClickVolume).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericLatency).BeginInit();
             panelFileCommands.SuspendLayout();
             statusStrip.SuspendLayout();
             trackNameMenu.SuspendLayout();
             demosMenu.SuspendLayout();
+            patternMenu.SuspendLayout();
+            beatMenu.SuspendLayout();
             SuspendLayout();
             // 
             // ribbonTabs
@@ -241,6 +277,9 @@
             flowFile.Controls.Add(groupFind);
             flowFile.Controls.Add(dividerFind);
             flowFile.Controls.Add(groupStartup);
+            flowFile.Controls.Add(dividerStartup);
+            flowFile.Controls.Add(groupProjects);
+            flowFile.Controls.Add(dividerProjects);
             flowFile.Dock = DockStyle.Fill;
             flowFile.Location = new Point(236, 0);
             flowFile.Name = "flowFile";
@@ -266,7 +305,7 @@
             // 
             labelSearch.AccessibleDescription = "Sucht in den Namen der Projekte und Ordner.";
             labelSearch.AutoSize = true;
-            labelSearch.Location = new Point(8, 8);
+            labelSearch.Location = new Point(8, 11);
             labelSearch.Name = "labelSearch";
             labelSearch.Size = new Size(53, 19);
             labelSearch.TabIndex = 0;
@@ -277,8 +316,10 @@
             textBoxSearch.AccessibleDescription = "Sucht in den Namen der Projekte und Ordner. Strg+F. Enter öffnet das markierte Projekt, Pfeil runter springt in die Liste.";
             textBoxSearch.Location = new Point(62, 5);
             textBoxSearch.Name = "textBoxSearch";
-            textBoxSearch.Size = new Size(400, 25);
+            textBoxSearch.PlaceholderText = "Name oder Ordner (Strg+F)";
+            textBoxSearch.Size = new Size(400, 28);
             textBoxSearch.TabIndex = 1;
+            textBoxSearch.VisualStylesMode = VisualStylesMode.Net11;
             textBoxSearch.TextChanged += BrowserFilter_Changed;
             textBoxSearch.KeyDown += TextBoxSearch_KeyDown;
             // 
@@ -286,7 +327,7 @@
             // 
             labelFilterKit.AccessibleDescription = "Zeigt nur Projekte mit diesem Kit.";
             labelFilterKit.AutoSize = true;
-            labelFilterKit.Location = new Point(8, 40);
+            labelFilterKit.Location = new Point(8, 42);
             labelFilterKit.Name = "labelFilterKit";
             labelFilterKit.Size = new Size(25, 19);
             labelFilterKit.TabIndex = 2;
@@ -299,15 +340,16 @@
             comboFilterKit.Location = new Point(62, 37);
             comboFilterKit.MaxDropDownItems = 20;
             comboFilterKit.Name = "comboFilterKit";
-            comboFilterKit.Size = new Size(170, 25);
+            comboFilterKit.Size = new Size(170, 28);
             comboFilterKit.TabIndex = 3;
+            comboFilterKit.VisualStylesMode = VisualStylesMode.Net11;
             comboFilterKit.SelectedIndexChanged += BrowserFilter_Changed;
             // 
             // labelFilterMeter
             // 
             labelFilterMeter.AccessibleDescription = "Zeigt nur Projekte, in denen diese Taktart vorkommt.";
             labelFilterMeter.AutoSize = true;
-            labelFilterMeter.Location = new Point(246, 40);
+            labelFilterMeter.Location = new Point(246, 42);
             labelFilterMeter.Name = "labelFilterMeter";
             labelFilterMeter.Size = new Size(50, 19);
             labelFilterMeter.TabIndex = 4;
@@ -319,8 +361,9 @@
             comboFilterMeter.DropDownStyle = ComboBoxStyle.DropDownList;
             comboFilterMeter.Location = new Point(300, 37);
             comboFilterMeter.Name = "comboFilterMeter";
-            comboFilterMeter.Size = new Size(162, 25);
+            comboFilterMeter.Size = new Size(162, 28);
             comboFilterMeter.TabIndex = 5;
+            comboFilterMeter.VisualStylesMode = VisualStylesMode.Net11;
             comboFilterMeter.SelectedIndexChanged += BrowserFilter_Changed;
             // 
             // captionFind
@@ -378,6 +421,15 @@
             captionStartup.Text = "Programmstart";
             captionStartup.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // dividerStartup
+            // 
+            dividerStartup.BackColor = SystemColors.ControlDark;
+            dividerStartup.Location = new Point(631, 4);
+            dividerStartup.Margin = new Padding(0, 4, 0, 4);
+            dividerStartup.Name = "dividerStartup";
+            dividerStartup.Size = new Size(1, 82);
+            dividerStartup.TabIndex = 3;
+            // 
             // tabPageStart
             // 
             tabPageStart.Controls.Add(flowStart);
@@ -395,13 +447,16 @@
             flowStart.Controls.Add(dividerTempo);
             flowStart.Controls.Add(groupTrainer);
             flowStart.Controls.Add(dividerTrainer);
-            flowStart.Controls.Add(groupSound);
-            flowStart.Controls.Add(dividerSound);
+            flowStart.Controls.Add(groupSwing);
+            flowStart.Controls.Add(dividerSwing);
+            flowStart.Controls.Add(groupFlash);
+            flowStart.Controls.Add(dividerFlash);
             flowStart.Controls.Add(groupDrumkit);
             flowStart.Controls.Add(dividerDrumkit);
             flowStart.Controls.Add(groupPattern);
             flowStart.Controls.Add(dividerPattern);
             flowStart.Controls.Add(groupSequence);
+            flowStart.Controls.Add(dividerSequence);
             flowStart.Dock = DockStyle.Fill;
             flowStart.Location = new Point(0, 0);
             flowStart.Name = "flowStart";
@@ -465,7 +520,7 @@
             groupTempo.Location = new Point(89, 0);
             groupTempo.Margin = new Padding(0);
             groupTempo.Name = "groupTempo";
-            groupTempo.Size = new Size(208, 90);
+            groupTempo.Size = new Size(222, 90);
             groupTempo.TabIndex = 2;
             // 
             // labelTempo
@@ -505,14 +560,14 @@
             // 
             buttonTap.AccessibleDescription = "Öffnet ein Fenster, in dem du das Tempo mit der Leertaste tippst oder aus dem laufenden Song ermitteln lässt. Strg+T.";
             buttonTap.AccessibleName = "Tempo ermitteln";
-            buttonTap.Image = (Image)resources.GetObject("buttonTap.Image");
             buttonTap.Location = new Point(168, 3);
             buttonTap.Name = "buttonTap";
-            buttonTap.Size = new Size(34, 64);
+            buttonTap.Size = new Size(48, 64);
             buttonTap.TabIndex = 3;
             toolTip.SetToolTip(buttonTap, "Tempo ermitteln (Strg+T)");
             buttonTap.UseVisualStyleBackColor = true;
             buttonTap.Click += ButtonTap_Click;
+            buttonTap.Paint += ButtonTap_Paint;
             // 
             // labelCountIn
             // 
@@ -550,7 +605,7 @@
             captionTempo.ForeColor = SystemColors.GrayText;
             captionTempo.Location = new Point(0, 72);
             captionTempo.Name = "captionTempo";
-            captionTempo.Size = new Size(208, 18);
+            captionTempo.Size = new Size(222, 18);
             captionTempo.TabIndex = 7;
             captionTempo.Text = "Tempo";
             captionTempo.TextAlign = ContentAlignment.MiddleCenter;
@@ -558,7 +613,7 @@
             // dividerTempo
             // 
             dividerTempo.BackColor = SystemColors.ControlDark;
-            dividerTempo.Location = new Point(297, 4);
+            dividerTempo.Location = new Point(311, 4);
             dividerTempo.Margin = new Padding(0, 4, 0, 4);
             dividerTempo.Name = "dividerTempo";
             dividerTempo.Size = new Size(1, 82);
@@ -567,7 +622,7 @@
             // groupTrainer
             // 
             groupTrainer.Controls.Add(checkBoxTrainer);
-            groupTrainer.Controls.Add(labelTrainerStep);
+            groupTrainer.Controls.Add(labelTrainerStepBpm);
             groupTrainer.Controls.Add(numericTrainerStep);
             groupTrainer.Controls.Add(labelTrainerBars);
             groupTrainer.Controls.Add(labelTrainerEvery);
@@ -576,10 +631,10 @@
             groupTrainer.Controls.Add(numericTrainerTarget);
             groupTrainer.Controls.Add(labelTrainerBpm);
             groupTrainer.Controls.Add(captionTrainer);
-            groupTrainer.Location = new Point(298, 0);
+            groupTrainer.Location = new Point(312, 0);
             groupTrainer.Margin = new Padding(0);
             groupTrainer.Name = "groupTrainer";
-            groupTrainer.Size = new Size(244, 90);
+            groupTrainer.Size = new Size(230, 90);
             groupTrainer.TabIndex = 4;
             // 
             // checkBoxTrainer
@@ -596,26 +651,26 @@
             checkBoxTrainer.VisualStylesMode = VisualStylesMode.Net11;
             checkBoxTrainer.CheckedChanged += CheckBoxTrainer_CheckedChanged;
             // 
-            // labelTrainerStep
+            // labelTrainerStepBpm
             // 
-            labelTrainerStep.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            labelTrainerStep.AutoSize = true;
-            labelTrainerStep.Location = new Point(118, 8);
-            labelTrainerStep.Name = "labelTrainerStep";
-            labelTrainerStep.Size = new Size(40, 19);
-            labelTrainerStep.TabIndex = 1;
-            labelTrainerStep.Text = "Stufe";
+            labelTrainerStepBpm.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
+            labelTrainerStepBpm.AutoSize = true;
+            labelTrainerStepBpm.Location = new Point(53, 40);
+            labelTrainerStepBpm.Name = "labelTrainerStepBpm";
+            labelTrainerStepBpm.Size = new Size(38, 19);
+            labelTrainerStepBpm.TabIndex = 5;
+            labelTrainerStepBpm.Text = "BPM";
             // 
             // numericTrainerStep
             // 
             numericTrainerStep.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
             numericTrainerStep.Enabled = false;
-            numericTrainerStep.Location = new Point(160, 5);
+            numericTrainerStep.Location = new Point(8, 37);
             numericTrainerStep.Maximum = new decimal(new int[] { 20, 0, 0, 0 });
             numericTrainerStep.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericTrainerStep.Name = "numericTrainerStep";
             numericTrainerStep.Size = new Size(44, 25);
-            numericTrainerStep.TabIndex = 2;
+            numericTrainerStep.TabIndex = 4;
             numericTrainerStep.TextAlign = HorizontalAlignment.Center;
             numericTrainerStep.Value = new decimal(new int[] { 2, 0, 0, 0 });
             numericTrainerStep.ValueChanged += NumericTrainer_ValueChanged;
@@ -624,32 +679,32 @@
             // 
             labelTrainerBars.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
             labelTrainerBars.AutoSize = true;
-            labelTrainerBars.Location = new Point(205, 8);
+            labelTrainerBars.Location = new Point(191, 40);
             labelTrainerBars.Name = "labelTrainerBars";
-            labelTrainerBars.Size = new Size(38, 19);
-            labelTrainerBars.TabIndex = 3;
-            labelTrainerBars.Text = "BPM";
+            labelTrainerBars.Size = new Size(40, 19);
+            labelTrainerBars.TabIndex = 8;
+            labelTrainerBars.Text = "Takte";
             // 
             // labelTrainerEvery
             // 
             labelTrainerEvery.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            labelTrainerEvery.AutoSize = true;
-            labelTrainerEvery.Location = new Point(8, 40);
+            labelTrainerEvery.Location = new Point(92, 40);
             labelTrainerEvery.Name = "labelTrainerEvery";
-            labelTrainerEvery.Size = new Size(29, 19);
-            labelTrainerEvery.TabIndex = 4;
+            labelTrainerEvery.Size = new Size(42, 19);
+            labelTrainerEvery.TabIndex = 6;
             labelTrainerEvery.Text = "alle";
+            labelTrainerEvery.TextAlign = ContentAlignment.MiddleRight;
             // 
             // numericTrainerBars
             // 
             numericTrainerBars.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
             numericTrainerBars.Enabled = false;
-            numericTrainerBars.Location = new Point(38, 37);
+            numericTrainerBars.Location = new Point(134, 37);
             numericTrainerBars.Maximum = new decimal(new int[] { 64, 0, 0, 0 });
             numericTrainerBars.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericTrainerBars.Name = "numericTrainerBars";
-            numericTrainerBars.Size = new Size(44, 25);
-            numericTrainerBars.TabIndex = 5;
+            numericTrainerBars.Size = new Size(56, 25);
+            numericTrainerBars.TabIndex = 7;
             numericTrainerBars.TextAlign = HorizontalAlignment.Center;
             numericTrainerBars.Value = new decimal(new int[] { 4, 0, 0, 0 });
             numericTrainerBars.ValueChanged += NumericTrainer_ValueChanged;
@@ -657,23 +712,23 @@
             // labelTrainerTarget
             // 
             labelTrainerTarget.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
-            labelTrainerTarget.AutoSize = true;
-            labelTrainerTarget.Location = new Point(84, 40);
+            labelTrainerTarget.Location = new Point(92, 8);
             labelTrainerTarget.Name = "labelTrainerTarget";
-            labelTrainerTarget.Size = new Size(64, 19);
-            labelTrainerTarget.TabIndex = 6;
-            labelTrainerTarget.Text = "Takte, bis";
+            labelTrainerTarget.Size = new Size(42, 19);
+            labelTrainerTarget.TabIndex = 1;
+            labelTrainerTarget.Text = "bis";
+            labelTrainerTarget.TextAlign = ContentAlignment.MiddleRight;
             // 
             // numericTrainerTarget
             // 
             numericTrainerTarget.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
             numericTrainerTarget.Enabled = false;
-            numericTrainerTarget.Location = new Point(148, 37);
+            numericTrainerTarget.Location = new Point(134, 5);
             numericTrainerTarget.Maximum = new decimal(new int[] { 300, 0, 0, 0 });
             numericTrainerTarget.Minimum = new decimal(new int[] { 20, 0, 0, 0 });
             numericTrainerTarget.Name = "numericTrainerTarget";
             numericTrainerTarget.Size = new Size(56, 25);
-            numericTrainerTarget.TabIndex = 7;
+            numericTrainerTarget.TabIndex = 2;
             numericTrainerTarget.TextAlign = HorizontalAlignment.Center;
             numericTrainerTarget.Value = new decimal(new int[] { 120, 0, 0, 0 });
             numericTrainerTarget.ValueChanged += NumericTrainer_ValueChanged;
@@ -682,10 +737,10 @@
             // 
             labelTrainerBpm.AccessibleDescription = "Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran.";
             labelTrainerBpm.AutoSize = true;
-            labelTrainerBpm.Location = new Point(205, 40);
+            labelTrainerBpm.Location = new Point(191, 8);
             labelTrainerBpm.Name = "labelTrainerBpm";
             labelTrainerBpm.Size = new Size(38, 19);
-            labelTrainerBpm.TabIndex = 8;
+            labelTrainerBpm.TabIndex = 3;
             labelTrainerBpm.Text = "BPM";
             // 
             // captionTrainer
@@ -694,7 +749,7 @@
             captionTrainer.ForeColor = SystemColors.GrayText;
             captionTrainer.Location = new Point(0, 72);
             captionTrainer.Name = "captionTrainer";
-            captionTrainer.Size = new Size(244, 18);
+            captionTrainer.Size = new Size(230, 18);
             captionTrainer.TabIndex = 9;
             captionTrainer.Text = "Tempotrainer";
             captionTrainer.TextAlign = ContentAlignment.MiddleCenter;
@@ -708,103 +763,120 @@
             dividerTrainer.Size = new Size(1, 82);
             dividerTrainer.TabIndex = 5;
             // 
-            // groupSound
+            // groupSwing
+            //
+            groupSwing.Controls.Add(radioSwingStraight);
+            groupSwing.Controls.Add(radioSwingEighths);
+            groupSwing.Controls.Add(radioSwingSixteenths);
+            groupSwing.Controls.Add(captionSwing);
+            groupSwing.Location = new Point(543, 0);
+            groupSwing.Margin = new Padding(0);
+            groupSwing.Name = "groupSwing";
+            groupSwing.Size = new Size(104, 90);
+            groupSwing.TabIndex = 6;
+            //
+            // radioSwingStraight
+            //
+            radioSwingStraight.AccessibleDescription = "Gerader Rhythmus: Alle Schritte sind gleich lang, so wie sie im Raster stehen.";
+            radioSwingStraight.AutoSize = true;
+            radioSwingStraight.Checked = true;
+            radioSwingStraight.Location = new Point(6, 1);
+            radioSwingStraight.Name = "radioSwingStraight";
+            radioSwingStraight.Size = new Size(68, 23);
+            radioSwingStraight.TabIndex = 0;
+            radioSwingStraight.TabStop = true;
+            radioSwingStraight.Text = "Gerade";
+            radioSwingStraight.UseVisualStyleBackColor = true;
+            radioSwingStraight.CheckedChanged += RadioSwing_CheckedChanged;
+            //
+            // radioSwingEighths
+            //
+            radioSwingEighths.AccessibleDescription = "Swing-Achtel: Die zweite Achtel jeder Zählzeit kommt später, wie die dritte Note einer Triole. Wirkt in 2/4, 3/4, 4/4 und 5/4.";
+            radioSwingEighths.AutoSize = true;
+            radioSwingEighths.Location = new Point(6, 24);
+            radioSwingEighths.Name = "radioSwingEighths";
+            radioSwingEighths.Size = new Size(65, 23);
+            radioSwingEighths.TabIndex = 1;
+            radioSwingEighths.Text = "Achtel";
+            radioSwingEighths.UseVisualStyleBackColor = true;
+            radioSwingEighths.CheckedChanged += RadioSwing_CheckedChanged;
+            //
+            // radioSwingSixteenths
+            //
+            radioSwingSixteenths.AccessibleDescription = "Swing-Sechzehntel: Jede zweite Sechzehntel kommt später, wie die dritte Note einer Triole.";
+            radioSwingSixteenths.AutoSize = true;
+            radioSwingSixteenths.Location = new Point(6, 47);
+            radioSwingSixteenths.Name = "radioSwingSixteenths";
+            radioSwingSixteenths.Size = new Size(94, 23);
+            radioSwingSixteenths.TabIndex = 2;
+            radioSwingSixteenths.Text = "Sechzehntel";
+            radioSwingSixteenths.UseVisualStyleBackColor = true;
+            radioSwingSixteenths.CheckedChanged += RadioSwing_CheckedChanged;
+            //
+            // captionSwing
+            //
+            captionSwing.Dock = DockStyle.Bottom;
+            captionSwing.ForeColor = SystemColors.GrayText;
+            captionSwing.Location = new Point(0, 72);
+            captionSwing.Name = "captionSwing";
+            captionSwing.Size = new Size(104, 18);
+            captionSwing.TabIndex = 3;
+            captionSwing.Text = "Swing";
+            captionSwing.TextAlign = ContentAlignment.MiddleCenter;
+            //
+            // dividerSwing
+            //
+            dividerSwing.BackColor = SystemColors.ControlDark;
+            dividerSwing.Location = new Point(647, 4);
+            dividerSwing.Margin = new Padding(0, 4, 0, 4);
+            dividerSwing.Name = "dividerSwing";
+            dividerSwing.Size = new Size(1, 82);
+            dividerSwing.TabIndex = 7;
+            //
+            // groupFlash
             // 
-            groupSound.Controls.Add(labelSwing);
-            groupSound.Controls.Add(trackBarSwing);
-            groupSound.Controls.Add(labelSwingValue);
-            groupSound.Controls.Add(labelVolume);
-            groupSound.Controls.Add(trackBarVolume);
-            groupSound.Controls.Add(labelVolumeValue);
-            groupSound.Controls.Add(captionSound);
-            groupSound.Location = new Point(543, 0);
-            groupSound.Margin = new Padding(0);
-            groupSound.Name = "groupSound";
-            groupSound.Size = new Size(179, 90);
-            groupSound.TabIndex = 6;
+            groupFlash.Controls.Add(checkBoxFlash);
+            groupFlash.Controls.Add(captionFlash);
+            groupFlash.Location = new Point(648, 0);
+            groupFlash.Margin = new Padding(0);
+            groupFlash.Name = "groupFlash";
+            groupFlash.Size = new Size(76, 90);
+            groupFlash.TabIndex = 8;
             // 
-            // labelSwing
+            // checkBoxFlash
             // 
-            labelSwing.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
-            labelSwing.Location = new Point(8, 8);
-            labelSwing.Name = "labelSwing";
-            labelSwing.Size = new Size(45, 19);
-            labelSwing.TabIndex = 0;
-            labelSwing.Text = "Swing";
+            checkBoxFlash.AccessibleDescription = "Lässt das Raster bei jedem Taktanfang kurz aufleuchten.";
+            checkBoxFlash.AccessibleName = "Taktblitz";
+            checkBoxFlash.Appearance = Appearance.ToggleSwitch;
+            checkBoxFlash.AutoSize = true;
+            checkBoxFlash.Location = new Point(20, 26);
+            checkBoxFlash.Name = "checkBoxFlash";
+            checkBoxFlash.Size = new Size(37, 16);
+            checkBoxFlash.TabIndex = 0;
+            checkBoxFlash.UseVisualStyleBackColor = true;
+            checkBoxFlash.VisualStylesMode = VisualStylesMode.Net11;
+            checkBoxFlash.CheckedChanged += CheckBoxFlash_CheckedChanged;
             // 
-            // trackBarSwing
+            // captionFlash
             // 
-            trackBarSwing.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
-            trackBarSwing.AutoSize = false;
-            trackBarSwing.Location = new Point(53, 3);
-            trackBarSwing.Maximum = 100;
-            trackBarSwing.Name = "trackBarSwing";
-            trackBarSwing.Size = new Size(74, 30);
-            trackBarSwing.TabIndex = 1;
-            trackBarSwing.TickStyle = TickStyle.None;
-            trackBarSwing.ValueChanged += TrackBarSwing_ValueChanged;
+            captionFlash.AccessibleDescription = "Lässt das Raster bei jedem Taktanfang kurz aufleuchten.";
+            captionFlash.Dock = DockStyle.Bottom;
+            captionFlash.ForeColor = SystemColors.GrayText;
+            captionFlash.Location = new Point(0, 72);
+            captionFlash.Name = "captionFlash";
+            captionFlash.Size = new Size(76, 18);
+            captionFlash.TabIndex = 1;
+            captionFlash.Text = "Taktblitz";
+            captionFlash.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // labelSwingValue
+            // dividerFlash
             // 
-            labelSwingValue.AccessibleDescription = "Verzögert jeden zweiten Schritt und gibt dem Rhythmus so mehr Schwung.";
-            labelSwingValue.Location = new Point(127, 8);
-            labelSwingValue.Name = "labelSwingValue";
-            labelSwingValue.Size = new Size(48, 19);
-            labelSwingValue.TabIndex = 8;
-            labelSwingValue.Text = "0 %";
-            labelSwingValue.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // labelVolume
-            // 
-            labelVolume.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
-            labelVolume.Location = new Point(8, 40);
-            labelVolume.Name = "labelVolume";
-            labelVolume.Size = new Size(45, 19);
-            labelVolume.TabIndex = 2;
-            labelVolume.Text = "Vol.";
-            // 
-            // trackBarVolume
-            // 
-            trackBarVolume.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
-            trackBarVolume.AutoSize = false;
-            trackBarVolume.Location = new Point(53, 35);
-            trackBarVolume.Maximum = 100;
-            trackBarVolume.Name = "trackBarVolume";
-            trackBarVolume.Size = new Size(74, 30);
-            trackBarVolume.TabIndex = 3;
-            trackBarVolume.TickStyle = TickStyle.None;
-            trackBarVolume.Value = 80;
-            trackBarVolume.ValueChanged += TrackBarVolume_ValueChanged;
-            // 
-            // labelVolumeValue
-            // 
-            labelVolumeValue.AccessibleDescription = "Gesamtlautstärke aller Spuren. Alt+Plus und Alt+Minus: 5 %.";
-            labelVolumeValue.Location = new Point(127, 40);
-            labelVolumeValue.Name = "labelVolumeValue";
-            labelVolumeValue.Size = new Size(48, 19);
-            labelVolumeValue.TabIndex = 9;
-            labelVolumeValue.Text = "80 %";
-            labelVolumeValue.TextAlign = ContentAlignment.MiddleRight;
-            // 
-            // captionSound
-            // 
-            captionSound.Dock = DockStyle.Bottom;
-            captionSound.ForeColor = SystemColors.GrayText;
-            captionSound.Location = new Point(0, 72);
-            captionSound.Name = "captionSound";
-            captionSound.Size = new Size(179, 18);
-            captionSound.TabIndex = 7;
-            captionSound.Text = "Klang";
-            captionSound.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // dividerSound
-            // 
-            dividerSound.BackColor = SystemColors.ControlDark;
-            dividerSound.Location = new Point(722, 4);
-            dividerSound.Margin = new Padding(0, 4, 0, 4);
-            dividerSound.Name = "dividerSound";
-            dividerSound.Size = new Size(1, 82);
-            dividerSound.TabIndex = 7;
+            dividerFlash.BackColor = SystemColors.ControlDark;
+            dividerFlash.Location = new Point(724, 4);
+            dividerFlash.Margin = new Padding(0, 4, 0, 4);
+            dividerFlash.Name = "dividerFlash";
+            dividerFlash.Size = new Size(1, 82);
+            dividerFlash.TabIndex = 9;
             // 
             // groupDrumkit
             // 
@@ -815,7 +887,7 @@
             groupDrumkit.Margin = new Padding(0);
             groupDrumkit.Name = "groupDrumkit";
             groupDrumkit.Size = new Size(140, 90);
-            groupDrumkit.TabIndex = 8;
+            groupDrumkit.TabIndex = 10;
             // 
             // comboKit
             // 
@@ -830,6 +902,7 @@
             comboKit.Name = "comboKit";
             comboKit.Size = new Size(124, 25);
             comboKit.TabIndex = 0;
+            comboKit.VisualStylesMode = VisualStylesMode.Net11;
             comboKit.DrawItem += ComboKit_DrawItem;
             comboKit.SelectedIndexChanged += ComboKit_SelectedIndexChanged;
             // 
@@ -862,7 +935,7 @@
             dividerDrumkit.Margin = new Padding(0, 4, 0, 4);
             dividerDrumkit.Name = "dividerDrumkit";
             dividerDrumkit.Size = new Size(1, 82);
-            dividerDrumkit.TabIndex = 9;
+            dividerDrumkit.TabIndex = 11;
             // 
             // groupPattern
             // 
@@ -877,12 +950,13 @@
             groupPattern.Margin = new Padding(0);
             groupPattern.Name = "groupPattern";
             groupPattern.Size = new Size(160, 90);
-            groupPattern.TabIndex = 10;
+            groupPattern.TabIndex = 12;
             // 
             // radioPattern1
             // 
-            radioPattern1.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
+            radioPattern1.AccessibleDescription = "Zeigt und spielt dieses Pattern; beim ersten Aufruf übernimmt es den Inhalt des aktuellen. Ziehen auf ein anderes Pattern: dorthin kopieren. Rechtsklick: kopieren, einfügen, leeren.";
             radioPattern1.Appearance = Appearance.Button;
+            radioPattern1.ContextMenuStrip = patternMenu;
             radioPattern1.Checked = true;
             radioPattern1.Location = new Point(8, 3);
             radioPattern1.Name = "radioPattern1";
@@ -893,11 +967,15 @@
             radioPattern1.TextAlign = ContentAlignment.MiddleCenter;
             radioPattern1.UseVisualStyleBackColor = true;
             radioPattern1.CheckedChanged += RadioPattern_CheckedChanged;
+            radioPattern1.MouseDown += RadioPattern_MouseDown;
+            radioPattern1.MouseMove += RadioPattern_MouseMove;
+            radioPattern1.MouseUp += RadioPattern_MouseUp;
             // 
             // radioPattern2
             // 
-            radioPattern2.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
+            radioPattern2.AccessibleDescription = "Zeigt und spielt dieses Pattern; beim ersten Aufruf übernimmt es den Inhalt des aktuellen. Ziehen auf ein anderes Pattern: dorthin kopieren. Rechtsklick: kopieren, einfügen, leeren.";
             radioPattern2.Appearance = Appearance.Button;
+            radioPattern2.ContextMenuStrip = patternMenu;
             radioPattern2.Location = new Point(44, 3);
             radioPattern2.Name = "radioPattern2";
             radioPattern2.Size = new Size(36, 29);
@@ -906,11 +984,15 @@
             radioPattern2.TextAlign = ContentAlignment.MiddleCenter;
             radioPattern2.UseVisualStyleBackColor = true;
             radioPattern2.CheckedChanged += RadioPattern_CheckedChanged;
+            radioPattern2.MouseDown += RadioPattern_MouseDown;
+            radioPattern2.MouseMove += RadioPattern_MouseMove;
+            radioPattern2.MouseUp += RadioPattern_MouseUp;
             // 
             // radioPattern3
             // 
-            radioPattern3.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
+            radioPattern3.AccessibleDescription = "Zeigt und spielt dieses Pattern; beim ersten Aufruf übernimmt es den Inhalt des aktuellen. Ziehen auf ein anderes Pattern: dorthin kopieren. Rechtsklick: kopieren, einfügen, leeren.";
             radioPattern3.Appearance = Appearance.Button;
+            radioPattern3.ContextMenuStrip = patternMenu;
             radioPattern3.Location = new Point(80, 3);
             radioPattern3.Name = "radioPattern3";
             radioPattern3.Size = new Size(36, 29);
@@ -919,11 +1001,15 @@
             radioPattern3.TextAlign = ContentAlignment.MiddleCenter;
             radioPattern3.UseVisualStyleBackColor = true;
             radioPattern3.CheckedChanged += RadioPattern_CheckedChanged;
+            radioPattern3.MouseDown += RadioPattern_MouseDown;
+            radioPattern3.MouseMove += RadioPattern_MouseMove;
+            radioPattern3.MouseUp += RadioPattern_MouseUp;
             // 
             // radioPattern4
             // 
-            radioPattern4.AccessibleDescription = "Wählt das Pattern, das du siehst und hörst. Beim ersten Aufruf übernimmt es den Inhalt des aktuellen Patterns.";
+            radioPattern4.AccessibleDescription = "Zeigt und spielt dieses Pattern; beim ersten Aufruf übernimmt es den Inhalt des aktuellen. Ziehen auf ein anderes Pattern: dorthin kopieren. Rechtsklick: kopieren, einfügen, leeren.";
             radioPattern4.Appearance = Appearance.Button;
+            radioPattern4.ContextMenuStrip = patternMenu;
             radioPattern4.Location = new Point(116, 3);
             radioPattern4.Name = "radioPattern4";
             radioPattern4.Size = new Size(36, 29);
@@ -932,6 +1018,9 @@
             radioPattern4.TextAlign = ContentAlignment.MiddleCenter;
             radioPattern4.UseVisualStyleBackColor = true;
             radioPattern4.CheckedChanged += RadioPattern_CheckedChanged;
+            radioPattern4.MouseDown += RadioPattern_MouseDown;
+            radioPattern4.MouseMove += RadioPattern_MouseMove;
+            radioPattern4.MouseUp += RadioPattern_MouseUp;
             // 
             // comboMeter
             // 
@@ -940,8 +1029,9 @@
             comboMeter.DropDownStyle = ComboBoxStyle.DropDownList;
             comboMeter.Location = new Point(8, 37);
             comboMeter.Name = "comboMeter";
-            comboMeter.Size = new Size(104, 25);
+            comboMeter.Size = new Size(104, 28);
             comboMeter.TabIndex = 4;
+            comboMeter.VisualStylesMode = VisualStylesMode.Net11;
             comboMeter.SelectedIndexChanged += ComboMeter_SelectedIndexChanged;
             // 
             // buttonClearPattern
@@ -975,7 +1065,7 @@
             dividerPattern.Margin = new Padding(0, 4, 0, 4);
             dividerPattern.Name = "dividerPattern";
             dividerPattern.Size = new Size(1, 82);
-            dividerPattern.TabIndex = 11;
+            dividerPattern.TabIndex = 13;
             // 
             // groupSequence
             // 
@@ -987,11 +1077,11 @@
             groupSequence.Margin = new Padding(0);
             groupSequence.Name = "groupSequence";
             groupSequence.Size = new Size(222, 90);
-            groupSequence.TabIndex = 12;
+            groupSequence.TabIndex = 14;
             // 
             // checkBoxSequence
             // 
-            checkBoxSequence.AccessibleDescription = "Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2.";
+            checkBoxSequence.AccessibleDescription = "Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2. Kurz: 1x8 für acht Takte. 0 ist ein stummer Takt.";
             checkBoxSequence.AccessibleName = "Abfolge";
             checkBoxSequence.Appearance = Appearance.ToggleSwitch;
             checkBoxSequence.Location = new Point(8, 8);
@@ -1021,12 +1111,14 @@
             // 
             // textBoxSequence
             // 
-            textBoxSequence.AccessibleDescription = "Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2.";
+            textBoxSequence.AccessibleDescription = "Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2. Kurz: 1x8 für acht Takte. 0 ist ein stummer Takt.";
             textBoxSequence.Enabled = false;
             textBoxSequence.Location = new Point(8, 37);
             textBoxSequence.Name = "textBoxSequence";
-            textBoxSequence.Size = new Size(208, 25);
+            textBoxSequence.PlaceholderText = "Patternreihenfolge";
+            textBoxSequence.Size = new Size(208, 28);
             textBoxSequence.TabIndex = 2;
+            textBoxSequence.VisualStylesMode = VisualStylesMode.Net11;
             textBoxSequence.TextChanged += TextBoxSequence_TextChanged;
             textBoxSequence.Leave += TextBoxSequence_Leave;
             // 
@@ -1041,28 +1133,40 @@
             captionSequence.Text = "Abfolge";
             captionSequence.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // dividerSequence
+            // 
+            dividerSequence.BackColor = SystemColors.ControlDark;
+            dividerSequence.Location = new Point(1247, 4);
+            dividerSequence.Margin = new Padding(0, 4, 0, 4);
+            dividerSequence.Name = "dividerSequence";
+            dividerSequence.Size = new Size(1, 82);
+            dividerSequence.TabIndex = 15;
+            // 
             // tabPageSettings
             // 
             tabPageSettings.Controls.Add(flowSettings);
-            tabPageSettings.Location = new Point(4, 26);
+            tabPageSettings.Location = new Point(4, 24);
             tabPageSettings.Name = "tabPageSettings";
-            tabPageSettings.Size = new Size(1252, 94);
+            tabPageSettings.Size = new Size(1252, 96);
             tabPageSettings.TabIndex = 2;
             tabPageSettings.Text = "Einstellungen";
             // 
             // flowSettings
             // 
-            flowSettings.Controls.Add(groupProjects);
-            flowSettings.Controls.Add(dividerProjects);
             flowSettings.Controls.Add(groupAppearance);
             flowSettings.Controls.Add(dividerAppearance);
+            flowSettings.Controls.Add(groupLanguage);
+            flowSettings.Controls.Add(dividerLanguage);
             flowSettings.Controls.Add(groupKits);
             flowSettings.Controls.Add(dividerKits);
             flowSettings.Controls.Add(groupAudio);
+            flowSettings.Controls.Add(dividerAudio);
+            flowSettings.Controls.Add(groupPlayback);
+            flowSettings.Controls.Add(dividerPlayback);
             flowSettings.Dock = DockStyle.Fill;
             flowSettings.Location = new Point(0, 0);
             flowSettings.Name = "flowSettings";
-            flowSettings.Size = new Size(1252, 94);
+            flowSettings.Size = new Size(1252, 96);
             flowSettings.TabIndex = 0;
             // 
             // groupProjects
@@ -1072,11 +1176,11 @@
             groupProjects.Controls.Add(buttonProjectFolder);
             groupProjects.Controls.Add(labelProjectHint);
             groupProjects.Controls.Add(captionProjects);
-            groupProjects.Location = new Point(0, 0);
+            groupProjects.Location = new Point(632, 0);
             groupProjects.Margin = new Padding(0);
             groupProjects.Name = "groupProjects";
-            groupProjects.Size = new Size(396, 90);
-            groupProjects.TabIndex = 0;
+            groupProjects.Size = new Size(376, 90);
+            groupProjects.TabIndex = 4;
             // 
             // labelProjectFolder
             // 
@@ -1092,16 +1196,17 @@
             textBoxProjectFolder.Location = new Point(92, 5);
             textBoxProjectFolder.Name = "textBoxProjectFolder";
             textBoxProjectFolder.ReadOnly = true;
-            textBoxProjectFolder.Size = new Size(260, 25);
+            textBoxProjectFolder.Size = new Size(240, 28);
             textBoxProjectFolder.TabIndex = 1;
             textBoxProjectFolder.TabStop = false;
+            textBoxProjectFolder.VisualStylesMode = VisualStylesMode.Net11;
             // 
             // buttonProjectFolder
             // 
             buttonProjectFolder.AccessibleDescription = "Wählt den Ordner für deine Projekte.";
             buttonProjectFolder.AccessibleName = "Speicherort ändern";
             buttonProjectFolder.Image = (Image)resources.GetObject("buttonProjectFolder.Image");
-            buttonProjectFolder.Location = new Point(356, 3);
+            buttonProjectFolder.Location = new Point(336, 3);
             buttonProjectFolder.Name = "buttonProjectFolder";
             buttonProjectFolder.Size = new Size(34, 29);
             buttonProjectFolder.TabIndex = 2;
@@ -1115,9 +1220,9 @@
             labelProjectHint.ForeColor = SystemColors.GrayText;
             labelProjectHint.Location = new Point(8, 41);
             labelProjectHint.Name = "labelProjectHint";
-            labelProjectHint.Size = new Size(375, 19);
+            labelProjectHint.Size = new Size(350, 19);
             labelProjectHint.TabIndex = 3;
-            labelProjectHint.Text = "Standard für Dateidialoge (Ändern verschiebt keine Dateien)";
+            labelProjectHint.Text = "Gilt für Dateidialoge. Ändern verschiebt keine Dateien.";
             // 
             // captionProjects
             // 
@@ -1125,7 +1230,7 @@
             captionProjects.ForeColor = SystemColors.GrayText;
             captionProjects.Location = new Point(0, 72);
             captionProjects.Name = "captionProjects";
-            captionProjects.Size = new Size(396, 18);
+            captionProjects.Size = new Size(376, 18);
             captionProjects.TabIndex = 4;
             captionProjects.Text = "Projekte";
             captionProjects.TextAlign = ContentAlignment.MiddleCenter;
@@ -1133,32 +1238,29 @@
             // dividerProjects
             // 
             dividerProjects.BackColor = SystemColors.ControlDark;
-            dividerProjects.Location = new Point(396, 4);
+            dividerProjects.Location = new Point(1008, 4);
             dividerProjects.Margin = new Padding(0, 4, 0, 4);
             dividerProjects.Name = "dividerProjects";
             dividerProjects.Size = new Size(1, 82);
-            dividerProjects.TabIndex = 1;
+            dividerProjects.TabIndex = 5;
             // 
             // groupAppearance
             // 
             groupAppearance.Controls.Add(radioSystem);
             groupAppearance.Controls.Add(radioLight);
             groupAppearance.Controls.Add(radioDark);
-            groupAppearance.Controls.Add(labelAppearanceHint);
-            groupAppearance.Controls.Add(lineFlash);
-            groupAppearance.Controls.Add(labelFlash);
-            groupAppearance.Controls.Add(checkBoxFlash);
             groupAppearance.Controls.Add(captionAppearance);
             groupAppearance.Location = new Point(397, 0);
             groupAppearance.Margin = new Padding(0);
             groupAppearance.Name = "groupAppearance";
-            groupAppearance.Size = new Size(292, 90);
+            groupAppearance.Size = new Size(90, 90);
             groupAppearance.TabIndex = 2;
             // 
             // radioSystem
             // 
+            radioSystem.AccessibleDescription = "Hell, dunkel oder wie Windows. Gilt ab dem nächsten Start.";
             radioSystem.AutoSize = true;
-            radioSystem.Location = new Point(8, 6);
+            radioSystem.Location = new Point(8, 1);
             radioSystem.Name = "radioSystem";
             radioSystem.Size = new Size(71, 23);
             radioSystem.TabIndex = 0;
@@ -1169,8 +1271,9 @@
             // 
             // radioLight
             // 
+            radioLight.AccessibleDescription = "Hell, dunkel oder wie Windows. Gilt ab dem nächsten Start.";
             radioLight.AutoSize = true;
-            radioLight.Location = new Point(84, 6);
+            radioLight.Location = new Point(8, 24);
             radioLight.Name = "radioLight";
             radioLight.Size = new Size(50, 23);
             radioLight.TabIndex = 1;
@@ -1180,8 +1283,9 @@
             // 
             // radioDark
             // 
+            radioDark.AccessibleDescription = "Hell, dunkel oder wie Windows. Gilt ab dem nächsten Start.";
             radioDark.AutoSize = true;
-            radioDark.Location = new Point(140, 6);
+            radioDark.Location = new Point(8, 47);
             radioDark.Name = "radioDark";
             radioDark.Size = new Size(70, 23);
             radioDark.TabIndex = 2;
@@ -1189,56 +1293,13 @@
             radioDark.UseVisualStyleBackColor = true;
             radioDark.CheckedChanged += RadioColorMode_CheckedChanged;
             // 
-            // labelAppearanceHint
-            // 
-            labelAppearanceHint.AutoSize = true;
-            labelAppearanceHint.ForeColor = SystemColors.GrayText;
-            labelAppearanceHint.Location = new Point(8, 40);
-            labelAppearanceHint.Name = "labelAppearanceHint";
-            labelAppearanceHint.Size = new Size(175, 19);
-            labelAppearanceHint.TabIndex = 3;
-            labelAppearanceHint.Text = "Gilt ab dem nächsten Start.";
-            // 
-            // lineFlash
-            // 
-            lineFlash.BackColor = SystemColors.ScrollBar;
-            lineFlash.Location = new Point(214, 6);
-            lineFlash.Name = "lineFlash";
-            lineFlash.Size = new Size(1, 56);
-            lineFlash.TabIndex = 5;
-            // 
-            // labelFlash
-            // 
-            labelFlash.AccessibleDescription = "Lässt das Raster bei jedem Taktanfang kurz aufleuchten.";
-            labelFlash.AutoSize = true;
-            labelFlash.Location = new Point(224, 8);
-            labelFlash.Name = "labelFlash";
-            labelFlash.Size = new Size(58, 19);
-            labelFlash.TabIndex = 5;
-            labelFlash.Text = "Taktblitz";
-            labelFlash.Click += LabelFlash_Click;
-            // 
-            // checkBoxFlash
-            // 
-            checkBoxFlash.AccessibleDescription = "Lässt das Raster bei jedem Taktanfang kurz aufleuchten.";
-            checkBoxFlash.AccessibleName = "Taktblitz";
-            checkBoxFlash.Appearance = Appearance.ToggleSwitch;
-            checkBoxFlash.AutoSize = true;
-            checkBoxFlash.Location = new Point(236, 36);
-            checkBoxFlash.Name = "checkBoxFlash";
-            checkBoxFlash.Size = new Size(37, 16);
-            checkBoxFlash.TabIndex = 4;
-            checkBoxFlash.UseVisualStyleBackColor = true;
-            checkBoxFlash.VisualStylesMode = VisualStylesMode.Net11;
-            checkBoxFlash.CheckedChanged += CheckBoxFlash_CheckedChanged;
-            // 
             // captionAppearance
             // 
             captionAppearance.Dock = DockStyle.Bottom;
             captionAppearance.ForeColor = SystemColors.GrayText;
             captionAppearance.Location = new Point(0, 72);
             captionAppearance.Name = "captionAppearance";
-            captionAppearance.Size = new Size(292, 18);
+            captionAppearance.Size = new Size(90, 18);
             captionAppearance.TabIndex = 6;
             captionAppearance.Text = "Darstellung";
             captionAppearance.TextAlign = ContentAlignment.MiddleCenter;
@@ -1246,11 +1307,67 @@
             // dividerAppearance
             // 
             dividerAppearance.BackColor = SystemColors.ControlDark;
-            dividerAppearance.Location = new Point(689, 4);
+            dividerAppearance.Location = new Point(565, 4);
             dividerAppearance.Margin = new Padding(0, 4, 0, 4);
             dividerAppearance.Name = "dividerAppearance";
             dividerAppearance.Size = new Size(1, 82);
             dividerAppearance.TabIndex = 3;
+            // 
+            // groupLanguage
+            // 
+            groupLanguage.Controls.Add(radioGerman);
+            groupLanguage.Controls.Add(radioEnglish);
+            groupLanguage.Controls.Add(captionLanguage);
+            groupLanguage.Location = new Point(566, 0);
+            groupLanguage.Margin = new Padding(0);
+            groupLanguage.Name = "groupLanguage";
+            groupLanguage.Size = new Size(100, 90);
+            groupLanguage.TabIndex = 4;
+            // 
+            // radioGerman
+            // 
+            radioGerman.AccessibleDescription = "Die Sprache des Programms. Gilt ab dem nächsten Start.";
+            radioGerman.AutoSize = true;
+            radioGerman.Location = new Point(8, 5);
+            radioGerman.Name = "radioGerman";
+            radioGerman.Size = new Size(77, 23);
+            radioGerman.TabIndex = 0;
+            radioGerman.TabStop = true;
+            radioGerman.Text = "Deutsch";
+            radioGerman.UseVisualStyleBackColor = true;
+            radioGerman.CheckedChanged += RadioLanguage_CheckedChanged;
+            // 
+            // radioEnglish
+            // 
+            radioEnglish.AccessibleDescription = "Die Sprache des Programms. Gilt ab dem nächsten Start.";
+            radioEnglish.AutoSize = true;
+            radioEnglish.Location = new Point(8, 37);
+            radioEnglish.Name = "radioEnglish";
+            radioEnglish.Size = new Size(70, 23);
+            radioEnglish.TabIndex = 1;
+            radioEnglish.Text = "English";
+            radioEnglish.UseVisualStyleBackColor = true;
+            radioEnglish.CheckedChanged += RadioLanguage_CheckedChanged;
+            // 
+            // captionLanguage
+            // 
+            captionLanguage.Dock = DockStyle.Bottom;
+            captionLanguage.ForeColor = SystemColors.GrayText;
+            captionLanguage.Location = new Point(0, 72);
+            captionLanguage.Name = "captionLanguage";
+            captionLanguage.Size = new Size(100, 18);
+            captionLanguage.TabIndex = 2;
+            captionLanguage.Text = "Sprache";
+            captionLanguage.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerLanguage
+            // 
+            dividerLanguage.BackColor = SystemColors.ControlDark;
+            dividerLanguage.Location = new Point(666, 4);
+            dividerLanguage.Margin = new Padding(0, 4, 0, 4);
+            dividerLanguage.Name = "dividerLanguage";
+            dividerLanguage.Size = new Size(1, 82);
+            dividerLanguage.TabIndex = 5;
             // 
             // groupKits
             // 
@@ -1262,11 +1379,11 @@
             groupKits.Controls.Add(buttonReloadKits);
             groupKits.Controls.Add(buttonKitGuide);
             groupKits.Controls.Add(captionKits);
-            groupKits.Location = new Point(690, 0);
+            groupKits.Location = new Point(667, 0);
             groupKits.Margin = new Padding(0);
             groupKits.Name = "groupKits";
             groupKits.Size = new Size(280, 90);
-            groupKits.TabIndex = 4;
+            groupKits.TabIndex = 6;
             // 
             // labelOwnKits
             // 
@@ -1354,28 +1471,33 @@
             // dividerKits
             // 
             dividerKits.BackColor = SystemColors.ControlDark;
-            dividerKits.Location = new Point(970, 4);
+            dividerKits.Location = new Point(947, 4);
             dividerKits.Margin = new Padding(0, 4, 0, 4);
             dividerKits.Name = "dividerKits";
             dividerKits.Size = new Size(1, 82);
-            dividerKits.TabIndex = 5;
+            dividerKits.TabIndex = 7;
             // 
             // groupAudio
             // 
             groupAudio.Controls.Add(labelAudioDevice);
             groupAudio.Controls.Add(comboAudioDevice);
+            groupAudio.Controls.Add(lineLatency);
+            groupAudio.Controls.Add(labelLatency);
+            groupAudio.Controls.Add(numericLatency);
+            groupAudio.Controls.Add(labelLatencyUnit);
+            groupAudio.Controls.Add(buttonLatencyDefault);
             groupAudio.Controls.Add(captionAudio);
-            groupAudio.Location = new Point(971, 0);
+            groupAudio.Location = new Point(948, 0);
             groupAudio.Margin = new Padding(0);
             groupAudio.Name = "groupAudio";
-            groupAudio.Size = new Size(276, 90);
-            groupAudio.TabIndex = 6;
+            groupAudio.Size = new Size(456, 90);
+            groupAudio.TabIndex = 8;
             // 
             // labelAudioDevice
             // 
             labelAudioDevice.AccessibleDescription = "Über dieses Gerät spielt drums4me, zum Beispiel ein Audio-Interface für den Kopfhörer. Windows-Standard folgt der Einstellung von Windows.";
             labelAudioDevice.AutoSize = true;
-            labelAudioDevice.Location = new Point(8, 8);
+            labelAudioDevice.Location = new Point(8, 9);
             labelAudioDevice.Name = "labelAudioDevice";
             labelAudioDevice.Size = new Size(94, 19);
             labelAudioDevice.TabIndex = 0;
@@ -1387,12 +1509,68 @@
             comboAudioDevice.AccessibleName = "Ausgabegerät";
             comboAudioDevice.DropDownStyle = ComboBoxStyle.DropDownList;
             comboAudioDevice.DropDownWidth = 340;
-            comboAudioDevice.Location = new Point(8, 37);
+            comboAudioDevice.Location = new Point(8, 35);
             comboAudioDevice.Name = "comboAudioDevice";
-            comboAudioDevice.Size = new Size(260, 25);
+            comboAudioDevice.Size = new Size(283, 28);
             comboAudioDevice.TabIndex = 1;
+            comboAudioDevice.VisualStylesMode = VisualStylesMode.Net11;
             comboAudioDevice.DropDown += ComboAudioDevice_DropDown;
             comboAudioDevice.SelectedIndexChanged += ComboAudioDevice_SelectedIndexChanged;
+            // 
+            // lineLatency
+            // 
+            lineLatency.BackColor = SystemColors.ScrollBar;
+            lineLatency.Location = new Point(300, 6);
+            lineLatency.Name = "lineLatency";
+            lineLatency.Size = new Size(1, 56);
+            lineLatency.TabIndex = 2;
+            // 
+            // labelLatency
+            // 
+            labelLatency.AccessibleDescription = "Puffer der Tonausgabe in Millisekunden. Größer hilft, wenn der Ton knackt oder aussetzt. Kleiner lässt den Ton schneller auf Eingaben folgen. Standard: 40.";
+            labelLatency.AutoSize = true;
+            labelLatency.Location = new Point(310, 9);
+            labelLatency.Name = "labelLatency";
+            labelLatency.Size = new Size(48, 19);
+            labelLatency.TabIndex = 3;
+            labelLatency.Text = "Latenz";
+            // 
+            // numericLatency
+            // 
+            numericLatency.AccessibleDescription = "Puffer der Tonausgabe in Millisekunden. Größer hilft, wenn der Ton knackt oder aussetzt. Kleiner lässt den Ton schneller auf Eingaben folgen. Standard: 40.";
+            numericLatency.AccessibleName = "Latenz in Millisekunden";
+            numericLatency.Increment = new decimal(new int[] { 5, 0, 0, 0 });
+            numericLatency.Location = new Point(366, 6);
+            numericLatency.Maximum = new decimal(new int[] { 100, 0, 0, 0 });
+            numericLatency.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            numericLatency.Name = "numericLatency";
+            numericLatency.Size = new Size(54, 25);
+            numericLatency.TabIndex = 4;
+            numericLatency.TextAlign = HorizontalAlignment.Center;
+            numericLatency.Value = new decimal(new int[] { 40, 0, 0, 0 });
+            numericLatency.ValueChanged += NumericLatency_ValueChanged;
+            // 
+            // labelLatencyUnit
+            // 
+            labelLatencyUnit.AccessibleDescription = "Puffer der Tonausgabe in Millisekunden. Größer hilft, wenn der Ton knackt oder aussetzt. Kleiner lässt den Ton schneller auf Eingaben folgen. Standard: 40.";
+            labelLatencyUnit.AutoSize = true;
+            labelLatencyUnit.Location = new Point(424, 9);
+            labelLatencyUnit.Name = "labelLatencyUnit";
+            labelLatencyUnit.Size = new Size(26, 19);
+            labelLatencyUnit.TabIndex = 5;
+            labelLatencyUnit.Text = "ms";
+            // 
+            // buttonLatencyDefault
+            // 
+            buttonLatencyDefault.AccessibleDescription = "Stellt die Latenz auf den Standardwert von 40 Millisekunden zurück.";
+            buttonLatencyDefault.Enabled = false;
+            buttonLatencyDefault.Location = new Point(310, 35);
+            buttonLatencyDefault.Name = "buttonLatencyDefault";
+            buttonLatencyDefault.Size = new Size(138, 29);
+            buttonLatencyDefault.TabIndex = 6;
+            buttonLatencyDefault.Text = "Standard";
+            buttonLatencyDefault.UseVisualStyleBackColor = true;
+            buttonLatencyDefault.Click += ButtonLatencyDefault_Click;
             // 
             // captionAudio
             // 
@@ -1400,10 +1578,83 @@
             captionAudio.ForeColor = SystemColors.GrayText;
             captionAudio.Location = new Point(0, 72);
             captionAudio.Name = "captionAudio";
-            captionAudio.Size = new Size(276, 18);
-            captionAudio.TabIndex = 2;
+            captionAudio.Size = new Size(456, 18);
+            captionAudio.TabIndex = 7;
             captionAudio.Text = "Audio";
             captionAudio.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerAudio
+            // 
+            dividerAudio.BackColor = SystemColors.ControlDark;
+            dividerAudio.Location = new Point(1247, 4);
+            dividerAudio.Margin = new Padding(0, 4, 0, 4);
+            dividerAudio.Name = "dividerAudio";
+            dividerAudio.Size = new Size(1, 82);
+            dividerAudio.TabIndex = 9;
+            // 
+            // groupPlayback
+            // 
+            groupPlayback.Controls.Add(labelClickVolume);
+            groupPlayback.Controls.Add(numericClickVolume);
+            groupPlayback.Controls.Add(labelClickVolumeUnit);
+            groupPlayback.Controls.Add(captionPlayback);
+            groupPlayback.Location = new Point(931, 0);
+            groupPlayback.Margin = new Padding(0);
+            groupPlayback.Name = "groupPlayback";
+            groupPlayback.Size = new Size(184, 90);
+            groupPlayback.TabIndex = 10;
+            // 
+            // labelClickVolume
+            // 
+            labelClickVolume.AccessibleDescription = "Lautstärke der Klicks beim Vorzählen in Prozent der Gesamtlautstärke. Nach jeder Änderung hörst du den Klick.";
+            labelClickVolume.Location = new Point(8, 13);
+            labelClickVolume.Name = "labelClickVolume";
+            labelClickVolume.Size = new Size(80, 40);
+            labelClickVolume.TabIndex = 0;
+            labelClickVolume.Text = "Lautstärke Vorzählen";
+            // 
+            // numericClickVolume
+            // 
+            numericClickVolume.AccessibleDescription = "Lautstärke der Klicks beim Vorzählen in Prozent der Gesamtlautstärke. Nach jeder Änderung hörst du den Klick.";
+            numericClickVolume.AccessibleName = "Lautstärke Vorzählen";
+            numericClickVolume.Increment = new decimal(new int[] { 5, 0, 0, 0 });
+            numericClickVolume.Location = new Point(96, 20);
+            numericClickVolume.Name = "numericClickVolume";
+            numericClickVolume.Size = new Size(54, 25);
+            numericClickVolume.TabIndex = 1;
+            numericClickVolume.TextAlign = HorizontalAlignment.Center;
+            numericClickVolume.Value = new decimal(new int[] { 100, 0, 0, 0 });
+            numericClickVolume.ValueChanged += NumericClickVolume_ValueChanged;
+            // 
+            // labelClickVolumeUnit
+            // 
+            labelClickVolumeUnit.AccessibleDescription = "Lautstärke der Klicks beim Vorzählen in Prozent der Gesamtlautstärke. Nach jeder Änderung hörst du den Klick.";
+            labelClickVolumeUnit.AutoSize = true;
+            labelClickVolumeUnit.Location = new Point(154, 23);
+            labelClickVolumeUnit.Name = "labelClickVolumeUnit";
+            labelClickVolumeUnit.Size = new Size(19, 19);
+            labelClickVolumeUnit.TabIndex = 2;
+            labelClickVolumeUnit.Text = "%";
+            // 
+            // captionPlayback
+            // 
+            captionPlayback.Dock = DockStyle.Bottom;
+            captionPlayback.ForeColor = SystemColors.GrayText;
+            captionPlayback.Location = new Point(0, 72);
+            captionPlayback.Name = "captionPlayback";
+            captionPlayback.Size = new Size(184, 18);
+            captionPlayback.TabIndex = 3;
+            captionPlayback.Text = "Wiedergabe";
+            captionPlayback.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // dividerPlayback
+            // 
+            dividerPlayback.BackColor = SystemColors.ControlDark;
+            dividerPlayback.Location = new Point(1084, 4);
+            dividerPlayback.Margin = new Padding(0, 4, 0, 4);
+            dividerPlayback.Name = "dividerPlayback";
+            dividerPlayback.Size = new Size(1, 82);
+            dividerPlayback.TabIndex = 11;
             // 
             // ribbonImages
             // 
@@ -1418,11 +1669,13 @@
             panelFileCommands.Controls.Add(buttonNew);
             panelFileCommands.Controls.Add(buttonSave);
             panelFileCommands.Controls.Add(buttonSaveAs);
+            panelFileCommands.Controls.Add(buttonExportAudio);
             panelFileCommands.Controls.Add(buttonCloseProject);
             panelFileCommands.Controls.Add(lineCommands);
             panelFileCommands.Controls.Add(buttonOtherFolder);
             panelFileCommands.Controls.Add(buttonDefaultFolder);
             panelFileCommands.Controls.Add(buttonDemos);
+            panelFileCommands.Controls.Add(buttonImportMidi);
             panelFileCommands.Controls.Add(lineWindowCommands);
             panelFileCommands.Controls.Add(buttonResetLayout);
             panelFileCommands.Controls.Add(buttonFileAbout);
@@ -1494,6 +1747,26 @@
             buttonSaveAs.UseVisualStyleBackColor = false;
             buttonSaveAs.Click += ButtonSaveAs_Click;
             // 
+            // buttonExportAudio
+            // 
+            buttonExportAudio.AccessibleDescription = "Speichert, was die Wiedergabe spielt, als WAV, FLAC oder MP3. Länge und Format wählst du im nächsten Fenster.";
+            buttonExportAudio.BackColor = Color.Transparent;
+            buttonExportAudio.FlatAppearance.BorderSize = 0;
+            buttonExportAudio.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonExportAudio.FlatStyle = FlatStyle.Flat;
+            buttonExportAudio.Image = (Image)resources.GetObject("buttonExportAudio.Image");
+            buttonExportAudio.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonExportAudio.Location = new Point(0, 132);
+            buttonExportAudio.Name = "buttonExportAudio";
+            buttonExportAudio.Padding = new Padding(16, 0, 0, 0);
+            buttonExportAudio.Size = new Size(239, 36);
+            buttonExportAudio.TabIndex = 3;
+            buttonExportAudio.Text = "Als Audiodatei speichern…";
+            buttonExportAudio.TextAlign = ContentAlignment.MiddleLeft;
+            buttonExportAudio.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonExportAudio.UseVisualStyleBackColor = false;
+            buttonExportAudio.Click += ButtonExportAudio_Click;
+            // 
             // buttonCloseProject
             // 
             buttonCloseProject.AccessibleDescription = "Schließt die Datei und leert das Raster. Beim nächsten Start wird sie nicht wieder geöffnet.";
@@ -1503,11 +1776,11 @@
             buttonCloseProject.FlatStyle = FlatStyle.Flat;
             buttonCloseProject.Image = (Image)resources.GetObject("buttonCloseProject.Image");
             buttonCloseProject.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonCloseProject.Location = new Point(0, 132);
+            buttonCloseProject.Location = new Point(0, 172);
             buttonCloseProject.Name = "buttonCloseProject";
             buttonCloseProject.Padding = new Padding(16, 0, 0, 0);
             buttonCloseProject.Size = new Size(239, 36);
-            buttonCloseProject.TabIndex = 3;
+            buttonCloseProject.TabIndex = 4;
             buttonCloseProject.Text = "Schließen";
             buttonCloseProject.TextAlign = ContentAlignment.MiddleLeft;
             buttonCloseProject.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1517,10 +1790,10 @@
             // lineCommands
             // 
             lineCommands.BackColor = SystemColors.ScrollBar;
-            lineCommands.Location = new Point(16, 176);
+            lineCommands.Location = new Point(16, 216);
             lineCommands.Name = "lineCommands";
             lineCommands.Size = new Size(208, 1);
-            lineCommands.TabIndex = 4;
+            lineCommands.TabIndex = 5;
             // 
             // buttonOtherFolder
             // 
@@ -1531,11 +1804,11 @@
             buttonOtherFolder.FlatStyle = FlatStyle.Flat;
             buttonOtherFolder.Image = (Image)resources.GetObject("buttonOtherFolder.Image");
             buttonOtherFolder.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonOtherFolder.Location = new Point(0, 185);
+            buttonOtherFolder.Location = new Point(0, 225);
             buttonOtherFolder.Name = "buttonOtherFolder";
             buttonOtherFolder.Padding = new Padding(16, 0, 0, 0);
             buttonOtherFolder.Size = new Size(239, 36);
-            buttonOtherFolder.TabIndex = 5;
+            buttonOtherFolder.TabIndex = 6;
             buttonOtherFolder.Text = "Anderen Ordner…";
             buttonOtherFolder.TextAlign = ContentAlignment.MiddleLeft;
             buttonOtherFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1551,11 +1824,11 @@
             buttonDefaultFolder.FlatStyle = FlatStyle.Flat;
             buttonDefaultFolder.Image = (Image)resources.GetObject("buttonDefaultFolder.Image");
             buttonDefaultFolder.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonDefaultFolder.Location = new Point(0, 225);
+            buttonDefaultFolder.Location = new Point(0, 265);
             buttonDefaultFolder.Name = "buttonDefaultFolder";
             buttonDefaultFolder.Padding = new Padding(16, 0, 0, 0);
             buttonDefaultFolder.Size = new Size(239, 36);
-            buttonDefaultFolder.TabIndex = 6;
+            buttonDefaultFolder.TabIndex = 7;
             buttonDefaultFolder.Text = "Standardordner";
             buttonDefaultFolder.TextAlign = ContentAlignment.MiddleLeft;
             buttonDefaultFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1571,24 +1844,44 @@
             buttonDemos.FlatStyle = FlatStyle.Flat;
             buttonDemos.Image = (Image)resources.GetObject("buttonDemos.Image");
             buttonDemos.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonDemos.Location = new Point(0, 265);
+            buttonDemos.Location = new Point(0, 305);
             buttonDemos.Name = "buttonDemos";
             buttonDemos.Padding = new Padding(16, 0, 0, 0);
             buttonDemos.Size = new Size(239, 36);
-            buttonDemos.TabIndex = 7;
+            buttonDemos.TabIndex = 8;
             buttonDemos.Text = "Demos öffnen▸";
             buttonDemos.TextAlign = ContentAlignment.MiddleLeft;
             buttonDemos.TextImageRelation = TextImageRelation.ImageBeforeText;
             buttonDemos.UseVisualStyleBackColor = false;
             buttonDemos.Click += ButtonDemos_Click;
             // 
+            // buttonImportMidi
+            // 
+            buttonImportMidi.AccessibleDescription = "Liest das Schlagzeug einer MIDI-Datei und macht aus bis zu vier Takten ein neues Projekt. Gedacht für kurze Grooves, nicht für ganze Songs.";
+            buttonImportMidi.BackColor = Color.Transparent;
+            buttonImportMidi.FlatAppearance.BorderSize = 0;
+            buttonImportMidi.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonImportMidi.FlatStyle = FlatStyle.Flat;
+            buttonImportMidi.Image = (Image)resources.GetObject("buttonImportMidi.Image");
+            buttonImportMidi.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonImportMidi.Location = new Point(0, 345);
+            buttonImportMidi.Name = "buttonImportMidi";
+            buttonImportMidi.Padding = new Padding(16, 0, 0, 0);
+            buttonImportMidi.Size = new Size(239, 36);
+            buttonImportMidi.TabIndex = 9;
+            buttonImportMidi.Text = "MIDI importieren…";
+            buttonImportMidi.TextAlign = ContentAlignment.MiddleLeft;
+            buttonImportMidi.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonImportMidi.UseVisualStyleBackColor = false;
+            buttonImportMidi.Click += ButtonImportMidi_Click;
+            // 
             // lineWindowCommands
             // 
             lineWindowCommands.BackColor = SystemColors.ScrollBar;
-            lineWindowCommands.Location = new Point(16, 309);
+            lineWindowCommands.Location = new Point(16, 389);
             lineWindowCommands.Name = "lineWindowCommands";
             lineWindowCommands.Size = new Size(208, 1);
-            lineWindowCommands.TabIndex = 8;
+            lineWindowCommands.TabIndex = 10;
             // 
             // buttonResetLayout
             // 
@@ -1599,11 +1892,11 @@
             buttonResetLayout.FlatStyle = FlatStyle.Flat;
             buttonResetLayout.Image = (Image)resources.GetObject("buttonResetLayout.Image");
             buttonResetLayout.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonResetLayout.Location = new Point(0, 318);
+            buttonResetLayout.Location = new Point(0, 398);
             buttonResetLayout.Name = "buttonResetLayout";
             buttonResetLayout.Padding = new Padding(16, 0, 0, 0);
             buttonResetLayout.Size = new Size(239, 36);
-            buttonResetLayout.TabIndex = 9;
+            buttonResetLayout.TabIndex = 11;
             buttonResetLayout.Text = "Fensterlayout zurücksetzen";
             buttonResetLayout.TextAlign = ContentAlignment.MiddleLeft;
             buttonResetLayout.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1619,11 +1912,11 @@
             buttonFileAbout.FlatStyle = FlatStyle.Flat;
             buttonFileAbout.Image = (Image)resources.GetObject("buttonFileAbout.Image");
             buttonFileAbout.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonFileAbout.Location = new Point(0, 358);
+            buttonFileAbout.Location = new Point(0, 438);
             buttonFileAbout.Name = "buttonFileAbout";
             buttonFileAbout.Padding = new Padding(16, 0, 0, 0);
             buttonFileAbout.Size = new Size(239, 36);
-            buttonFileAbout.TabIndex = 10;
+            buttonFileAbout.TabIndex = 12;
             buttonFileAbout.Text = "Über";
             buttonFileAbout.TextAlign = ContentAlignment.MiddleLeft;
             buttonFileAbout.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1639,11 +1932,11 @@
             buttonExit.FlatStyle = FlatStyle.Flat;
             buttonExit.Image = (Image)resources.GetObject("buttonExit.Image");
             buttonExit.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonExit.Location = new Point(0, 398);
+            buttonExit.Location = new Point(0, 478);
             buttonExit.Name = "buttonExit";
             buttonExit.Padding = new Padding(16, 0, 0, 0);
             buttonExit.Size = new Size(239, 36);
-            buttonExit.TabIndex = 11;
+            buttonExit.TabIndex = 13;
             buttonExit.Text = "Beenden";
             buttonExit.TextAlign = ContentAlignment.MiddleLeft;
             buttonExit.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1657,7 +1950,40 @@
             lineFileCommands.Location = new Point(239, 0);
             lineFileCommands.Name = "lineFileCommands";
             lineFileCommands.Size = new Size(1, 605);
-            lineFileCommands.TabIndex = 12;
+            lineFileCommands.TabIndex = 14;
+            // 
+            // tabMarker
+            // 
+            tabMarker.Location = new Point(66, 52);
+            tabMarker.Name = "tabMarker";
+            tabMarker.Size = new Size(48, 3);
+            tabMarker.TabIndex = 10;
+            // 
+            // buttonTopMost
+            // 
+            buttonTopMost.AccessibleDescription = "Hält das Fenster über anderen Programmen, etwa über Noten oder Tabulaturen. Ein Klick schaltet um.";
+            buttonTopMost.AccessibleName = "Immer im Vordergrund";
+            buttonTopMost.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonTopMost.Location = new Point(1032, 0);
+            buttonTopMost.Name = "buttonTopMost";
+            buttonTopMost.Size = new Size(28, 24);
+            buttonTopMost.TabIndex = 11;
+            buttonTopMost.UseVisualStyleBackColor = true;
+            buttonTopMost.Click += ButtonTopMost_Click;
+            buttonTopMost.Paint += ButtonTopMost_Paint;
+            // 
+            // buttonKeepScreenOn
+            // 
+            buttonKeepScreenOn.AccessibleDescription = "Verhindert, dass Windows den Bildschirm abschaltet, solange die Wiedergabe läuft. Ein Klick schaltet um.";
+            buttonKeepScreenOn.AccessibleName = "Bildschirm anlassen";
+            buttonKeepScreenOn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonKeepScreenOn.Location = new Point(1062, 0);
+            buttonKeepScreenOn.Name = "buttonKeepScreenOn";
+            buttonKeepScreenOn.Size = new Size(28, 24);
+            buttonKeepScreenOn.TabIndex = 12;
+            buttonKeepScreenOn.UseVisualStyleBackColor = true;
+            buttonKeepScreenOn.Click += ButtonKeepScreenOn_Click;
+            buttonKeepScreenOn.Paint += ButtonKeepScreenOn_Paint;
             // 
             // buttonUndo
             // 
@@ -1742,6 +2068,10 @@
             stepGrid.Edited += StepGrid_Edited;
             stepGrid.EditCompleted += StepGrid_EditCompleted;
             stepGrid.TrackNameClicked += StepGrid_TrackNameClicked;
+            stepGrid.BeatMenuRequested += StepGrid_BeatMenuRequested;
+            stepGrid.BeatCopied += StepGrid_BeatCopied;
+            stepGrid.EmptyStepRightClicked += StepGrid_EmptyStepRightClicked;
+            stepGrid.MouseDown += StepGrid_MouseDown;
             // 
             // projectBrowser
             // 
@@ -1847,6 +2177,72 @@
             renameTrackToolStripMenuItem.Text = "&Umbenennen…";
             renameTrackToolStripMenuItem.Click += RenameTrackToolStripMenuItem_Click;
             // 
+            // patternMenu
+            // 
+            patternMenu.Font = new Font("Segoe UI", 10F);
+            patternMenu.Items.AddRange(new ToolStripItem[] { copyPatternToolStripMenuItem, pastePatternToolStripMenuItem, clearPatternToolStripMenuItem });
+            patternMenu.Name = "patternMenu";
+            patternMenu.Size = new Size(141, 76);
+            patternMenu.Opening += PatternMenu_Opening;
+            // 
+            // copyPatternToolStripMenuItem
+            // 
+            copyPatternToolStripMenuItem.Name = "copyPatternToolStripMenuItem";
+            copyPatternToolStripMenuItem.Size = new Size(140, 24);
+            copyPatternToolStripMenuItem.Text = "&Kopieren";
+            copyPatternToolStripMenuItem.Click += CopyPatternToolStripMenuItem_Click;
+            // 
+            // pastePatternToolStripMenuItem
+            // 
+            pastePatternToolStripMenuItem.Name = "pastePatternToolStripMenuItem";
+            pastePatternToolStripMenuItem.Size = new Size(140, 24);
+            pastePatternToolStripMenuItem.Text = "&Einfügen";
+            pastePatternToolStripMenuItem.Click += PastePatternToolStripMenuItem_Click;
+            // 
+            // clearPatternToolStripMenuItem
+            // 
+            clearPatternToolStripMenuItem.Name = "clearPatternToolStripMenuItem";
+            clearPatternToolStripMenuItem.Size = new Size(140, 24);
+            clearPatternToolStripMenuItem.Text = "&Leeren";
+            clearPatternToolStripMenuItem.Click += ClearPatternToolStripMenuItem_Click;
+            // 
+            // beatMenu
+            // 
+            beatMenu.Font = new Font("Segoe UI", 10F);
+            beatMenu.Items.AddRange(new ToolStripItem[] { copyBeatToolStripMenuItem, pasteBeatToolStripMenuItem, fillBeatsToolStripMenuItem, clearBeatToolStripMenuItem });
+            beatMenu.Name = "beatMenu";
+            beatMenu.Size = new Size(290, 100);
+            // 
+            // copyBeatToolStripMenuItem
+            // 
+            copyBeatToolStripMenuItem.Name = "copyBeatToolStripMenuItem";
+            copyBeatToolStripMenuItem.ShortcutKeyDisplayString = "Strg+C";
+            copyBeatToolStripMenuItem.Size = new Size(289, 24);
+            copyBeatToolStripMenuItem.Text = "&Kopieren";
+            copyBeatToolStripMenuItem.Click += CopyBeatToolStripMenuItem_Click;
+            // 
+            // pasteBeatToolStripMenuItem
+            // 
+            pasteBeatToolStripMenuItem.Name = "pasteBeatToolStripMenuItem";
+            pasteBeatToolStripMenuItem.ShortcutKeyDisplayString = "Strg+V";
+            pasteBeatToolStripMenuItem.Size = new Size(289, 24);
+            pasteBeatToolStripMenuItem.Text = "&Einfügen";
+            pasteBeatToolStripMenuItem.Click += PasteBeatToolStripMenuItem_Click;
+            // 
+            // fillBeatsToolStripMenuItem
+            // 
+            fillBeatsToolStripMenuItem.Name = "fillBeatsToolStripMenuItem";
+            fillBeatsToolStripMenuItem.Size = new Size(289, 24);
+            fillBeatsToolStripMenuItem.Text = "Auf &alle Zählzeiten übertragen";
+            fillBeatsToolStripMenuItem.Click += FillBeatsToolStripMenuItem_Click;
+            // 
+            // clearBeatToolStripMenuItem
+            // 
+            clearBeatToolStripMenuItem.Name = "clearBeatToolStripMenuItem";
+            clearBeatToolStripMenuItem.Size = new Size(289, 24);
+            clearBeatToolStripMenuItem.Text = "&Leeren";
+            clearBeatToolStripMenuItem.Click += ClearBeatToolStripMenuItem_Click;
+            // 
             // demosMenu
             // 
             demosMenu.Font = new Font("Segoe UI", 10F);
@@ -1883,11 +2279,19 @@
             saveFileDialog.Filter = "drums4me-Projekte (*.d4m)|*.d4m|Alle Dateien (*.*)|*.*";
             saveFileDialog.Title = "Projekt speichern";
             // 
+            // midiFileDialog
+            // 
+            midiFileDialog.Filter = "MIDI-Dateien (*.mid;*.midi)|*.mid;*.midi|Alle Dateien (*.*)|*.*";
+            midiFileDialog.Title = "MIDI-Groove importieren";
+            // 
             // FrmDrums4me
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1260, 654);
+            Controls.Add(tabMarker);
+            Controls.Add(buttonTopMost);
+            Controls.Add(buttonKeepScreenOn);
             Controls.Add(buttonUndo);
             Controls.Add(buttonRedo);
             Controls.Add(buttonQuickSave);
@@ -1900,7 +2304,7 @@
             Controls.Add(ribbonTabs);
             Font = new Font("Segoe UI", 10F);
             Icon = (Icon)resources.GetObject("$this.Icon");
-            MinimumSize = new Size(960, 574);
+            MinimumSize = new Size(960, 614);
             Name = "FrmDrums4me";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "drums4me";
@@ -1926,9 +2330,8 @@
             ((System.ComponentModel.ISupportInitialize)numericTrainerStep).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerBars).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericTrainerTarget).EndInit();
-            groupSound.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)trackBarSwing).EndInit();
-            ((System.ComponentModel.ISupportInitialize)trackBarVolume).EndInit();
+            groupSwing.ResumeLayout(false);
+            groupSwing.PerformLayout();
             groupDrumkit.ResumeLayout(false);
             groupPattern.ResumeLayout(false);
             groupSequence.ResumeLayout(false);
@@ -1939,15 +2342,25 @@
             groupProjects.PerformLayout();
             groupAppearance.ResumeLayout(false);
             groupAppearance.PerformLayout();
+            groupLanguage.ResumeLayout(false);
+            groupLanguage.PerformLayout();
             groupKits.ResumeLayout(false);
             groupKits.PerformLayout();
             groupAudio.ResumeLayout(false);
             groupAudio.PerformLayout();
+            groupPlayback.ResumeLayout(false);
+            groupPlayback.PerformLayout();
+            groupFlash.ResumeLayout(false);
+            groupFlash.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericClickVolume).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericLatency).EndInit();
             panelFileCommands.ResumeLayout(false);
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
             trackNameMenu.ResumeLayout(false);
             demosMenu.ResumeLayout(false);
+            patternMenu.ResumeLayout(false);
+            beatMenu.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1959,6 +2372,7 @@
         private ImageList ribbonImages;
         private FlowLayoutPanel flowFile;
         private Panel panelFileCommands;
+        private Panel tabMarker;
         private Panel lineFileCommands;
         private Button buttonNew;
         private Button buttonSave;
@@ -1972,6 +2386,8 @@
         private ComboBox comboFilterMeter;
         private Label captionFind;
         private Panel dividerFind;
+        private Panel dividerStartup;
+        private Button buttonExportAudio;
         private Panel lineCommands;
         private Button buttonCloseProject;
         private Panel lineWindowCommands;
@@ -1981,6 +2397,7 @@
         private Button buttonOtherFolder;
         private Button buttonDefaultFolder;
         private Button buttonDemos;
+        private Button buttonImportMidi;
         private TabPage tabPageStart;
         private FlowLayoutPanel flowStart;
         private Panel groupPlay;
@@ -1999,7 +2416,7 @@
         private Panel dividerTempo;
         private Panel groupTrainer;
         private CheckBox checkBoxTrainer;
-        private Label labelTrainerStep;
+        private Label labelTrainerStepBpm;
         private NumericUpDown numericTrainerStep;
         private Label labelTrainerBars;
         private Label labelTrainerEvery;
@@ -2009,15 +2426,12 @@
         private Label labelTrainerBpm;
         private Label captionTrainer;
         private Panel dividerTrainer;
-        private Panel groupSound;
-        private Label labelSwing;
-        private Label labelSwingValue;
-        private TrackBar trackBarSwing;
-        private Label labelVolume;
-        private Label labelVolumeValue;
-        private TrackBar trackBarVolume;
-        private Label captionSound;
-        private Panel dividerSound;
+        private Panel groupSwing;
+        private RadioButton radioSwingStraight;
+        private RadioButton radioSwingEighths;
+        private RadioButton radioSwingSixteenths;
+        private Label captionSwing;
+        private Panel dividerSwing;
         private Panel groupDrumkit;
         private ComboBox comboKit;
         private Label captionDrumkit;
@@ -2031,6 +2445,7 @@
         private Button buttonClearPattern;
         private Label captionPattern;
         private Panel dividerPattern;
+        private Panel dividerSequence;
         private Panel groupSequence;
         private CheckBox checkBoxSequence;
         private CheckBox checkBoxRepeat;
@@ -2052,12 +2467,14 @@
         private RadioButton radioSystem;
         private RadioButton radioLight;
         private RadioButton radioDark;
-        private Label labelAppearanceHint;
-        private Panel lineFlash;
-        private Label labelFlash;
         private CheckBox checkBoxFlash;
         private Label captionAppearance;
         private Panel dividerAppearance;
+        private Panel groupLanguage;
+        private RadioButton radioGerman;
+        private RadioButton radioEnglish;
+        private Label captionLanguage;
+        private Panel dividerLanguage;
         private Panel groupKits;
         private Label labelOwnKits;
         private Button buttonOwnKits;
@@ -2069,6 +2486,23 @@
         private Button buttonSelectKits;
         private Label captionKits;
         private Panel dividerKits;
+        private Panel dividerAudio;
+        private Panel groupPlayback;
+        private Label labelClickVolume;
+        private Button buttonKeepScreenOn;
+        private Label captionPlayback;
+        private Panel dividerPlayback;
+        private Panel groupFlash;
+        private Label captionFlash;
+        private Panel dividerFlash;
+        private NumericUpDown numericClickVolume;
+        private Label labelClickVolumeUnit;
+        private Panel lineLatency;
+        private Label labelLatency;
+        private NumericUpDown numericLatency;
+        private Label labelLatencyUnit;
+        private Button buttonLatencyDefault;
+        private Button buttonTopMost;
         private Panel groupAudio;
         private Label labelAudioDevice;
         private ComboBox comboAudioDevice;
@@ -2093,6 +2527,15 @@
         private ToolStripMenuItem renameTrackToolStripMenuItem;
         private ContextMenuStrip demosMenu;
         private ToolStripMenuItem noDemosToolStripMenuItem;
+        private ContextMenuStrip patternMenu;
+        private ToolStripMenuItem copyPatternToolStripMenuItem;
+        private ToolStripMenuItem pastePatternToolStripMenuItem;
+        private ToolStripMenuItem clearPatternToolStripMenuItem;
+        private ContextMenuStrip beatMenu;
+        private ToolStripMenuItem copyBeatToolStripMenuItem;
+        private ToolStripMenuItem pasteBeatToolStripMenuItem;
+        private ToolStripMenuItem fillBeatsToolStripMenuItem;
+        private ToolStripMenuItem clearBeatToolStripMenuItem;
         private Drums4me.Controls.StepGrid stepGrid;
         private Drums4me.Controls.ProjectBrowser projectBrowser;
         private System.Windows.Forms.Timer playheadTimer;
@@ -2100,5 +2543,6 @@
         private FolderBrowserDialog otherFolderDialog;
         private FolderBrowserDialog projectFolderDialog;
         private SaveFileDialog saveFileDialog;
+        private OpenFileDialog midiFileDialog;
     }
 }

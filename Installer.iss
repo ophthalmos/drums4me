@@ -51,15 +51,28 @@ WizardStyle=modern
 MinVersion=10.0.14393
 
 [Languages]
+; Das Setup wählt die Sprache nach der Windows-Sprache; die erste ist der Rückfall. Die Wahl gilt beim ersten
+; Start auch für das Programm (setup.default, siehe CurStepChanged und AppSettings.ApplyInstallerDefaults).
+Name: en; MessagesFile: "compiler:Default.isl"
 Name: de; MessagesFile: "compiler:Languages\German.isl"
 
 [Messages]
+en.WinVersionTooLowError=This program requires Windows 10 (version 1607) or later.
+en.ConfirmUninstall=Are you sure you want to remove %1? Your projects, kits and settings are kept. You do not need to uninstall before an update.
 de.WinVersionTooLowError=Dieses Programm benötigt Windows 10 (Version 1607) oder höher.
 de.SelectDirLabel3=drums4me wird in diesen Ordner installiert.
 de.SelectDirBrowseLabel=Klicke auf „Weiter“, um fortzufahren. Mit „Durchsuchen“ wählst du einen anderen Ordner.
 de.ConfirmUninstall=Bist du sicher, dass du %1 entfernen möchtest? Deine Projekte, Kits und Einstellungen bleiben erhalten. Vor einem Update ist keine Deinstallation erforderlich.
 
 [CustomMessages]
+en.Run=Launch {#appName}
+en.DesktopIcon=Create a desktop shortcut
+en.ProjectFile={#appName} project
+en.UpdateDirLabel=drums4me is already installed. The update goes into the same folder.
+en.UpdateBrowseLabel=Click Next to continue.
+en.UpdatePageName=Destination folder
+en.UpdatePageDescription=This is where drums4me is installed.
+de.ProjectFile={#appName}-Projekt
 de.Run={#appName} starten
 de.DesktopIcon=Verknüpfung auf dem Desktop anlegen
 de.UpdateDirLabel=drums4me ist schon installiert. Das Update kommt in denselben Ordner.
@@ -83,12 +96,15 @@ Name: "{autodesktop}\{#appName}"; Filename: "{app}\{#appName}.exe"; Tasks: deskt
 ; Dateizuordnung .d4m => drums4me; HKA = HKLM bei Installation fuer alle Benutzer, sonst HKCU
 Root: HKA; Subkey: "Software\Classes\.d4m"; ValueType: string; ValueName: ""; ValueData: "{#appName}.Project"; Flags: uninsdeletevalue uninsdeletekeyifempty
 Root: HKA; Subkey: "Software\Classes\.d4m\OpenWithProgids"; ValueType: string; ValueName: "{#appName}.Project"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKA; Subkey: "Software\Classes\{#appName}.Project"; ValueType: string; ValueName: ""; ValueData: "{#appName}-Projekt"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#appName}.Project"; ValueType: string; ValueName: ""; ValueData: "{cm:ProjectFile}"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\{#appName}.Project\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#appName}.exe,0"
 Root: HKA; Subkey: "Software\Classes\{#appName}.Project\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#appName}.exe"" ""%1"""
 
 [Run]
 Filename: "{app}\{#appName}.exe"; Description: "{cm:Run}"; Flags: nowait postinstall skipifsilent runasoriginaluser
+
+[UninstallDelete]
+Type: files; Name: "{app}\setup.default"
 
 [Code]
 { Ein Update gehört in den bisherigen Ordner, sonst bliebe die alte Installation daneben liegen. }
@@ -120,4 +136,12 @@ begin
     WizardForm.PageDescriptionLabel.Caption := CustomMessage('UpdatePageDescription');
     WizardForm.ActiveControl := WizardForm.NextButton;
   end;
+end;
+
+{ Die Sprache des Setups hinterlegen. drums4me übernimmt sie beim ersten Start nach dieser Installation
+  (AppSettings.ApplyInstallerDefaults); eine spätere Umstellung in den Einstellungen bleibt bis zum nächsten Setup. }
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssPostInstall then
+    SaveStringToFile(ExpandConstant('{app}\setup.default'), 'language=' + ActiveLanguage + #13#10, False);
 end;

@@ -21,26 +21,26 @@ internal static class ProjectChanges
             }
         }
 
-        Compare("Tempo", saved.Bpm, current.Bpm, bpm => $"{bpm} BPM");
-        Compare("Swing", saved.SwingPercent, current.SwingPercent, percent => $"{percent} %");
-        Compare("Lautstärke", saved.VolumePercent, current.VolumePercent, percent => $"{percent} %");
-        Compare("Kit", saved.KitName, current.KitName);
-        Compare("Vorzählen", saved.CountInBars, current.CountInBars, bars => bars == 1 ? "1 Takt" : $"{bars} Takte");
+        Compare(Lng.T("Tempo"), saved.Bpm, current.Bpm, bpm => $"{bpm} BPM");
+        Compare(Lng.T("Swing"), saved.Swing, current.Swing, SwingName);
+        Compare(Lng.T("Gesamtlautstärke"), saved.VolumePercent, current.VolumePercent, percent => $"{percent} %");
+        Compare(Lng.T("Kit"), saved.KitName, current.KitName);
+        Compare(Lng.T("Vorzählen"), saved.CountInBars, current.CountInBars, Bars);
 
         if (saved.TrainerEnabled != current.TrainerEnabled)
         {
-            changes.Add(current.TrainerEnabled ? "Tempotrainer: eingeschaltet" : "Tempotrainer: ausgeschaltet");
+            changes.Add(current.TrainerEnabled ? Lng.T("Tempotrainer: eingeschaltet") : Lng.T("Tempotrainer: ausgeschaltet"));
         }
-        Compare("Tempotrainer, Schritt", saved.TrainerStepBpm, current.TrainerStepBpm, bpm => $"{bpm} BPM");
-        Compare("Tempotrainer, Abstand", saved.TrainerEveryBars, current.TrainerEveryBars, bars => bars == 1 ? "1 Takt" : $"{bars} Takte");
-        Compare("Tempotrainer, Ziel", saved.TrainerTargetBpm, current.TrainerTargetBpm, bpm => $"{bpm} BPM");
+        Compare(Lng.T("Tempotrainer, Schritt"), saved.TrainerStepBpm, current.TrainerStepBpm, bpm => $"{bpm} BPM");
+        Compare(Lng.T("Tempotrainer, Abstand"), saved.TrainerEveryBars, current.TrainerEveryBars, Bars);
+        Compare(Lng.T("Tempotrainer, Ziel"), saved.TrainerTargetBpm, current.TrainerTargetBpm, bpm => $"{bpm} BPM");
 
         if (saved.SequenceEnabled != current.SequenceEnabled)
         {
-            changes.Add(current.SequenceEnabled ? "Abfolge: eingeschaltet" : "Abfolge: ausgeschaltet");
+            changes.Add(current.SequenceEnabled ? Lng.T("Abfolge: eingeschaltet") : Lng.T("Abfolge: ausgeschaltet"));
         }
-        Compare("Abfolge", saved.Sequence, current.Sequence, sequence => sequence.Length == 0 ? "(leer)" : sequence);
-        Compare("Wiederholen", saved.SequenceRepeat, current.SequenceRepeat, repeat => repeat ? "ein" : "aus");
+        Compare(Lng.T("Abfolge"), saved.Sequence, current.Sequence, sequence => sequence.Length == 0 ? Lng.T("(leer)") : sequence);
+        Compare(Lng.T("Wiederholen"), saved.SequenceRepeat, current.SequenceRepeat, repeat => repeat ? Lng.T("ein") : Lng.T("aus"));
 
         for (var index = 0; index < Project.PatternCount; index++)
         {
@@ -51,10 +51,14 @@ internal static class ProjectChanges
         {
             var before = saved.Tracks[track];
             var after = current.Tracks[track];
-            var name = track < trackNames.Length && !string.IsNullOrEmpty(trackNames[track]) ? trackNames[track] : $"Spur {track + 1}";
-            Compare($"{name}, Lautstärke", Percent(before.Volume), Percent(after.Volume));
-            Compare($"{name}, Panorama", Percent(before.Pan), Percent(after.Pan), FormatPan);
-            Compare($"{name}, Tonhöhe", before.Pitch, after.Pitch, FormatPitch);
+            var name = track < trackNames.Length && !string.IsNullOrEmpty(trackNames[track]) ? trackNames[track] : string.Format(Lng.T("Spur {0}"), track + 1);
+            Compare(string.Format(Lng.T("{0}, Lautstärke"), name), Percent(before.Volume), Percent(after.Volume));
+            Compare(string.Format(Lng.T("{0}, Panorama"), name), Percent(before.Pan), Percent(after.Pan), FormatPan);
+            Compare(string.Format(Lng.T("{0}, Tonhöhe"), name), before.Pitch, after.Pitch, FormatPitch);
+            if (before.Muted != after.Muted)
+            {
+                changes.Add(string.Format(after.Muted ? Lng.T("{0}: stumm geschaltet") : Lng.T("{0}: wieder eingeschaltet"), name));
+            }
         }
 
         return changes;
@@ -67,9 +71,9 @@ internal static class ProjectChanges
         var hidden = changes.Count - MaxListedChanges;
         if (hidden > 0)
         {
-            lines.Add(hidden == 1 ? "  und 1 weitere Änderung" : $"  und {hidden} weitere Änderungen");
+            lines.Add("  " + (hidden == 1 ? Lng.T("und 1 weitere Änderung") : string.Format(Lng.T("und {0} weitere Änderungen"), hidden)));
         }
-        return $"Geändert in „{projectName}“:\n{string.Join('\n', lines)}";
+        return string.Format(Lng.T("Geändert in „{0}“:"), projectName) + "\n" + string.Join('\n', lines);
     }
 
     private static void DescribePattern(List<string> changes, int index, Pattern saved, Pattern current)
@@ -77,13 +81,13 @@ internal static class ProjectChanges
         var label = $"Pattern {index + 1}";
         if (!saved.Used && current.Used)
         {
-            changes.Add($"{label}: neu angelegt");
+            changes.Add(string.Format(Lng.T("{0}: neu angelegt"), label));
             return;
         }
 
         if (saved.MeterName != current.MeterName)
         {
-            changes.Add($"{label}: Taktart {saved.MeterName} → {current.MeterName}");
+            changes.Add(string.Format(Lng.T("{0}: Taktart {1} → {2}"), label, saved.MeterName, current.MeterName));
         }
 
         var different = 0;
@@ -100,14 +104,23 @@ internal static class ProjectChanges
 
         if (different > 0)
         {
-            changes.Add(different == 1 ? $"{label}: 1 Schritt geändert" : $"{label}: {different} Schritte geändert");
+            changes.Add(different == 1 ? string.Format(Lng.T("{0}: 1 Schritt geändert"), label) : string.Format(Lng.T("{0}: {1} Schritte geändert"), label, different));
         }
     }
 
     /// <summary>Verglichen wird wie angezeigt, in ganzen Prozent. Was man nicht sieht, gilt nicht als Änderung.</summary>
     private static int Percent(float value) => (int)MathF.Round(value * 100f);
 
-    private static string FormatPan(int pan) => pan == 0 ? "Mitte" : pan < 0 ? $"L{-pan}" : $"R{pan}";
+    private static string FormatPan(int pan) => pan == 0 ? Lng.T("Mitte") : pan < 0 ? $"L{-pan}" : $"R{pan}";
+
+    private static string Bars(int bars) => bars == 1 ? Lng.T("1 Takt") : string.Format(Lng.T("{0} Takte"), bars);
+
+    private static string SwingName(SwingFeel swing) => swing switch
+    {
+        SwingFeel.Eighths => Lng.T("Achtel"),
+        SwingFeel.Sixteenths => Lng.T("Sechzehntel"),
+        _ => Lng.T("Gerade"),
+    };
 
     private static string FormatPitch(int pitch) => pitch > 0 ? $"+{pitch}" : pitch.ToString();
 }

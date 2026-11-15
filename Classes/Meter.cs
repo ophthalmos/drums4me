@@ -27,9 +27,16 @@ internal sealed class Meter
         new("12/8", [6, 6, 6, 6], [1, 1, 1, 1]),
     ];
 
+    // Swing teilt zwei gleich notierte Noten im Verhältnis 2:1, zusammen bleiben sie so lang wie gerade gespielt.
+    private const double SwingLong = 4.0 / 3.0;
+    private const double SwingShort = 2.0 / 3.0;
+
+    private readonly bool _countsQuarters;
+
     private Meter(string name, int[] beats, int[] groups)
     {
         Name = name;
+        _countsQuarters = beats.All(beat => beat == 4);
         BeatCount = beats.Length;
         Steps = beats.Sum();
         BeatOf = new int[Steps];
@@ -72,6 +79,20 @@ internal sealed class Meter
 
     /// <summary>Welcher Klick beim Vorzählen auf jedem Schritt liegt.</summary>
     public int[] ClickLevels { get; }
+
+    /// <summary>
+    /// Wie lang ein Schritt mit Swing ist, gemessen an der geraden Sechzehntel. Zählzeiten und Taktlänge bleiben, wie sie sind.
+    /// Swing-Achtel gibt es nur, wo die Zählzeit eine Viertel aus zwei Achteln ist: In 6/8, 7/8, 9/8 und 12/8 bleibt der Rhythmus gerade.
+    /// </summary>
+    public double StepFactor(SwingFeel swing, int step) => swing switch
+    {
+        SwingFeel.Sixteenths => step % 2 == 0 ? SwingLong : SwingShort,
+        SwingFeel.Eighths when _countsQuarters => step % 4 < 2 ? SwingLong : SwingShort,
+        _ => 1.0,
+    };
+
+    /// <summary>Der erste Schritt einer Zählzeit und die Zahl ihrer Schritte.</summary>
+    public (int Start, int Count) StepsOfBeat(int beat) => (Array.IndexOf(BeatOf, beat), BeatOf.Count(value => value == beat));
 
     /// <summary>Unbekannte Namen, etwa aus von Hand geänderten Dateien, ergeben 4/4.</summary>
     public static Meter Find(string? name) => All.FirstOrDefault(meter => meter.Name == name) ?? FourFour;

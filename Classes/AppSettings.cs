@@ -38,23 +38,97 @@ internal sealed class AppSettings
     /// <summary>Größe und Lage des Hauptfensters beim letzten Beenden. Fehlt der Wert, startet es mittig in Standardgröße.</summary>
     public WindowPlacement? Window { get; set; }
 
+    /// <summary>So viele Takte kommen ohne Abfolge in eine Audiodatei.</summary>
+    public int ExportBars { get; set; } = 4;
+
+    /// <summary>Das zuletzt gewählte Format für Audiodateien als Endung, etwa ".wav". Ohne Wert gilt WAV.</summary>
+    public string? ExportFormat { get; set; }
+
+    /// <summary>Der Ordner, in den zuletzt eine Audiodatei gespeichert wurde. Ohne Wert der Projektordner.</summary>
+    public string? ExportFolder { get; set; }
+
+    /// <summary>Der Ordner, aus dem zuletzt eine MIDI-Datei importiert wurde.</summary>
+    public string? MidiFolder { get; set; }
+
     /// <summary>Lässt das Raster zu jedem neuen Takt kurz aufleuchten.</summary>
     public bool FlashOnBar { get; set; }
+
+    /// <summary>Solange die Wiedergabe läuft, schaltet Windows den Bildschirm nicht ab.</summary>
+    public bool KeepScreenOn { get; set; } = true;
+
+    /// <summary>Lautstärke der Klicks beim Vorzählen in Prozent, bezogen auf die Gesamtlautstärke des Projekts.</summary>
+    public int CountInVolume { get; set; } = 100;
+
+    /// <summary>Das Fenster bleibt über anderen Programmen, etwa über Noten.</summary>
+    public bool AlwaysOnTop { get; set; }
+
+    /// <summary>Mit diesem Puffer läuft die Tonausgabe, wenn nichts anderes eingestellt ist.</summary>
+    public const int DefaultOutputLatencyMs = 40;
+
+    /// <summary>Puffer der Tonausgabe in Millisekunden. Größer hilft gegen Knackser, kleiner lässt den Ton schneller folgen.</summary>
+    public int OutputLatencyMs { get; set; } = DefaultOutputLatencyMs;
 
     /// <summary>Hell, dunkel oder wie Windows. Gilt ab dem nächsten Programmstart, denn sie muss vor dem ersten Fenster feststehen.</summary>
     [JsonConverter(typeof(JsonStringEnumConverter<SystemColorMode>))]
     public SystemColorMode ColorMode { get; set; } = SystemColorMode.System;
 
+    /// <summary>Die Programmsprache, "de" oder "en". Ohne Vorgabe Deutsch nur bei deutschem Windows. Gilt ab dem nächsten Start.</summary>
+    public string Language { get; set; } = Lng.DefaultCultureCode;
+
+    /// <summary>Die zuletzt übernommene Sprachwahl des Setups, damit sie nur einmal pro Installation gilt (siehe ApplyInstallerDefaults).</summary>
+    public string? InstallerLanguage { get; set; }
+
     public static AppSettings Load()
     {
+        AppSettings settings;
         try
         {
-            return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(SettingsFile)) ?? new AppSettings();
+            settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(SettingsFile)) ?? new AppSettings();
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
         {
-            return new AppSettings();
+            settings = new AppSettings();
         }
+        return ApplyInstallerDefaults(settings);
+    }
+
+    /// <summary>
+    /// Übernimmt die Sprache, die im Setup gewählt wurde (Datei setup.default neben der EXE, Zeile „language=de“), genau einmal
+    /// pro Installation: Erst wenn eine neue Installation einen anderen Wert hinterlegt, überschreibt er die Einstellung.
+    /// Eine spätere Umstellung in den Einstellungen bleibt bis dahin erhalten. Gespeichert wird beim nächsten Save.
+    /// </summary>
+    private static AppSettings ApplyInstallerDefaults(AppSettings settings)
+    {
+        try
+        {
+            var marker = Path.Combine(AppContext.BaseDirectory, "setup.default");
+            if (!File.Exists(marker))
+            {
+                return settings;
+            }
+
+            foreach (var line in File.ReadAllLines(marker))
+            {
+                var separator = line.IndexOf('=');
+                if (separator <= 0)
+                {
+                    continue;
+                }
+
+                var key = line[..separator].Trim();
+                var value = line[(separator + 1)..].Trim();
+                if (key == "language" && (value is "de" or "en") && value != settings.InstallerLanguage)
+                {
+                    settings.InstallerLanguage = value;
+                    settings.Language = value;
+                }
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Ohne lesbare Vorgabe bleibt die bisherige Sprache.
+        }
+        return settings;
     }
 
     public void Save()

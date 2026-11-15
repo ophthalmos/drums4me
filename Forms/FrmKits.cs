@@ -13,6 +13,8 @@ public partial class FrmKits : Form
     public FrmKits()
     {
         InitializeComponent();
+        Lng.Apply(this, toolTip);
+        labelHint.Text = Lng.T("KitsHint", labelHint.Text);   // mehrzeilig, deshalb mit festem Schlüssel
     }
 
     /// <summary>Der Ordner für eigene Kits, für die Anleitung hinter dem Link.</summary>
@@ -36,7 +38,7 @@ public partial class FrmKits : Form
         foreach (var kit in kits)
         {
             var item = new ListViewItem(kit.Name) { Tag = kit, Checked = !hiddenNames.Contains(kit.Name) };
-            item.SubItems.Add(kit.IsOwn ? "eigen" : kit.Collection ?? string.Empty);
+            item.SubItems.Add(kit.IsOwn ? Lng.T("eigen") : kit.Collection ?? string.Empty);
             item.SubItems.Add(string.Join(", ", kit.TrackNames.Where(name => name != DrumKit.NoTrackName)));
             listKits.Items.Add(item);
         }
@@ -59,10 +61,10 @@ public partial class FrmKits : Form
     {
         var folder = SelectedFolder;
         buttonOpenFolder.Enabled = folder is { Length: > 0 };
-        buttonOpenFolder.Text = folder is { Length: > 0 } ? FitPathEnd(folder) : "Kein Kit markiert";
+        buttonOpenFolder.Text = folder is { Length: > 0 } ? FitPathEnd(folder) : Lng.T("Kein Kit markiert");
 
         // Ist der Pfad vorn gekürzt, steht er hier vollständig.
-        toolTip.SetToolTip(buttonOpenFolder, folder is { Length: > 0 } ? folder : "Markiere ein Kit, um seinen Ordner zu öffnen.");
+        toolTip.SetToolTip(buttonOpenFolder, folder is { Length: > 0 } ? folder : Lng.T("Markiere ein Kit, um seinen Ordner zu öffnen."));
     }
 
     private void ButtonOpenFolder_SizeChanged(object? sender, EventArgs e) => UpdateFolderButton();
@@ -116,7 +118,7 @@ public partial class FrmKits : Form
         }
         catch (Win32Exception ex)
         {
-            Dialogs.Error(this, "Der Ordner ließ sich nicht öffnen.", ex.Message);
+            Dialogs.Error(this, Lng.T("Der Ordner ließ sich nicht öffnen."), ex.Message);
         }
     }
 
@@ -145,7 +147,7 @@ public partial class FrmKits : Form
     {
         var total = listKits.Items.Count;
         var chosen = listKits.CheckedItems.Count;
-        labelCount.Text = chosen == 0 ? "Hake mindestens ein Kit an." : $"{chosen} von {total} ausgewählt";
+        labelCount.Text = chosen == 0 ? Lng.T("Hake mindestens ein Kit an.") : string.Format(Lng.T("{0} von {1} ausgewählt"), chosen, total);
         buttonOk.Enabled = chosen > 0;
     }
 }

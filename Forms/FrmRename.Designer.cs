@@ -51,6 +51,7 @@ namespace Drums4me.Forms
             textBoxName.Name = "textBoxName";
             textBoxName.Size = new Size(366, 25);
             textBoxName.TabIndex = 1;
+            textBoxName.VisualStylesMode = VisualStylesMode.Net11;
             textBoxName.TextChanged += TextBoxName_TextChanged;
             //
             // labelHint

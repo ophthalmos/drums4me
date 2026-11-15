@@ -1,6 +1,6 @@
 ﻿# Prüft die Übersetzungen von drums4me (deutscher Text = resx-Schlüssel, Vorbild PDFlight):
 # LNG001: Ein übersetzbarer deutscher Text (Lng.T im Code, Text/ToolTipText/AccessibleDescription/AccessibleName/
-#         ShortcutKeyDisplayString-Zuweisungen, SetToolTip-Literale) hat in lng.en.resx keinen Eintrag. Vermutlich
+#         ShortcutKeyDisplayString-/PlaceholderText-Zuweisungen, SetToolTip-Literale) hat in lng.en.resx keinen Eintrag. Vermutlich
 #         wurde deutscher Text geändert, ohne den Schlüssel nachzuziehen.
 # LNG002: Ein resx-Schlüssel kommt im Code nicht mehr vor, eine Altlast nach einer Umformulierung.
 # Grenzen: Mehrzeilige Texte laufen über explizite Schlüssel (Lng.T("Schlüssel", "…")), deren Text sieht der
@@ -59,7 +59,7 @@ foreach ($file in $sources) {
         [void]$used.Add((ConvertFrom-CSharpLiteral $m.Groups[2].Value))
     }
     # 4) übersetzte Eigenschafts-Zuweisungen (Designer wie Code; nur reine Literale bis zum Semikolon)
-    foreach ($m in [regex]::Matches($text, "\b(?:Text|ToolTipText|ShortcutKeyDisplayString|AccessibleDescription|AccessibleName|Description|Filter|Title)\s*=\s*$literal\s*;")) {
+    foreach ($m in [regex]::Matches($text, "\b(?:Text|ToolTipText|ShortcutKeyDisplayString|AccessibleDescription|AccessibleName|PlaceholderText|Description|Filter|Title)\s*=\s*$literal\s*;")) {
         [void]$used.Add((ConvertFrom-CSharpLiteral $m.Groups[1].Value))
     }
     # 5) Tooltips der ToolTip-Komponente im Designer

@@ -1,0 +1,1219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- Neutrale (deutsche) Basisdatei: bewusst leer, denn die deutschen Texte sind einkompiliert.
+       Übersetzungen liegen in lng.<kultur>.resx; der Schlüssel jedes Eintrags ist der deutsche Text. -->
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name=" - Kopie" xml:space="preserve">
+    <value> - Copy</value>
+  </data>
+  <data name="– BPM" xml:space="preserve">
+    <value>– BPM</value>
+  </data>
+  <data name="&amp;Anhören" xml:space="preserve">
+    <value>&amp;Listen</value>
+  </data>
+  <data name="&amp;Umbenennen…" xml:space="preserve">
+    <value>&amp;Rename…</value>
+  </data>
+  <data name="(kein Kit)" xml:space="preserve">
+    <value>(no kit)</value>
+  </data>
+  <data name="(leer)" xml:space="preserve">
+    <value>(empty)</value>
+  </data>
+  <data name="(nicht lesbar)" xml:space="preserve">
+    <value>(unreadable)</value>
+  </data>
+  <data name=", Ziel erreicht" xml:space="preserve">
+    <value>, target reached</value>
+  </data>
+  <data name="{0} (eigen)" xml:space="preserve">
+    <value>{0} (own)</value>
+  </data>
+  <data name="{0} (fehlt)" xml:space="preserve">
+    <value>{0} (missing)</value>
+  </data>
+  <data name="{0} in {1}" xml:space="preserve">
+    <value>{0} in {1}</value>
+  </data>
+  <data name="{0} Kits gefunden, {1} davon in der Auswahl." xml:space="preserve">
+    <value>{0} kits found, {1} of them in the list.</value>
+  </data>
+  <data name="{0} Kits gefunden, alle in der Auswahl." xml:space="preserve">
+    <value>{0} kits found, all of them in the list.</value>
+  </data>
+  <data name="{0} Projekte" xml:space="preserve">
+    <value>{0} projects</value>
+  </data>
+  <data name="{0} Schläge: Das getippte Tempo gilt." xml:space="preserve">
+    <value>{0} taps: the tapped tempo applies.</value>
+  </data>
+  <data name="{0} Takte" xml:space="preserve">
+    <value>{0} bars</value>
+  </data>
+  <data name="{0} von {1} ausgewählt" xml:space="preserve">
+    <value>{0} of {1} selected</value>
+  </data>
+  <data name="{0} von {1} Projekten" xml:space="preserve">
+    <value>{0} of {1} projects</value>
+  </data>
+  <data name="{0}, Lautstärke" xml:space="preserve">
+    <value>{0}, volume</value>
+  </data>
+  <data name="{0}, Panorama" xml:space="preserve">
+    <value>{0}, pan</value>
+  </data>
+  <data name="{0}, Tonhöhe" xml:space="preserve">
+    <value>{0}, pitch</value>
+  </data>
+  <data name="{0}: {1} Schritte geändert" xml:space="preserve">
+    <value>{0}: {1} steps changed</value>
+  </data>
+  <data name="{0}: 1 Schritt geändert" xml:space="preserve">
+    <value>{0}: 1 step changed</value>
+  </data>
+  <data name="{0}: neu angelegt" xml:space="preserve">
+    <value>{0}: newly created</value>
+  </data>
+  <data name="{0}: Taktart {1} → {2}" xml:space="preserve">
+    <value>{0}: time signature {1} → {2}</value>
+  </data>
+  <data name="„{0}“ angelegt. Mit F2 gibst du ihm einen Namen." xml:space="preserve">
+    <value>&quot;{0}&quot; created. Press F2 to give it a name.</value>
+  </data>
+  <data name="„{0}“ geschlossen, das Raster ist leer." xml:space="preserve">
+    <value>&quot;{0}&quot; closed, the grid is empty.</value>
+  </data>
+  <data name="„{0}“ in den Papierkorb verschieben?" xml:space="preserve">
+    <value>Move &quot;{0}&quot; to the Recycle Bin?</value>
+  </data>
+  <data name="„{0}“ ist nicht mehr angeschlossen. drums4me spielt jetzt über den Windows-Standard." xml:space="preserve">
+    <value>&quot;{0}&quot; is no longer connected. drums4me now plays through the Windows default.</value>
+  </data>
+  <data name="„{0}“ liegt jetzt im Papierkorb." xml:space="preserve">
+    <value>&quot;{0}&quot; is now in the Recycle Bin.</value>
+  </data>
+  <data name="0 von 0 ausgewählt" xml:space="preserve">
+    <value>0 of 0 selected</value>
+  </data>
+  <data name="1 Kit gefunden." xml:space="preserve">
+    <value>1 kit found.</value>
+  </data>
+  <data name="1 Projekt" xml:space="preserve">
+    <value>1 project</value>
+  </data>
+  <data name="1 Schlag: Tippe im Takt weiter." xml:space="preserve">
+    <value>1 tap: keep tapping in time.</value>
+  </data>
+  <data name="1 Takt" xml:space="preserve">
+    <value>1 bar</value>
+  </data>
+  <data name="Abbrechen" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Abfolge" xml:space="preserve">
+    <value>Sequence</value>
+  </data>
+  <data name="Abfolge: ausgeschaltet" xml:space="preserve">
+    <value>Sequence: off</value>
+  </data>
+  <data name="Abfolge: eingeschaltet" xml:space="preserve">
+    <value>Sequence: on</value>
+  </data>
+  <data name="Abfolge: Erlaubt sind die Ziffern 0 bis 4 und Wiederholungen wie 1x8." xml:space="preserve">
+    <value>Sequence: only the digits 0 to 4 and repeats like 1x8 are allowed.</value>
+  </data>
+  <data name="Aktiv" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Alle" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Alt+Eingabe" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="Anderen Ordner…" xml:space="preserve">
+    <value>Other folder…</value>
+  </data>
+  <data name="Anleitung…" xml:space="preserve">
+    <value>Guide…</value>
+  </data>
+  <data name="Auch die Datei im Kit-Ordner bekommt diesen Namen." xml:space="preserve">
+    <value>The file in the kit folder gets this name too.</value>
+  </data>
+  <data name="aus" xml:space="preserve">
+    <value>off</value>
+  </data>
+  <data name="Ausgabegerät" xml:space="preserve">
+    <value>Output device</value>
+  </data>
+  <data name="Beenden" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Beendet drums4me. Ungesicherte Änderungen werden vorher abgefragt." xml:space="preserve">
+    <value>Exits drums4me. You are asked about unsaved changes first.</value>
+  </data>
+  <data name="Beginnt die Abfolge am Ende von vorn. Sonst stoppt die Wiedergabe nach dem letzten Takt." xml:space="preserve">
+    <value>Starts the sequence over at its end. Otherwise playback stops after the last bar.</value>
+  </data>
+  <data name="Beginnt ein neues Projekt. Strg+N." xml:space="preserve">
+    <value>Starts a new project. Ctrl+N.</value>
+  </data>
+  <data name="Beim Schreiben im Abfolge-Feld und in der Suche gehören Leertaste, Plus und Minus dem Text." xml:space="preserve">
+    <value>While you type in the sequence field or the search, Space, Plus and Minus belong to the text.</value>
+  </data>
+  <data name="Darstellung" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Das Ausgabegerät ist weggefallen, die Wiedergabe läuft über den Windows-Standard weiter." xml:space="preserve">
+    <value>The output device is gone, playback continues through the Windows default.</value>
+  </data>
+  <data name="Das Ausgabegerät ist weggefallen. Die Wiedergabe startet gleich neu …" xml:space="preserve">
+    <value>The output device is gone. Playback restarts in a moment …</value>
+  </data>
+  <data name="Das Kit „{0}“ wurde nicht gefunden." xml:space="preserve">
+    <value>The kit &quot;{0}&quot; was not found.</value>
+  </data>
+  <data name="Das Pattern, das du gerade siehst. Läuft eine Abfolge, steht daneben, der wievielte Takt der Abfolge gerade spielt." xml:space="preserve">
+    <value>The pattern you are looking at. While a sequence plays, the position within the sequence appears next to it.</value>
+  </data>
+  <data name="Das Projekt „{0}“ konnte nicht geöffnet werden." xml:space="preserve">
+    <value>The project &quot;{0}&quot; could not be opened.</value>
+  </data>
+  <data name="Das Projekt konnte nicht gespeichert werden." xml:space="preserve">
+    <value>The project could not be saved.</value>
+  </data>
+  <data name="Das Projekt wurde nicht gelöscht." xml:space="preserve">
+    <value>The project was not deleted.</value>
+  </data>
+  <data name="Das Projekt wurde nicht kopiert." xml:space="preserve">
+    <value>The project was not copied.</value>
+  </data>
+  <data name="Das Projekt wurde nicht umbenannt." xml:space="preserve">
+    <value>The project was not renamed.</value>
+  </data>
+  <data name="Das Tonformat mit {0} Bit wird nicht unterstützt." xml:space="preserve">
+    <value>The audio format with {0} bits is not supported.</value>
+  </data>
+  <data name="Datei" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Datei (Strg+O oder Alt+D): Projekte, Neu, Speichern und mehr. Esc führt zurück zur Karte Start." xml:space="preserve">
+    <value>File (Ctrl+O or Alt+D): projects, new, save and more. Esc returns to the Start tab.</value>
+  </data>
+  <data name="Dateipfad kopieren" xml:space="preserve">
+    <value>Copy file path</value>
+  </data>
+  <data name="Demos öffnen▸" xml:space="preserve">
+    <value>Open demos▸</value>
+  </data>
+  <data name="Der Dateipfad ließ sich nicht kopieren." xml:space="preserve">
+    <value>The file path could not be copied.</value>
+  </data>
+  <data name="Der Dateipfad steht in der Zwischenablage." xml:space="preserve">
+    <value>The file path is on the clipboard.</value>
+  </data>
+  <data name="Der Editor ließ sich nicht starten." xml:space="preserve">
+    <value>The editor could not be started.</value>
+  </data>
+  <data name="Der Name darf nicht leer sein." xml:space="preserve">
+    <value>The name must not be empty.</value>
+  </data>
+  <data name="Der Name enthält Zeichen, die in Dateinamen nicht erlaubt sind." xml:space="preserve">
+    <value>The name contains characters that are not allowed in file names.</value>
+  </data>
+  <data name="Der Ordner ließ sich nicht öffnen." xml:space="preserve">
+    <value>The folder could not be opened.</value>
+  </data>
+  <data name="Die Audioausgabe konnte nicht gestartet werden." xml:space="preserve">
+    <value>The audio output could not be started.</value>
+  </data>
+  <data name="Die Audioausgabe wurde unterbrochen." xml:space="preserve">
+    <value>The audio output was interrupted.</value>
+  </data>
+  <data name="Die Datei enthält kein drums4me-Projekt." xml:space="preserve">
+    <value>The file does not contain a drums4me project.</value>
+  </data>
+  <data name="Die Datei ist keine gültige drums4me-Projektdatei." xml:space="preserve">
+    <value>The file is not a valid drums4me project file.</value>
+  </data>
+  <data name="Die Datei wurde nicht gefunden." xml:space="preserve">
+    <value>The file was not found.</value>
+  </data>
+  <data name="Die Kits gehören nicht zum Programm." xml:space="preserve">
+    <value>The kits are not part of the program.</value>
+  </data>
+  <data name="Die Klänge dieses Projekts. In der Liste steht der Ordner des Kits in Klammern." xml:space="preserve">
+    <value>The sounds of this project. The list shows the folder of each kit in parentheses.</value>
+  </data>
+  <data name="Die neue Darstellung gilt ab dem nächsten Start." xml:space="preserve">
+    <value>The new appearance takes effect the next time drums4me starts.</value>
+  </data>
+  <data name="Die Rechte liegen bei ihren Urhebern." xml:space="preserve">
+    <value>The rights remain with their creators.</value>
+  </data>
+  <data name="Die Sprache des Programms. Gilt ab dem nächsten Start." xml:space="preserve">
+    <value>The language of the program. Takes effect at the next start.</value>
+  </data>
+  <data name="Die Spur konnte nicht umbenannt werden." xml:space="preserve">
+    <value>The track could not be renamed.</value>
+  </data>
+  <data name="Die Taktart des aktuellen Patterns." xml:space="preserve">
+    <value>The time signature of the current pattern.</value>
+  </data>
+  <data name="Diese Dateien aus „{0}“ konnten nicht gelesen werden:" xml:space="preserve">
+    <value>These files from &quot;{0}&quot; could not be read:</value>
+  </data>
+  <data name="Diesen Namen hat schon eine andere Spur." xml:space="preserve">
+    <value>Another track already has this name.</value>
+  </data>
+  <data name="Doppelklick oder Enter: Projekt öffnen. F2: umbenennen. Entf: in den Papierkorb. Alt+Eingabe: Eigenschaften. Strg+E: im Editor bearbeiten. Strg+Umschalt+C: Dateipfad kopieren. Rechtsklick: weitere Befehle. Klick auf einen Spaltenkopf: sortieren." xml:space="preserve">
+    <value>Double-click or Enter: open project. F2: rename. Del: move to Recycle Bin. Alt+Enter: properties. Ctrl+E: edit in editor. Ctrl+Shift+C: copy file path. Right-click: more commands. Click a column header: sort.</value>
+  </data>
+  <data name="Doppelt" xml:space="preserve">
+    <value>Double</value>
+  </data>
+  <data name="Drumkit" xml:space="preserve">
+    <value>Drum kit</value>
+  </data>
+  <data name="Drumkits" xml:space="preserve">
+    <value>Drum kits</value>
+  </data>
+  <data name="drums4me-Projekte (*.d4m)|*.d4m|Alle Dateien (*.*)|*.*" xml:space="preserve">
+    <value>drums4me projects (*.d4m)|*.d4m|All files (*.*)|*.*</value>
+  </data>
+  <data name="AboutTerms" xml:space="preserve">
+    <value>You may share and modify the program under its terms.
+It comes without any warranty.</value>
+  </data>
+  <data name="Dunkel" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Duplizieren" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <data name="eigen" xml:space="preserve">
+    <value>own</value>
+  </data>
+  <data name="Eigene" xml:space="preserve">
+    <value>Own</value>
+  </data>
+  <data name="Eigene Kits anlegen…" xml:space="preserve">
+    <value>Create your own kits…</value>
+  </data>
+  <data name="Eigenschaften" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="ein" xml:space="preserve">
+    <value>on</value>
+  </data>
+  <data name="Ein Name darf keines dieser Zeichen enthalten:" xml:space="preserve">
+    <value>A name must not contain any of these characters:</value>
+  </data>
+  <data name="Ein Name darf nicht mit einem Punkt enden." xml:space="preserve">
+    <value>A name must not end with a period.</value>
+  </data>
+  <data name="Einstellungen" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Entf" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="Entfernt alle Haken, damit du danach nur die gewünschten Kits anhakst." xml:space="preserve">
+    <value>Clears all checkmarks, so you can then check only the kits you want.</value>
+  </data>
+  <data name="Erklärt, wie du eigene Kits anlegst und ihre Klänge aufbereitest." xml:space="preserve">
+    <value>Explains how to create your own kits and prepare their sounds.</value>
+  </data>
+  <data name="Es ist gerade geöffnet und bleibt es, bis du es schließt. Speichern legt dann eine neue Datei an." xml:space="preserve">
+    <value>It is open right now and stays open until you close it. Saving then creates a new file.</value>
+  </data>
+  <data name="Es ist noch kein Kit-Paket installiert." xml:space="preserve">
+    <value>No kit package is installed yet.</value>
+  </data>
+  <data name="Es wurden keine Kits gefunden." xml:space="preserve">
+    <value>No kits were found.</value>
+  </data>
+  <data name="Fensterlayout zurückgesetzt." xml:space="preserve">
+    <value>Window layout reset.</value>
+  </data>
+  <data name="Fensterlayout zurücksetzen" xml:space="preserve">
+    <value>Reset window layout</value>
+  </data>
+  <data name="Finden" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="Freie Klänge gibt es zum Beispiel bei {0}. Achte vor einer Weitergabe auf die Lizenz." xml:space="preserve">
+    <value>Free sounds are available from {0}, for example. Check the license before passing them on.</value>
+  </data>
+  <data name="Freie Software unter der {0}." xml:space="preserve">
+    <value>Free software under the {0}.</value>
+  </data>
+  <data name="Geändert" xml:space="preserve">
+    <value>Modified</value>
+  </data>
+  <data name="Geändert in „{0}“:" xml:space="preserve">
+    <value>Changed in &quot;{0}&quot;:</value>
+  </data>
+  <data name="Gestern" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
+  <data name="Gib einen Namen ein." xml:space="preserve">
+    <value>Enter a name.</value>
+  </data>
+  <data name="Hake mindestens ein Kit an." xml:space="preserve">
+    <value>Check at least one kit.</value>
+  </data>
+  <data name="Haken: Das Kit erscheint in der Auswahl. Leertaste oder Doppelklick schaltet den Haken um." xml:space="preserve">
+    <value>Checked: the kit appears in the list. Space or double-click toggles the checkmark.</value>
+  </data>
+  <data name="Hakt alle Kits an." xml:space="preserve">
+    <value>Checks all kits.</value>
+  </data>
+  <data name="Halb ({0})" xml:space="preserve">
+    <value>Half ({0})</value>
+  </data>
+  <data name="Doppelt ({0})" xml:space="preserve">
+    <value>Double ({0})</value>
+  </data>
+  <data name="Halb" xml:space="preserve">
+    <value>Half</value>
+  </data>
+  <data name="Hell" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Hell, dunkel oder wie Windows. Gilt ab dem nächsten Start." xml:space="preserve">
+    <value>Light, dark or like Windows. Takes effect at the next start.</value>
+  </data>
+  <data name="Heute" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="Höre zu: {0:F0} s. Das Ergebnis wird noch genauer." xml:space="preserve">
+    <value>Listening: {0:F0} s. The result is still getting more accurate.</value>
+  </data>
+  <data name="Höre zu: {0:F0} s. Das erste Ergebnis kommt gleich." xml:space="preserve">
+    <value>Listening: {0:F0} s. The first result is coming up.</value>
+  </data>
+  <data name="Höre zu: {0:F0} s. Der Rhythmus ist nicht eindeutig, prüfe das Ergebnis." xml:space="preserve">
+    <value>Listening: {0:F0} s. The rhythm is ambiguous, check the result.</value>
+  </data>
+  <data name="Höre zu: {0:F0} s. Stimmt nur das halbe oder doppelte Tempo? Dann korrigiere es." xml:space="preserve">
+    <value>Listening: {0:F0} s. Only half or double the tempo is right? Then correct it.</value>
+  </data>
+  <data name="Im Ordner anzeigen" xml:space="preserve">
+    <value>Show in folder</value>
+  </data>
+  <data name="In den Papierkorb" xml:space="preserve">
+    <value>Move to Recycle Bin</value>
+  </data>
+  <data name="In diesem Ordner gibt es schon ein Projekt „{0}“." xml:space="preserve">
+    <value>There is already a project &quot;{0}&quot; in this folder.</value>
+  </data>
+  <data name="In Editor bearbeiten" xml:space="preserve">
+    <value>Edit in editor</value>
+  </data>
+  <data name="Installiere ein Kit-Paket oder lege ein eigenes Kit an." xml:space="preserve">
+    <value>Install a kit package or create a kit of your own.</value>
+  </data>
+  <data name="Installiert" xml:space="preserve">
+    <value>Installed</value>
+  </data>
+  <data name="Kein Kit markiert" xml:space="preserve">
+    <value>No kit selected</value>
+  </data>
+  <data name="Keine" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Keine Demos installiert" xml:space="preserve">
+    <value>No demos installed</value>
+  </data>
+  <data name="Keine Kits gefunden." xml:space="preserve">
+    <value>No kits found.</value>
+  </data>
+  <data name="Kits auswählen" xml:space="preserve">
+    <value>Choose kits</value>
+  </data>
+  <data name="Kits neu einlesen" xml:space="preserve">
+    <value>Reload kits</value>
+  </data>
+  <data name="Kits verwalten…" xml:space="preserve">
+    <value>Manage kits…</value>
+  </data>
+  <data name="Klänge" xml:space="preserve">
+    <value>Sounds</value>
+  </data>
+  <data name="Klick: Klang anhören. Rechtsklick: weitere Möglichkeiten." xml:space="preserve">
+    <value>Click: hear the sound. Right-click: more options.</value>
+  </data>
+  <data name="Lädt beim Programmstart das zuletzt benutzte Projekt. Sonst beginnst du mit einem neuen." xml:space="preserve">
+    <value>Loads the last used project at startup. Otherwise you start with a new one.</value>
+  </data>
+  <data name="Lässt das Raster bei jedem Taktanfang kurz aufleuchten." xml:space="preserve">
+    <value>Briefly lights up the grid at the start of every bar.</value>
+  </data>
+  <data name="Lautstärke der Spur." xml:space="preserve">
+    <value>Volume of the track.</value>
+  </data>
+  <data name="Leert das aktuelle Pattern. Strg+Entf. Strg+Z nimmt das zurück." xml:space="preserve">
+    <value>Clears the current pattern. Ctrl+Del. Ctrl+Z undoes it.</value>
+  </data>
+  <data name="Legt fest, welche Kits in der Auswahl darüber erscheinen." xml:space="preserve">
+    <value>Sets which kits appear in the list above.</value>
+  </data>
+  <data name="Löschen" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="M" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="Markiere ein Kit, um seinen Ordner zu öffnen." xml:space="preserve">
+    <value>Select a kit to open its folder.</value>
+  </data>
+  <data name="Mitte" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="Möchtest du die Änderungen speichern?" xml:space="preserve">
+    <value>Do you want to save the changes?</value>
+  </data>
+  <data name="Nach der Installation eines Pakets liegen die Kits hier:" xml:space="preserve">
+    <value>After installing a package, the kits are here:</value>
+  </data>
+  <data name="Name oder Ordner (Strg+F)" xml:space="preserve">
+    <value>Name or folder (Ctrl+F)</value>
+  </data>
+  <data name="Neu" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="Neu beginnen" xml:space="preserve">
+    <value>Start over</value>
+  </data>
+  <data name="Neuer Name der Spur:" xml:space="preserve">
+    <value>New name of the track:</value>
+  </data>
+  <data name="Nicht speichern" xml:space="preserve">
+    <value>Don&apos;t save</value>
+  </data>
+  <data name="Nimmt die letzte Änderung zurück. Strg+Z." xml:space="preserve">
+    <value>Undoes the last change. Ctrl+Z.</value>
+  </data>
+  <data name="Öffnen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Öffnet den Ordner der installierten Kits: {0}" xml:space="preserve">
+    <value>Opens the folder of the installed kits: {0}</value>
+  </data>
+  <data name="Öffnet den Ordner des markierten Kits, etwa um Klänge auszutauschen." xml:space="preserve">
+    <value>Opens the folder of the selected kit, for example to replace sounds.</value>
+  </data>
+  <data name="Öffnet den Ordner für eigene Kits: {0}" xml:space="preserve">
+    <value>Opens the folder for your own kits: {0}</value>
+  </data>
+  <data name="Öffnet ein Fenster, in dem du das Tempo mit der Leertaste tippst oder aus dem laufenden Song ermitteln lässt. Strg+T." xml:space="preserve">
+    <value>Opens a window where you tap the tempo with the Space bar or let it be detected from the playing song. Ctrl+T.</value>
+  </data>
+  <data name="Öffnet eines der installierten Demo-Projekte." xml:space="preserve">
+    <value>Opens one of the installed demo projects.</value>
+  </data>
+  <data name="Ordner" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Ordner der installierten Kits öffnen" xml:space="preserve">
+    <value>Open the folder of the installed kits</value>
+  </data>
+  <data name="Ordner des Kits öffnen" xml:space="preserve">
+    <value>Open the kit&apos;s folder</value>
+  </data>
+  <data name="Ordner des markierten Kits öffnen" xml:space="preserve">
+    <value>Open the folder of the selected kit</value>
+  </data>
+  <data name="Ordner für eigene Kits öffnen" xml:space="preserve">
+    <value>Open the folder for your own kits</value>
+  </data>
+  <data name="Ordner öffnen" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="Panorama der Spur. Doppelklick: Mitte." xml:space="preserve">
+    <value>Pan of the track. Double-click: center.</value>
+  </data>
+  <data name="Pattern geleert. Strg+Z holt es zurück." xml:space="preserve">
+    <value>Pattern cleared. Ctrl+Z brings it back.</value>
+  </data>
+  <data name="Pattern leeren" xml:space="preserve">
+    <value>Clear pattern</value>
+  </data>
+  <data name="Pattern leeren (Strg+Entf)" xml:space="preserve">
+    <value>Clear pattern (Ctrl+Del)</value>
+  </data>
+  <data name="Patternreihenfolge" xml:space="preserve">
+    <value>Pattern order</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Rest</value>
+  </data>
+  <data name="Pause erkannt: Der nächste Schlag beginnt neu." xml:space="preserve">
+    <value>Pause detected: the next tap starts over.</value>
+  </data>
+  <data name="Programmstart" xml:space="preserve">
+    <value>Startup</value>
+  </data>
+  <data name="Projekt geschlossen, das Raster ist leer." xml:space="preserve">
+    <value>Project closed, the grid is empty.</value>
+  </data>
+  <data name="Projekt speichern" xml:space="preserve">
+    <value>Save project</value>
+  </data>
+  <data name="Projekte" xml:space="preserve">
+    <value>Projects</value>
+  </data>
+  <data name="Rückgängig" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="Rückgängig (Strg+Z)" xml:space="preserve">
+    <value>Undo (Ctrl+Z)</value>
+  </data>
+  <data name="Sammlung" xml:space="preserve">
+    <value>Collection</value>
+  </data>
+  <data name="Schließen" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Schließt die Datei und leert das Raster. Beim nächsten Start wird sie nicht wieder geöffnet." xml:space="preserve">
+    <value>Closes the file and empties the grid. It will not be reopened at the next start.</value>
+  </data>
+  <data name="So legst du eigene Kits an" xml:space="preserve">
+    <value>How to create your own kits</value>
+  </data>
+  <data name="So viele Takte zählt ein Metronom vor, bevor die Patterns einsetzen. 0: kein Vorzählen." xml:space="preserve">
+    <value>A metronome counts in this many bars before the patterns start. 0: no count-in.</value>
+  </data>
+  <data name="Speichern" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Speichern (Strg+S)" xml:space="preserve">
+    <value>Save (Ctrl+S)</value>
+  </data>
+  <data name="Speichern unter…" xml:space="preserve">
+    <value>Save as…</value>
+  </data>
+  <data name="Speicherort" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Speicherort ändern" xml:space="preserve">
+    <value>Change location</value>
+  </data>
+  <data name="Speichert das Projekt unter einem anderen Namen. Strg+Umschalt+S." xml:space="preserve">
+    <value>Saves the project under a different name. Ctrl+Shift+S.</value>
+  </data>
+  <data name="Speichert das Projekt. Strg+S." xml:space="preserve">
+    <value>Saves the project. Ctrl+S.</value>
+  </data>
+  <data name="Spielt die Patterns in fester Reihenfolge: eine Ziffer je Takt, zum Beispiel 1 1 1 2. Kurz: 1x8 für acht Takte. 0 ist ein stummer Takt." xml:space="preserve">
+    <value>Plays the patterns in a fixed order: one digit per bar, for example 1 1 1 2. Short: 1x8 for eight bars. 0 is a silent bar.</value>
+  </data>
+  <data name="Spielzeit {0}" xml:space="preserve">
+    <value>Time {0}</value>
+  </data>
+  <data name="Spielzeit 0:00" xml:space="preserve">
+    <value>Time 0:00</value>
+  </data>
+  <data name="Sprache" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Spur {0}" xml:space="preserve">
+    <value>Track {0}</value>
+  </data>
+  <data name="Spur umbenennen" xml:space="preserve">
+    <value>Rename track</value>
+  </data>
+  <data name="Gilt für Dateidialoge. Ändern verschiebt keine Dateien." xml:space="preserve">
+    <value>Used for file dialogs. Changing it moves no files.</value>
+  </data>
+  <data name="Standardordner" xml:space="preserve">
+    <value>Default folder</value>
+  </data>
+  <data name="Start (Leertaste)" xml:space="preserve">
+    <value>Start (Space)</value>
+  </data>
+  <data name="Startet oder stoppt die Wiedergabe. Leertaste." xml:space="preserve">
+    <value>Starts or stops playback. Space.</value>
+  </data>
+  <data name="Stattdessen wird „{0}“ benutzt." xml:space="preserve">
+    <value>&quot;{0}&quot; is used instead.</value>
+  </data>
+  <data name="Steigert das Tempo beim Spielen schrittweise bis zum Ziel. So tastest du dich an schwierige Stellen heran." xml:space="preserve">
+    <value>Raises the tempo step by step up to the target while you play. This way you work up to difficult passages.</value>
+  </data>
+  <data name="Stellt die zurückgenommene Änderung wieder her. Strg+Y." xml:space="preserve">
+    <value>Restores the undone change. Ctrl+Y.</value>
+  </data>
+  <data name="Stellt Fenstergröße, Fensterlage und Spaltenbreiten der Projektliste wieder her wie beim ersten Start." xml:space="preserve">
+    <value>Restores window size, window position and the column widths of the project list as at the first start.</value>
+  </data>
+  <data name="Step-Sequencer und Metronom" xml:space="preserve">
+    <value>Step sequencer and metronome</value>
+  </data>
+  <data name="Stopp" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Stopp (Leertaste)" xml:space="preserve">
+    <value>Stop (Space)</value>
+  </data>
+  <data name="Strg + Ziehen: alle Spuren gemeinsam. Doppelklick: Standardwert, mit Strg für alle Spuren." xml:space="preserve">
+    <value>Ctrl + drag: all tracks together. Double-click: default value, with Ctrl for all tracks.</value>
+  </data>
+  <data name="Strg+E" xml:space="preserve">
+    <value>Ctrl+E</value>
+  </data>
+  <data name="Strg+Umschalt+C" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="Suchen" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Sucht die Kits erneut, etwa nach dem Kopieren eines neuen Ordners." xml:space="preserve">
+    <value>Searches for kits again, for example after copying a new folder.</value>
+  </data>
+  <data name="Sucht in den Namen der Projekte und Ordner." xml:space="preserve">
+    <value>Searches the names of projects and folders.</value>
+  </data>
+  <data name="Sucht in den Namen der Projekte und Ordner. Strg+F. Enter öffnet das markierte Projekt, Pfeil runter springt in die Liste." xml:space="preserve">
+    <value>Searches the names of projects and folders. Ctrl+F. Enter opens the selected project, Down arrow jumps into the list.</value>
+  </data>
+  <data name="Takt {0}" xml:space="preserve">
+    <value>Bar {0}</value>
+  </data>
+  <data name="Takt {0}/{1}" xml:space="preserve">
+    <value>Bar {0}/{1}</value>
+  </data>
+  <data name="Takt 0" xml:space="preserve">
+    <value>Bar 0</value>
+  </data>
+  <data name="Taktart" xml:space="preserve">
+    <value>Meter</value>
+  </data>
+  <data name="Taktblitz" xml:space="preserve">
+    <value>Bar flash</value>
+  </data>
+  <data name="Takte" xml:space="preserve">
+    <value>bars</value>
+  </data>
+  <data name="bis" xml:space="preserve">
+    <value>up to</value>
+  </data>
+  <data name="Tastenkombinationen" xml:space="preserve">
+    <value>Keyboard shortcuts</value>
+  </data>
+  <data name="Tastenkombinationen (F1)" xml:space="preserve">
+    <value>Keyboard shortcuts (F1)</value>
+  </data>
+  <data name="Tempo ermitteln" xml:space="preserve">
+    <value>Detect tempo</value>
+  </data>
+  <data name="Tempo ermitteln (Strg+T)" xml:space="preserve">
+    <value>Detect tempo (Ctrl+T)</value>
+  </data>
+  <data name="Tempo in Viertelnoten pro Minute. Plus und Minus: 1 BPM. Strg+Plus und Strg+Minus: 5 BPM." xml:space="preserve">
+    <value>Tempo in quarter notes per minute. Plus and Minus: 1 BPM. Ctrl+Plus and Ctrl+Minus: 5 BPM.</value>
+  </data>
+  <data name="Tempotrainer" xml:space="preserve">
+    <value>Tempo trainer</value>
+  </data>
+  <data name="Tempotrainer, Abstand" xml:space="preserve">
+    <value>Tempo trainer, interval</value>
+  </data>
+  <data name="Tempotrainer, Schritt" xml:space="preserve">
+    <value>Tempo trainer, step</value>
+  </data>
+  <data name="Tempotrainer, Ziel" xml:space="preserve">
+    <value>Tempo trainer, target</value>
+  </data>
+  <data name="Tempotrainer: ausgeschaltet" xml:space="preserve">
+    <value>Tempo trainer: off</value>
+  </data>
+  <data name="Tempotrainer: eingeschaltet" xml:space="preserve">
+    <value>Tempo trainer: on</value>
+  </data>
+  <data name="Tempotrainer: jetzt {0} BPM" xml:space="preserve">
+    <value>Tempo trainer: now {0} BPM</value>
+  </data>
+  <data name="Tempotrainer: zuletzt {0} BPM" xml:space="preserve">
+    <value>Tempo trainer: last {0} BPM</value>
+  </data>
+  <data name="Tippe im Takt auf die Leertaste oder spiele den Song in einem beliebigen Programm ab: drums4me hört den Ton von Windows mit. Nichts davon wird gespeichert." xml:space="preserve">
+    <value>Tap the Space bar in time or play the song in any program: drums4me listens to the Windows audio. None of it is saved.</value>
+  </data>
+  <data name="Tippe mit der Leertaste, mithören geht nicht: {0}" xml:space="preserve">
+    <value>Tap with the Space bar, listening is not possible: {0}</value>
+  </data>
+  <data name="Tonhöhe der Spur." xml:space="preserve">
+    <value>Pitch of the track.</value>
+  </data>
+  <data name="Über" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Über {0}" xml:space="preserve">
+    <value>About {0}</value>
+  </data>
+  <data name="Über dieses Gerät spielt drums4me, zum Beispiel ein Audio-Interface für den Kopfhörer. Windows-Standard folgt der Einstellung von Windows." xml:space="preserve">
+    <value>drums4me plays through this device, for example an audio interface for your headphones. Windows default follows the Windows setting.</value>
+  </data>
+  <data name="Über drums4me" xml:space="preserve">
+    <value>About drums4me</value>
+  </data>
+  <data name="Übernehmen" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Umbenennen" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="Umbenennen (nur bei eigenen Kits)" xml:space="preserve">
+    <value>Rename (own kits only)</value>
+  </data>
+  <data name="Unbenannt" xml:space="preserve">
+    <value>Untitled</value>
+  </data>
+  <data name="und {0} weitere Änderungen" xml:space="preserve">
+    <value>and {0} more changes</value>
+  </data>
+  <data name="und 1 weitere Änderung" xml:space="preserve">
+    <value>and 1 more change</value>
+  </data>
+  <data name="Verwendet {0} von Mark Heath et al. (MIT-Lizenz)." xml:space="preserve">
+    <value>Uses {0} by Mark Heath et al. (MIT license).</value>
+  </data>
+  <data name="Von dort kannst du das Projekt wiederherstellen." xml:space="preserve">
+    <value>You can restore the project from there.</value>
+  </data>
+  <data name="Vorzählen" xml:space="preserve">
+    <value>Count-in</value>
+  </data>
+  <data name="Wähle den Ordner für deine Projekte." xml:space="preserve">
+    <value>Choose the folder for your projects.</value>
+  </data>
+  <data name="Wähle den Ordner, dessen Projekte du sehen möchtest." xml:space="preserve">
+    <value>Choose the folder whose projects you want to see.</value>
+  </data>
+  <data name="Wählt den Ordner für deine Projekte." xml:space="preserve">
+    <value>Chooses the folder for your projects.</value>
+  </data>
+  <data name="Warte auf Ton oder auf deinen ersten Schlag." xml:space="preserve">
+    <value>Waiting for sound or your first tap.</value>
+  </data>
+  <data name="Wiedergabe" xml:space="preserve">
+    <value>Playback</value>
+  </data>
+  <data name="Wiederholen" xml:space="preserve">
+    <value>Repeat</value>
+  </data>
+  <data name="Wiederholen (Strg+Y)" xml:space="preserve">
+    <value>Redo (Ctrl+Y)</value>
+  </data>
+  <data name="Windows meldet den Fehler 0x{0:X}. Vielleicht ist die Datei gerade in einem anderen Programm geöffnet." xml:space="preserve">
+    <value>Windows reports error 0x{0:X}. Perhaps the file is open in another program.</value>
+  </data>
+  <data name="Windows-Standard" xml:space="preserve">
+    <value>Windows default</value>
+  </data>
+  <data name="Zeigt die Projekte eines anderen Ordners. Der Speicherort in den Einstellungen bleibt, wie er ist." xml:space="preserve">
+    <value>Shows the projects of another folder. The location in the settings stays as it is.</value>
+  </data>
+  <data name="Zeigt die Projekte im Speicherort aus den Einstellungen: {0}" xml:space="preserve">
+    <value>Shows the projects in the location from the settings: {0}</value>
+  </data>
+  <data name="Zeigt die Tastenkombinationen. F1." xml:space="preserve">
+    <value>Shows the keyboard shortcuts. F1.</value>
+  </data>
+  <data name="Zeigt nur Projekte mit diesem Kit." xml:space="preserve">
+    <value>Shows only projects with this kit.</value>
+  </data>
+  <data name="Zeigt nur Projekte, in denen diese Taktart vorkommt." xml:space="preserve">
+    <value>Shows only projects that use this time signature.</value>
+  </data>
+  <data name="Zeigt Version und Lizenz von drums4me." xml:space="preserve">
+    <value>Shows the version and license of drums4me.</value>
+  </data>
+  <data name="Zeigt wieder die Projekte im Speicherort aus den Einstellungen." xml:space="preserve">
+    <value>Shows the projects in the location from the settings again.</value>
+  </data>
+  <data name="Zeigt wieder die Projekte im Speicherort aus den Einstellungen: {0}" xml:space="preserve">
+    <value>Shows the projects in the location from the settings again: {0}</value>
+  </data>
+  <data name="TrainerEvery" xml:space="preserve">
+    <value>every</value>
+  </data>
+  <data name="Redo" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="Als Audiodatei speichern" xml:space="preserve">
+    <value>Save as audio file</value>
+  </data>
+  <data name="Die Audiodatei konnte nicht gespeichert werden." xml:space="preserve">
+    <value>The audio file could not be saved.</value>
+  </data>
+  <data name="Die Audiodatei wäre {0:F0} Minuten lang. Mehr als {1:F0} Minuten gehen nicht." xml:space="preserve">
+    <value>The audio file would be {0:F0} minutes long. More than {1:F0} minutes are not possible.</value>
+  </data>
+  <data name="Die Datei lässt sich nahtlos wiederholen." xml:space="preserve">
+    <value>The file loops seamlessly.</value>
+  </data>
+  <data name="Speichern…" xml:space="preserve">
+    <value>Save…</value>
+  </data>
+  <data name="„{0}“ gespeichert: {1}, {2}." xml:space="preserve">
+    <value>&quot;{0}&quot; saved: {1}, {2}.</value>
+  </data>
+  <data name="Dauer: 0:00" xml:space="preserve">
+    <value>Duration: 0:00</value>
+  </data>
+  <data name="Dauer: {0}" xml:space="preserve">
+    <value>Duration: {0}</value>
+  </data>
+  <data name="Dauer: {0}. Mehr als {1:F0} Minuten gehen nicht." xml:space="preserve">
+    <value>Duration: {0}. More than {1:F0} minutes are not possible.</value>
+  </data>
+  <data name="Die Datei endet genau auf der Taktgrenze. Was darüber hinaus klingt, etwa ein Becken, steht schon am Anfang: So klingt sie beim Wiederholen wie das laufende Programm." xml:space="preserve">
+    <value>The file ends exactly on the bar line. Whatever rings beyond it, such as a cymbal, is already at the beginning: looped, it sounds like the running program.</value>
+  </data>
+  <data name="FLAC-Datei (*.flac)|*.flac" xml:space="preserve">
+    <value>FLAC file (*.flac)|*.flac</value>
+  </data>
+  <data name="FLAC: verlustfrei komprimiert, deutlich kleiner" xml:space="preserve">
+    <value>FLAC: lossless compression, much smaller</value>
+  </data>
+  <data name="Format:" xml:space="preserve">
+    <value>Format:</value>
+  </data>
+  <data name="Gespeichert wird Pattern {0}, so viele Takte hintereinander, wie du angibst." xml:space="preserve">
+    <value>Pattern {0} is saved, as many bars in a row as you specify.</value>
+  </data>
+  <data name="Gespeichert wird die Abfolge von Anfang an, sie hat {0}. Nach dem letzten Takt klingt das Stück aus. Mit weniger Takten endet es früher." xml:space="preserve">
+    <value>The sequence is saved from the beginning, it has {0}. After the last bar the piece rings out. With fewer bars it ends earlier.</value>
+  </data>
+  <data name="Gespeichert wird die Abfolge von Anfang an. Ein Durchgang hat {0}, mit mehr Takten läuft sie mehrmals durch." xml:space="preserve">
+    <value>The sequence is saved from the beginning. One pass has {0}, with more bars it runs through several times.</value>
+  </data>
+  <data name="Gespeichert wird, was die Wiedergabe spielt." xml:space="preserve">
+    <value>What playback plays is saved.</value>
+  </data>
+  <data name="Länge:" xml:space="preserve">
+    <value>Length:</value>
+  </data>
+  <data name="MP3-Datei (*.mp3)|*.mp3" xml:space="preserve">
+    <value>MP3 file (*.mp3)|*.mp3</value>
+  </data>
+  <data name="MP3: klein und überall abspielbar, aber nicht nahtlos wiederholbar" xml:space="preserve">
+    <value>MP3: small and plays everywhere, but does not loop seamlessly</value>
+  </data>
+  <data name="Speichert, was die Wiedergabe spielt, als WAV, FLAC oder MP3. Länge und Format wählst du im nächsten Fenster." xml:space="preserve">
+    <value>Saves what playback plays as WAV, FLAC or MP3. You choose length and format in the next window.</value>
+  </data>
+  <data name="Vorzählen und Tempotrainer kommen nicht in die Datei." xml:space="preserve">
+    <value>Count-in and tempo trainer are not included in the file.</value>
+  </data>
+  <data name="WAV-Datei (*.wav)|*.wav" xml:space="preserve">
+    <value>WAV file (*.wav)|*.wav</value>
+  </data>
+  <data name="WAV: unkomprimiert, für Looper und Aufnahme-Software" xml:space="preserve">
+    <value>WAV: uncompressed, for loopers and recording software</value>
+  </data>
+  <data name="Achtel" xml:space="preserve">
+    <value>Eighths</value>
+  </data>
+  <data name="Gerade" xml:space="preserve">
+    <value>Straight</value>
+  </data>
+  <data name="Sechzehntel" xml:space="preserve">
+    <value>Sixteenths</value>
+  </data>
+  <data name="Gerader Rhythmus: Alle Schritte sind gleich lang, so wie sie im Raster stehen." xml:space="preserve">
+    <value>Straight rhythm: all steps have the same length, just as they appear in the grid.</value>
+  </data>
+  <data name="Swing-Achtel: Die zweite Achtel jeder Zählzeit kommt später, wie die dritte Note einer Triole. Wirkt in 2/4, 3/4, 4/4 und 5/4." xml:space="preserve">
+    <value>Swing eighths: the second eighth of each beat comes later, like the third note of a triplet. Works in 2/4, 3/4, 4/4 and 5/4.</value>
+  </data>
+  <data name="Swing-Sechzehntel: Jede zweite Sechzehntel kommt später, wie die dritte Note einer Triole." xml:space="preserve">
+    <value>Swing sixteenths: every second sixteenth comes later, like the third note of a triplet.</value>
+  </data>
+  <data name="Gesamtlautstärke" xml:space="preserve">
+    <value>Master volume</value>
+  </data>
+  <data name="Gesamtlautstärke: {0} %" xml:space="preserve">
+    <value>Master volume: {0} %</value>
+  </data>
+  <data name="Schaltet die Spur ein oder stumm. Strg + Klick: Nur diese Spur spielt, noch einmal: wieder alle." xml:space="preserve">
+    <value>Turns the track on or mutes it. Ctrl + click: only this track plays; again: all tracks play.</value>
+  </data>
+  <data name="{0}: stumm geschaltet" xml:space="preserve">
+    <value>{0}: muted</value>
+  </data>
+  <data name="{0}: wieder eingeschaltet" xml:space="preserve">
+    <value>{0}: turned back on</value>
+  </data>
+  <data name="&amp;Einfügen" xml:space="preserve">
+    <value>&amp;Paste</value>
+  </data>
+  <data name="&amp;Kopieren" xml:space="preserve">
+    <value>&amp;Copy</value>
+  </data>
+  <data name="&amp;Leeren" xml:space="preserve">
+    <value>C&amp;lear</value>
+  </data>
+  <data name="Auf &amp;alle Zählzeiten übertragen" xml:space="preserve">
+    <value>Apply to &amp;all beats</value>
+  </data>
+  <data name="Strg+C" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="Strg+V" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="Klick: Zählzeit markieren. Ziehen auf eine andere Zählzeit: dorthin kopieren. Rechtsklick: kopieren, einfügen, leeren." xml:space="preserve">
+    <value>Click: mark the beat. Drag onto another beat: copy it there. Right-click: copy, paste, clear.</value>
+  </data>
+  <data name="Markiere zuerst die Zählzeit, in die eingefügt werden soll: Klick auf ihre Zahl über dem Raster." xml:space="preserve">
+    <value>First mark the beat to paste into: click its number above the grid.</value>
+  </data>
+  <data name="Noch nichts kopiert. Strg+C kopiert die markierte Zählzeit, sonst das Pattern." xml:space="preserve">
+    <value>Nothing copied yet. Ctrl+C copies the marked beat, otherwise the pattern.</value>
+  </data>
+  <data name="Pattern {0} geleert. Strg+Z holt es zurück." xml:space="preserve">
+    <value>Pattern {0} cleared. Ctrl+Z brings it back.</value>
+  </data>
+  <data name="Pattern {0} kopiert. Einfügen: Strg+V oder Rechtsklick auf ein Pattern." xml:space="preserve">
+    <value>Pattern {0} copied. Paste: Ctrl+V or right-click a pattern.</value>
+  </data>
+  <data name="Pattern {0} nach Pattern {1} kopiert. Strg+Z holt den alten Inhalt zurück." xml:space="preserve">
+    <value>Pattern {0} copied to pattern {1}. Ctrl+Z brings back the old content.</value>
+  </data>
+  <data name="Zeigt und spielt dieses Pattern; beim ersten Aufruf übernimmt es den Inhalt des aktuellen. Ziehen auf ein anderes Pattern: dorthin kopieren. Rechtsklick: kopieren, einfügen, leeren." xml:space="preserve">
+    <value>Shows and plays this pattern; the first time you select it, it takes over the content of the current one. Drag onto another pattern: copy it there. Right-click: copy, paste, clear.</value>
+  </data>
+  <data name="Zählzeit {0} auf alle Zählzeiten übertragen. Strg+Z holt den alten Inhalt zurück." xml:space="preserve">
+    <value>Beat {0} applied to all beats. Ctrl+Z brings back the old content.</value>
+  </data>
+  <data name="Zählzeit {0} geleert. Strg+Z holt sie zurück." xml:space="preserve">
+    <value>Beat {0} cleared. Ctrl+Z brings it back.</value>
+  </data>
+  <data name="Zählzeit {0} kopiert. Einfügen: andere Zählzeit markieren, dann Strg+V oder Rechtsklick." xml:space="preserve">
+    <value>Beat {0} copied. Paste: mark another beat, then Ctrl+V or right-click.</value>
+  </data>
+  <data name="Zählzeit {0} nach Zählzeit {1} kopiert. Strg+Z holt den alten Inhalt zurück." xml:space="preserve">
+    <value>Beat {0} copied to beat {1}. Ctrl+Z brings back the old content.</value>
+  </data>
+  <data name="Als Audiodatei speichern…" xml:space="preserve">
+    <value>Save as audio file…</value>
+  </data>
+  <data name="„{0}“ importiert: {1}, {2} BPM. Das Projekt ist noch nicht gespeichert." xml:space="preserve">
+    <value>“{0}” imported: {1}, {2} BPM. The project has not been saved yet.</value>
+  </data>
+  <data name="„{0}“: {1} BPM, {2} mit Schlagzeug, {3} davon verschieden." xml:space="preserve">
+    <value>“{0}”: {1} BPM, {2} with drums, {3} of them different.</value>
+  </data>
+  <data name="1 Pattern" xml:space="preserve">
+    <value>1 pattern</value>
+  </data>
+  <data name="{0} Patterns" xml:space="preserve">
+    <value>{0} patterns</value>
+  </data>
+  <data name="Der Groove ist triolisch gespielt, deshalb wird Swing-Achtel eingeschaltet." xml:space="preserve">
+    <value>The groove is played with a triplet feel, so swing eighths is turned on.</value>
+  </data>
+  <data name="Die Abfolge spielt die Takte so wie die Datei." xml:space="preserve">
+    <value>The sequence plays the bars the way the file does.</value>
+  </data>
+  <data name="Die Datei enthält kein Schlagzeug auf Kanal 10." xml:space="preserve">
+    <value>The file contains no drums on channel 10.</value>
+  </data>
+  <data name="Die Datei ist keine gültige MIDI-Datei." xml:space="preserve">
+    <value>The file is not a valid MIDI file.</value>
+  </data>
+  <data name="Die Datei misst die Zeit in Bildern statt in Noten. So etwas kann drums4me nicht lesen." xml:space="preserve">
+    <value>The file measures time in frames instead of notes. drums4me cannot read that.</value>
+  </data>
+  <data name="Die MIDI-Datei lässt sich nicht importieren." xml:space="preserve">
+    <value>The MIDI file cannot be imported.</value>
+  </data>
+  <data name="Die Taktart der Datei kennt drums4me nicht." xml:space="preserve">
+    <value>drums4me does not know the meter of this file.</value>
+  </data>
+  <data name="Gewählt: {0} von höchstens {1}." xml:space="preserve">
+    <value>Selected: {0} of at most {1}.</value>
+  </data>
+  <data name="Importieren" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Kein Schlagzeugklang der Datei passt zu einer Spur von „{0}“." xml:space="preserve">
+    <value>No drum sound in the file matches a track of “{0}”.</value>
+  </data>
+  <data name="Klang {0}" xml:space="preserve">
+    <value>Sound {0}</value>
+  </data>
+  <data name="Liest das Schlagzeug einer MIDI-Datei und macht aus bis zu vier Takten ein neues Projekt. Gedacht für kurze Grooves, nicht für ganze Songs." xml:space="preserve">
+    <value>Reads the drums of a MIDI file and turns up to four bars into a new project. Meant for short grooves, not for whole songs.</value>
+  </data>
+  <data name="MIDI importieren…" xml:space="preserve">
+    <value>Import MIDI…</value>
+  </data>
+  <data name="MIDI-Dateien (*.mid;*.midi)|*.mid;*.midi|Alle Dateien (*.*)|*.*" xml:space="preserve">
+    <value>MIDI files (*.mid;*.midi)|*.mid;*.midi|All files (*.*)|*.*</value>
+  </data>
+  <data name="MIDI-Groove importieren" xml:space="preserve">
+    <value>Import MIDI groove</value>
+  </data>
+  <data name="Mehr als vier Takte passen nicht in ein Projekt. Nimm zuerst bei einem anderen das Häkchen weg." xml:space="preserve">
+    <value>A project holds no more than four bars. Untick another one first.</value>
+  </data>
+  <data name="Nicht übernommen, weil das Kit dafür keine Spur hat:" xml:space="preserve">
+    <value>Not imported because the kit has no track for it:</value>
+  </data>
+  <data name="Sie decken {0} der {1} Takte mit Schlagzeug ab." xml:space="preserve">
+    <value>They cover {0} of the {1} bars with drums.</value>
+  </data>
+  <data name="Spuren von „{0}“:" xml:space="preserve">
+    <value>Tracks of “{0}”:</value>
+  </data>
+  <data name="Takt" xml:space="preserve">
+    <value>Bar</value>
+  </data>
+  <data name="Wähle bis zu vier Takte, sie werden zu den Patterns 1 bis 4 eines neuen Projekts." xml:space="preserve">
+    <value>Choose up to four bars; they become patterns 1 to 4 of a new project.</value>
+  </data>
+  <data name="kommt vor" xml:space="preserve">
+    <value>occurs</value>
+  </data>
+  <data name="Bildschirm anlassen" xml:space="preserve">
+    <value>Keep screen on</value>
+  </data>
+  <data name="Hier steht noch kein Schlag. Ein Linksklick setzt einen. Der Rechtsklick wechselt dann seine Stärke: normal, betont, leise." xml:space="preserve">
+    <value>There is no hit here yet. A left click sets one. The right click then changes its strength: normal, accent, soft.</value>
+  </data>
+  <data name="Immer im Vordergrund" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
+  <data name="Klick: Schritt setzen oder löschen. Ziehen: mehrere Schritte auf einmal. Rechtsklick auf einen gesetzten Schritt: Stärke wechseln (normal, betont, leise)." xml:space="preserve">
+    <value>Click: set or clear a step. Drag: several steps at once. Right-click a set step: change its strength (normal, accent, soft).</value>
+  </data>
+  <data name="Latenz in Millisekunden" xml:space="preserve">
+    <value>Latency in milliseconds</value>
+  </data>
+  <data name="Latenz" xml:space="preserve">
+    <value>Latency</value>
+  </data>
+  <data name="Lautstärke Vorzählen" xml:space="preserve">
+    <value>Count-in volume</value>
+  </data>
+  <data name="Lautstärke der Klicks beim Vorzählen in Prozent der Gesamtlautstärke. Nach jeder Änderung hörst du den Klick." xml:space="preserve">
+    <value>Volume of the count-in clicks as a percentage of the master volume. You hear the click after every change.</value>
+  </data>
+  <data name="Puffer der Tonausgabe in Millisekunden. Größer hilft, wenn der Ton knackt oder aussetzt. Kleiner lässt den Ton schneller auf Eingaben folgen. Standard: 40." xml:space="preserve">
+    <value>Audio output buffer in milliseconds. Larger helps when the sound crackles or drops out. Smaller makes the sound follow your input faster. Default: 40.</value>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Stellt die Latenz auf den Standardwert von 40 Millisekunden zurück." xml:space="preserve">
+    <value>Resets the latency to the default of 40 milliseconds.</value>
+  </data>
+  <data name="ms" xml:space="preserve">
+    <value>ms</value>
+  </data>
+  <data name="Bildschirm beim Spielen anlassen: ein" xml:space="preserve">
+    <value>Keep the screen on while playing: on</value>
+  </data>
+  <data name="Bildschirm beim Spielen anlassen: aus" xml:space="preserve">
+    <value>Keep the screen on while playing: off</value>
+  </data>
+  <data name="Immer im Vordergrund: ein" xml:space="preserve">
+    <value>Always on top: on</value>
+  </data>
+  <data name="Immer im Vordergrund: aus" xml:space="preserve">
+    <value>Always on top: off</value>
+  </data>
+  <data name="Hält das Fenster über anderen Programmen, etwa über Noten oder Tabulaturen. Ein Klick schaltet um." xml:space="preserve">
+    <value>Keeps the window above other programs, such as sheet music or tabs. A click toggles it.</value>
+  </data>
+  <data name="Verhindert, dass Windows den Bildschirm abschaltet, solange die Wiedergabe läuft. Ein Klick schaltet um." xml:space="preserve">
+    <value>Stops Windows from turning off the screen while playback is running. A click toggles it.</value>
+  </data>
+  <data name="KitGuide" xml:space="preserve">
+    <value>A kit is a folder with up to eight WAV files, one file per track. Create it in the folder
+for your own kits:
+{0}
+Then click "Reload kits" on the Settings tab.
+
+Order and names
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+The tracks follow the alphabetical order of the file names. A number at the beginning sets the
+order, for example "1 Crash.wav". The number is not shown, the rest of the name becomes
+the track name. The same applies to the folder names of the kits.
+You can still rename a track of your own kits later (right-click its name in the grid).
+
+Recommended layout
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+So that a pattern still fits after changing the kit, all included kits are laid out like this:
+1 cymbal, 2 to 4 toms or percussion, 5 open hi-hat, 6 closed hi-hat, 7 snare, 8 kick.
+
+Preparing sounds
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+Any sample rate and bit depth will do, drums4me converts by itself and mixes stereo to mono.
+Cut off silence at the start, otherwise the hit comes too late. Shorten long decays of cymbals.
+drums4me stops an open hi-hat by itself as soon as another hi-hat hit follows. For this the
+track names must fit, for example &quot;Hat Open&quot; and &quot;Hat Closed&quot; or &quot;Open Hihat&quot; and &quot;Hihat&quot;.
+
+Organizing several kits
+‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+A folder without WAV files of its own but with kit folders forms a so-called kit collection.</value>
+  </data>
+  <data name="Shortcuts" xml:space="preserve">
+    <value>Playback and tempo
+Space: start and stop
+Plus, Minus: tempo by 1 BPM
+Ctrl+Plus, Ctrl+Minus: tempo by 5 BPM
+Alt+Plus, Alt+Minus: volume by 5 %
+
+Commands
+Ctrl+N: New
+Ctrl+O or Alt+D: File tab, Esc: back to the Home tab
+Ctrl+F: search projects
+In the project list: F2 rename, Del move to Recycle Bin, Alt+Enter properties,
+Ctrl+E edit in editor, Ctrl+Shift+C copy file path
+Ctrl+S: Save
+Ctrl+Shift+S: Save as
+Ctrl+Z: Undo
+Ctrl+Y: Redo
+Ctrl+Del: clear pattern
+Ctrl+C, Ctrl+V: copy and paste the marked beat, otherwise the pattern
+Ctrl+T: detect tempo (tap or listen)
+Ctrl+Comma: Settings tab
+F1: this overview
+
+Mouse in the grid
+Right-click a step: change the strength (normal, accent, soft)
+Click a beat number: mark it, drag onto another: copy
+Ctrl + click a track switch: only this track plays
+Click a track name: hear the sound
+Right-click a track name: more options
+Ctrl + drag Volume or Pitch: all tracks together
+Double-click a control: default value
+Ctrl + double-click Volume or Pitch: default value for all tracks</value>
+  </data>
+  <data name="OpenLast" xml:space="preserve">
+    <value>Reopen
+last file</value>
+  </data>
+  <data name="KitsHint" xml:space="preserve">
+    <value>Only checked kits appear in the list on the Start tab.
+Projects with a hidden kit still sound as usual.</value>
+  </data>
+</root>

@@ -25,6 +25,9 @@
     <Platforms>AnyCPU;x64</Platforms>
     
     <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
+
+    <!-- Deutsch ist einkompiliert, Englisch kommt als Satellit en\drums4me.resources.dll (Languages\lng.en.resx) -->
+    <SatelliteResourceLanguages>de;en</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,5 +37,11 @@
   <ItemGroup>
     <PackageReference Include="NAudio" Version="3.3.0" />
   </ItemGroup>
+
+  <!-- Übersetzungen prüfen (check-lng.ps1): fehlende und verwaiste Einträge. Im Release-Build sind Funde Fehler. -->
+  <Target Name="CheckTranslations" AfterTargets="Build">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\check-lng.ps1&quot;" Condition="'$(Configuration)' != 'Release'" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\check-lng.ps1&quot; -Strict" Condition="'$(Configuration)' == 'Release'" />
+  </Target>
 
 </Project>
