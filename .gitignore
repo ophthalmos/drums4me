@@ -365,3 +365,5 @@ FodyWeavers.xsd
 drums4meSetup.exe
 /drums4me-Demo.mp4
 /check-lng.ps1
+# Konfliktdateien von Syncthing
+*.sync-conflict-*

@@ -31,7 +31,7 @@ internal sealed class TempoDetector
     private const double BandMaxHertz = 16000;
     private const float Compression = 20000f;
 
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
     private readonly int _hop;
     private readonly double _frameRate;
     private readonly int _maxFrames;

@@ -143,6 +143,13 @@
         N5qIwtQ3gCzNg8cAsjUjG0AKRjFgwAEAlWSlr8dydEoAAAAASUVORK5CYII=
 </value>
   </data>
+  <data name="buttonOwnTemplates.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vAAADrwBlbxySQAAAEZJREFUOE9jYBgUYFWVzH9kjC6PF2DTgG4gXsNBgh/2BRCF6WMAupPxYQwDQOxf
+        N5qIwtQ3gCzNg8cAsjUjG0AKRjFgwAEAlWSlr8dydEoAAAAASUVORK5CYII=
+</value>
+  </data>
   <data name="buttonOwnKits.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -284,7 +291,15 @@
         jzDPlFbG6VpjGvsmmPx6C6P75mQIIcm/ANsiFOVmDW7ZAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="buttonDemos.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="buttonSaveTemplate.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
+        vAAADrwBlbxySQAAAGJJREFUOE9jYKAm8ApJ+I8LIwN0fXCArhAG0A1B1wcH+AxAptH1wQEhA2BsdH1w
+        gM8AdIyuFwywGSAVMBGOYYBkA5BpEBgYA5AB0Qag+x0GiDIAW+DBAH0MwAdoawCxGKYHAPS7+5/P1o8C
+        AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="buttonTemplates.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         vAAADrwBlbxySQAAAGJJREFUOE9jYKAm8ApJ+I8LIwN0fXCArhAG0A1B1wcH+AxAptH1wQEhA2BsdH1w
@@ -391,7 +406,7 @@
   <metadata name="trackNameMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>846, 17</value>
   </metadata>
-  <metadata name="demosMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="templatesMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>1280, 17</value>
   </metadata>
   <metadata name="pendingOpenTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

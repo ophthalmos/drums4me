@@ -16,7 +16,7 @@ $languages = @("en")
 # Texte, die absichtlich in keiner Sprachdatei stehen: Namen, sprachneutrale Angaben und Designer-Platzhalter,
 # die zur Laufzeit sofort überschrieben werden
 $ignore = @(
-    "drums4me", "BPM", "Pattern", "Swing", "Kit", "Kits", "Demo", "Demos", "OK", "Tempo", "Name", "Audio", "System", "Start",
+    "drums4me", "BPM", "Pattern", "Swing", "Kit", "Kits", "OK", "Tempo", "Name", "Audio", "System", "Start",
     "Deutsch", "English",   # die Sprachwahl nennt jede Sprache in ihrer eigenen
     "alle"                  # Tempotrainer „alle … Takte“: läuft über den Schlüssel TrainerEvery, weil „Alle“ schon vergeben ist
 )

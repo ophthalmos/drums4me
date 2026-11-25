@@ -69,6 +69,11 @@ public sealed partial class ProjectBrowser : UserControl
 
     public string CountText { get; private set; } = string.Empty;
 
+    /// <summary>Zeigt die Liste den Vorlagenordner? Dann zählt sie Vorlagen statt Projekte.</summary>
+    [Browsable(false)]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    internal bool ShowsTemplates { get; set; }
+
     /// <summary>Die Kits, die in den Projekten vorkommen, für den Filter.</summary>
     public IEnumerable<string> KitNames => _entries.Where(entry => !entry.Unreadable).Select(entry => entry.KitName).Distinct(StringComparer.OrdinalIgnoreCase).Order(StringComparer.CurrentCultureIgnoreCase);
 
@@ -183,9 +188,13 @@ public sealed partial class ProjectBrowser : UserControl
         }
         listProjects.EndUpdate();
 
-        CountText = shown.Count == _entries.Count
-            ? (_entries.Count == 1 ? Lng.T("1 Projekt") : string.Format(Lng.T("{0} Projekte"), _entries.Count))
-            : string.Format(Lng.T("{0} von {1} Projekten"), shown.Count, _entries.Count);
+        CountText = ShowsTemplates
+            ? shown.Count == _entries.Count
+                ? (_entries.Count == 1 ? Lng.T("1 Vorlage") : string.Format(Lng.T("{0} Vorlagen"), _entries.Count))
+                : string.Format(Lng.T("{0} von {1} Vorlagen"), shown.Count, _entries.Count)
+            : shown.Count == _entries.Count
+                ? (_entries.Count == 1 ? Lng.T("1 Projekt") : string.Format(Lng.T("{0} Projekte"), _entries.Count))
+                : string.Format(Lng.T("{0} von {1} Projekten"), shown.Count, _entries.Count);
         CountChanged?.Invoke(this, EventArgs.Empty);
     }
 

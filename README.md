@@ -12,6 +12,7 @@ Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das P
 - Lautstärke und Tonhöhe aller Spuren gemeinsam ändern: Regler mit gedrückter Strg-Taste ziehen
 - 4 Patterns je Projekt, jedes mit eigener Taktart: 2/4, 3/4, 4/4, 5/4 (3+2 und 2+3), 6/8, 7/8, 9/8 und 12/8
 - Abfolge der Patterns, wahlweise mit Wiederholung: eine Ziffer je Takt, `1x8` für acht gleiche Takte, `0` für einen stummen Takt, in dem man allein weiterspielt; oben links im Raster steht das gezeigte Pattern und während einer Abfolge die Stelle darin, etwa „Pattern 4 4/5“
+- Vorlagen (`.d4mt`): Wie bei Office beginnt das Öffnen einer Vorlage ein neues, unbenanntes Projekt mit ihrem Inhalt, auch per Doppelklick im Explorer. Installierte und eigene Vorlagen liegen gemeinsam in `%ProgramData%\drums4me\Vorlagen` und gelten für alle Benutzer des PCs. „Als Vorlage speichern…“ legt eine Kopie des Projekts dort ab, „Vorlagenordner“ zeigt alle in der Projektliste; eigene lassen sich dort umbenennen, duplizieren und löschen, installierte nicht
 - MIDI-Grooves importieren: Aus dem Schlagzeug einer MIDI-Datei (Kanal 10, bei einzelnen Grooves auch Kanal 1) werden bis zu vier Takte zu den Patterns eines neuen Projekts, auf Sechzehntel gerundet und nach den Spurnamen auf das gewählte Kit verteilt. Die Anschlagstärke wird zu leise, normal und betont, triolische Grooves bekommen Swing-Achtel. Ganze Songs lassen sich so nicht übernehmen
 - Als Audiodatei speichern (WAV, FLAC oder MP3), was die Wiedergabe spielt; ein Fenster fragt nach Länge und Format und erklärt, was in die Datei kommt. Wiederholt sich das Ganze, endet die Datei genau auf der Taktgrenze und lässt sich als WAV oder FLAC nahtlos wiederholen, eine Abfolge ohne Wiederholung klingt am Ende aus
 - Vorzählen mit einstellbarer Anzahl von Takten; die Lautstärke der Klicks steht in den Einstellungen
@@ -24,9 +25,9 @@ Step-Sequencer und Metronom für Windows, gedacht zum Üben am Instrument. Das P
 - Deutsch und Englisch; das Setup übernimmt beim ersten Start seine Sprache, umstellen lässt sie sich in den Einstellungen
 - Statuszeile mit Hinweisen zum Element unter der Maus sowie Taktzähler und Spielzeit
 - Rückgängig und Wiederholen, beim Schließen eine Liste der tatsächlichen Änderungen
-- Projekte als `.d4m`-Dateien, die zuletzt benutzte Datei wird auf Wunsch beim Start geladen
+- Projekte als `.d4mx`-Dateien, die zuletzt benutzte Datei wird auf Wunsch beim Start geladen; ein neues Projekt beginnt mit dem einfachen Metronom oder mit einer Vorlage, einstellbar unter „Programmstart“
 - Fenstergröße und -lage bleiben von Sitzung zu Sitzung erhalten
-- Registerkarten statt Menü: Datei mit Befehlsspalte (Neu, Speichern, als Audiodatei speichern, Schließen, anderer Ordner und zurück zum Standardordner, Demos, MIDI importieren, Fensterlayout zurücksetzen, Beenden), Wahl des Speicherorts für Projekte und Projektübersicht mit Kontextmenü (im Editor bearbeiten, Dateipfad kopieren, Umbenennen, Duplizieren, Löschen in den Papierkorb, im Ordner anzeigen – auch in Directory Opus –, Eigenschaften), Suche, Filtern nach Kit und Taktart und sortierbaren Spalten, auch für andere Ordner; Start mit allen Bedienelementen zum Üben, darunter der Auswahl, welche Kits in der Liste erscheinen; Einstellungen mit Wahl des Ausgabegeräts, etwa eines Audio-Interfaces, und der Latenz der Tonausgabe
+- Registerkarten statt Menü: Datei mit Befehlsspalte (Neu, Speichern, als Vorlage speichern, als Audiodatei speichern, Schließen, anderer Ordner und zurück zum Standardordner, Vorlagenordner, Vorlage öffnen, MIDI importieren, Fensterlayout zurücksetzen, Beenden), Wahl des Speicherorts für Projekte und Projektübersicht mit Kontextmenü (im Editor bearbeiten, Dateipfad kopieren, Umbenennen, Duplizieren, Löschen in den Papierkorb, im Ordner anzeigen – auch in Directory Opus –, Eigenschaften), Suche, Filtern nach Kit und Taktart und sortierbaren Spalten, auch für andere Ordner; Start mit allen Bedienelementen zum Üben, darunter der Auswahl, welche Kits in der Liste erscheinen; Einstellungen mit Wahl des Ausgabegeräts, etwa eines Audio-Interfaces, und der Latenz der Tonausgabe
 
 ## Kits
 
@@ -57,4 +58,4 @@ Das Setup entsteht danach aus `Installer.iss` mit Inno Setup 7.
 
 ## Lizenz
 
-drums4me steht unter der [GNU General Public License, Version 3](LICENSE.txt). Die verwendeten Fremdkomponenten und ihre Lizenzen stehen in [NOTICE.txt](NOTICE.txt). Kits und Demos gehören nicht zum Programm, für sie gelten eigene Lizenzen.
+drums4me steht unter der [GNU General Public License, Version 3](LICENSE.txt). Die verwendeten Fremdkomponenten und ihre Lizenzen stehen in [NOTICE.txt](NOTICE.txt). Kits und Vorlagen gehören nicht zum Programm, für sie gelten eigene Lizenzen.

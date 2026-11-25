@@ -5,7 +5,7 @@ Dieses Programm ist freie Software. Du darfst es unter den Bedingungen der
 GNU General Public License, Version 3, weitergeben und ändern. Der vollständige
 Text steht in LICENSE.txt. Das Programm kommt ohne jede Gewährleistung.
 
-Kits und Demos gehören nicht zum Programm. Für sie gelten eigene Lizenzen.
+Kits und Vorlagen gehören nicht zum Programm. Für sie gelten eigene Lizenzen.
 
 
 drums4me verwendet die folgenden Fremdkomponenten:

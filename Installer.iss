@@ -7,7 +7,7 @@
 ;   - .NET Desktop Runtime 11 (x64) – fehlt sie, zeigt Windows beim ersten Start
 ;     selbst einen Dialog mit Download-Link, daher keine Prüfung hier.
 ;
-; Kits und Demos gehören bewusst nicht zum Setup, sie kommen aus eigenen Inhaltspaketen
+; Kits und Vorlagen gehören bewusst nicht zum Setup, sie kommen aus eigenen Inhaltspaketen
 ; (Ordner drumKits neben dem Projekt). Das Programm liest sie aus %ProgramData%\drums4me
 ; und eigene Kits aus %APPDATA%\drums4me\Kits. Findet es keine, meldet es das beim Start.
 ; Eigene Kits, die Einstellungen und die Projekte bleiben bei der Deinstallation erhalten.
@@ -68,11 +68,13 @@ de.ConfirmUninstall=Bist du sicher, dass du %1 entfernen möchtest? Deine Projek
 en.Run=Launch {#appName}
 en.DesktopIcon=Create a desktop shortcut
 en.ProjectFile={#appName} project
+en.TemplateFile={#appName} template
 en.UpdateDirLabel=drums4me is already installed. The update goes into the same folder.
 en.UpdateBrowseLabel=Click Next to continue.
 en.UpdatePageName=Destination folder
 en.UpdatePageDescription=This is where drums4me is installed.
 de.ProjectFile={#appName}-Projekt
+de.TemplateFile={#appName}-Vorlage
 de.Run={#appName} starten
 de.DesktopIcon=Verknüpfung auf dem Desktop anlegen
 de.UpdateDirLabel=drums4me ist schon installiert. Das Update kommt in denselben Ordner.
@@ -93,15 +95,25 @@ Name: "{autoprograms}\{#appName}"; Filename: "{app}\{#appName}.exe"
 Name: "{autodesktop}\{#appName}"; Filename: "{app}\{#appName}.exe"; Tasks: desktopicon
 
 [Registry]
-; Dateizuordnung .d4m => drums4me; HKA = HKLM bei Installation fuer alle Benutzer, sonst HKCU
-Root: HKA; Subkey: "Software\Classes\.d4m"; ValueType: string; ValueName: ""; ValueData: "{#appName}.Project"; Flags: uninsdeletevalue uninsdeletekeyifempty
-Root: HKA; Subkey: "Software\Classes\.d4m\OpenWithProgids"; ValueType: string; ValueName: "{#appName}.Project"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
+; Dateizuordnung .d4mx => drums4me; HKA = HKLM bei Installation fuer alle Benutzer, sonst HKCU
+Root: HKA; Subkey: "Software\Classes\.d4mx"; ValueType: string; ValueName: ""; ValueData: "{#appName}.Project"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKA; Subkey: "Software\Classes\.d4mx\OpenWithProgids"; ValueType: string; ValueName: "{#appName}.Project"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
 Root: HKA; Subkey: "Software\Classes\{#appName}.Project"; ValueType: string; ValueName: ""; ValueData: "{cm:ProjectFile}"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\{#appName}.Project\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#appName}.exe,0"
 Root: HKA; Subkey: "Software\Classes\{#appName}.Project\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#appName}.exe"" ""%1"""
+; Vorlagen .d4mt: Öffnen beginnt in drums4me ein neues Projekt mit ihrem Inhalt
+Root: HKA; Subkey: "Software\Classes\.d4mt"; ValueType: string; ValueName: ""; ValueData: "{#appName}.Template"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKA; Subkey: "Software\Classes\.d4mt\OpenWithProgids"; ValueType: string; ValueName: "{#appName}.Template"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKA; Subkey: "Software\Classes\{#appName}.Template"; ValueType: string; ValueName: ""; ValueData: "{cm:TemplateFile}"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#appName}.Template\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#appName}.exe,0"
+Root: HKA; Subkey: "Software\Classes\{#appName}.Template\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#appName}.exe"" ""%1"""
 
 [Run]
 Filename: "{app}\{#appName}.exe"; Description: "{cm:Run}"; Flags: nowait postinstall skipifsilent runasoriginaluser
+
+[InstallDelete]
+; Die früheren Demos hat das Paket „drums4me Demos – Standard“ hierher kopiert. Heute heißen sie Vorlagen und kommen aus dem Paket „drums4me Vorlagen“.
+Type: filesandordirs; Name: "{commonappdata}\{#appName}\Demos"
 
 [UninstallDelete]
 Type: files; Name: "{app}\setup.default"

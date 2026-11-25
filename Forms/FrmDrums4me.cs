@@ -31,7 +31,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
     // Hierhin installieren die Inhaltspakete. Für normale Benutzer sind die Dateien schreibgeschützt.
     private static readonly string SharedFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), AppSettings.AppName);
     private static readonly string SharedKitFolder = Path.Combine(SharedFolder, "Kits");
-    private static readonly string SharedDemoFolder = Path.Combine(SharedFolder, "Demos");
+
+    // Ein Ordner für alle Vorlagen, installierte wie eigene. Neue Dateien darf dort jeder Benutzer anlegen,
+    // ändern und löschen nur die eigenen; installierte gehören den Administratoren.
+    private static readonly string SharedTemplateFolder = Path.Combine(SharedFolder, "Vorlagen");
 
     private readonly SequencerEngine _engine;
     private readonly AppSettings _settings = AppSettings.Load();
@@ -101,7 +104,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         InitializeComponent();
         Lng.Apply(this, toolTip);
         Lng.Apply(trackNameMenu);
-        Lng.Apply(demosMenu);
+        Lng.Apply(templatesMenu);
         Lng.Apply(patternMenu);
         Lng.Apply(beatMenu);
         otherFolderDialog.Description = Lng.T(otherFolderDialog.Description);
@@ -110,7 +113,6 @@ public partial class FrmDrums4me : Form, IMessageFilter
         saveFileDialog.Title = Lng.T(saveFileDialog.Title);
         midiFileDialog.Filter = Lng.T(midiFileDialog.Filter);
         midiFileDialog.Title = Lng.T(midiFileDialog.Title);
-        checkBoxOpenLast.Text = Lng.T("OpenLast", checkBoxOpenLast.Text);   // mehrzeilig, deshalb mit festem Schlüssel
         labelTrainerEvery.Text = Lng.T("TrainerEvery", labelTrainerEvery.Text);   // „alle“: Der Schlüssel „Alle“ ist schon vergeben
         buttonRedo.AccessibleName = Lng.T("Redo", buttonRedo.AccessibleName);   // „Wiederholen“ heißt sonst „Repeat“ wie bei der Abfolge
         _startColorMode = _settings.ColorMode;
@@ -145,6 +147,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
             lineWindowCommands.BackColor = lineCommands.BackColor;
             lineKitFolders.BackColor = lineCommands.BackColor;
             lineLatency.BackColor = lineCommands.BackColor;
+            lineStartup.BackColor = lineCommands.BackColor;
 
         }
         Directory.CreateDirectory(KitFolder);
@@ -157,6 +160,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         _settings.OutputLatencyMs = Math.Clamp(_settings.OutputLatencyMs, (int)numericLatency.Minimum, (int)numericLatency.Maximum);
         numericLatency.Value = _settings.OutputLatencyMs;
         checkBoxOpenLast.Checked = _settings.OpenLastFile;
+        FillNewProjectChoices();
         FillAudioDevices();
         projectBrowser.SetColumnWidths(_settings.ColumnWidths);
         comboMeter.Items.AddRange([.. Meter.All]);
@@ -173,7 +177,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
             : _settings.OpenLastFile && _settings.LastFile is { } lastFile && File.Exists(lastFile) && LoadProjectFile(lastFile);
         if (!opened)
         {
-            ApplyProject();
+            ReplaceProject(NewProject());
         }
 
         if (_kits.Count == 0)
@@ -604,6 +608,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
     /// <param name="select">Die Zeile, die markiert sein soll. Ohne Angabe ist es das offene oder zuletzt benutzte Projekt.</param>
     private void RefreshProjectBrowser(string? select = null)
     {
+        projectBrowser.ShowsTemplates = string.Equals(BrowserFolder, SharedTemplateFolder, StringComparison.OrdinalIgnoreCase);
         projectBrowser.SetEntries(ProjectIndex.Scan(BrowserFolder, _kits.Select(kit => kit.Name)), select ?? _filePath ?? _settings.LastFile);
         _fillingFilters = true;
         FillFilter(comboFilterKit, projectBrowser.KitNames);
@@ -1812,6 +1817,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
         _project.PrepareSequencePatterns();
 
         var kit = _kits.Find(IsProjectKit) ?? _kits.Find(other => !IsHiddenKit(other)) ?? _kits.FirstOrDefault() ?? DrumKit.Empty;
+        if (_project.KitName.Length == 0 && kit != DrumKit.Empty)
+        {
+            _project.KitName = kit.Name;   // ein neues Projekt merkt sich das Kit, mit dem es angelegt wurde
+        }
         FillKitList(kit);
         _updatingUi = false;
 
@@ -1907,7 +1916,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
     {
         if (ConfirmDiscard())
         {
-            ReplaceProject(Project.CreateDefault());
+            ReplaceProject(NewProject());
             if (projectBrowser.Visible)
             {
                 ShowProjectBrowser(false);
@@ -1979,16 +1988,72 @@ public partial class FrmDrums4me : Form, IMessageFilter
         ShowNotice(string.Format(Lng.T("„{0}“ importiert: {1}, {2} BPM. Das Projekt ist noch nicht gespeichert."), midi.Name, patterns, midi.Bpm));
     }
 
+    /// <summary>
+    /// Ein neues Projekt: eine Kopie der Vorlage, die unter „Programmstart“ eingestellt ist, sonst das einfache Metronom.
+    /// Fehlt die Vorlage inzwischen oder ist sie nicht lesbar, gilt stillschweigend das Metronom.
+    /// </summary>
+    private Project NewProject()
+    {
+        if (_settings.NewProjectTemplate is { } template && File.Exists(template))
+        {
+            try
+            {
+                var project = Project.Load(template);
+                project.ActivePattern = project.FirstSequencePattern ?? 0;
+                return project;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or InvalidDataException)
+            {
+                // wie ohne Vorlage
+            }
+        }
+        return Project.CreateDefault();
+    }
+
+    /// <summary>Eine Möglichkeit in der Auswahl, womit „Neu“ beginnt. Ohne Pfad ist es das Metronom.</summary>
+    private sealed record NewProjectChoice(string? Path, string Name)
+    {
+        public override string ToString() => Name;
+    }
+
+    /// <summary>Das Metronom, dann alle installierten und eigenen Vorlagen, wie im Menü „Vorlage öffnen“.</summary>
+    private void FillNewProjectChoices()
+    {
+        var choices = new List<NewProjectChoice> { new(null, Lng.T("Metronom (Standard)")) };
+        choices.AddRange(FindTemplates().Select(path => new NewProjectChoice(path, Path.GetFileNameWithoutExtension(path))));
+
+        var wasUpdating = _updatingUi;
+        _updatingUi = true;
+        comboNewProject.Items.Clear();
+        comboNewProject.Items.AddRange([.. choices]);
+        comboNewProject.SelectedItem = choices.Find(choice => choice.Path is not null && string.Equals(choice.Path, _settings.NewProjectTemplate, StringComparison.OrdinalIgnoreCase)) ?? choices[0];
+        _updatingUi = wasUpdating;
+    }
+
+    /// <summary>Neu gespeicherte oder installierte Vorlagen erscheinen beim nächsten Aufklappen.</summary>
+    private void ComboNewProject_DropDown(object? sender, EventArgs e) => FillNewProjectChoices();
+
+    private void ComboNewProject_SelectedIndexChanged(object? sender, EventArgs e)
+    {
+        if (!_updatingUi && comboNewProject.SelectedItem is NewProjectChoice choice && choice.Path != _settings.NewProjectTemplate)
+        {
+            _settings.NewProjectTemplate = choice.Path;
+            _settings.Save();
+        }
+    }
+
     /// <summary>Ein neues, ungespeichertes Projekt ohne Vorgeschichte.</summary>
     private void ReplaceProject(Project project)
     {
         _project = project;
-        _savedProject = _project.Snapshot();
-        _history.Reset(_project);
-        UpdateUndoMenu();
         _filePath = null;
         _dirty = false;
         ApplyProject();
+
+        // Erst nach dem Anwenden: Ein neues Projekt bekommt dabei sein Kit, und das soll nicht als Änderung gelten.
+        _savedProject = _project.Snapshot();
+        _history.Reset(_project);
+        UpdateUndoMenu();
     }
 
     /// <summary>Größe und Lage wie beim ersten Start, mittig auf dem Bildschirm, auf dem das Fenster gerade steht.</summary>
@@ -2004,16 +2069,16 @@ public partial class FrmDrums4me : Form, IMessageFilter
     private void ButtonExit_Click(object? sender, EventArgs e) => Close();
 
     /// <summary>Baut die Liste bei jedem Öffnen neu auf, damit neu installierte Pakete sofort erscheinen.</summary>
-    private void ButtonDemos_Click(object? sender, EventArgs e)
+    private void ButtonTemplates_Click(object? sender, EventArgs e)
     {
-        var menu = demosMenu.Items;
+        var menu = templatesMenu.Items;
 
         // Die Einträge vom letzten Mal freigeben. Das Bild gehört dem Knopf und muss erhalten bleiben.
-        foreach (var old in menu.OfType<ToolStripItem>().Where(item => item != noDemosToolStripMenuItem).ToList())
+        foreach (var old in menu.OfType<ToolStripItem>().Where(item => item != noTemplatesToolStripMenuItem).ToList())
         {
             if (old is ToolStripMenuItem oldItem)
             {
-                oldItem.Click -= DemoItem_Click;
+                oldItem.Click -= TemplateItem_Click;
                 oldItem.Image = null;
             }
             old.Dispose();
@@ -2021,7 +2086,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         menu.Clear();
 
         string? lastFolder = null;
-        foreach (var path in FindDemos())
+        foreach (var path in FindTemplates())
         {
             var folder = Path.GetDirectoryName(path);
             if (lastFolder is not null && folder != lastFolder)
@@ -2030,24 +2095,27 @@ public partial class FrmDrums4me : Form, IMessageFilter
             }
             lastFolder = folder;
 
-            var item = new ToolStripMenuItem(Path.GetFileNameWithoutExtension(path), buttonDemos.Image) { Tag = path };
-            item.Click += DemoItem_Click;
+            var item = new ToolStripMenuItem(Path.GetFileNameWithoutExtension(path), buttonTemplates.Image) { Tag = path };
+            item.Click += TemplateItem_Click;
             menu.Add(item);
         }
 
         if (menu.Count == 0)
         {
-            menu.Add(noDemosToolStripMenuItem);
+            menu.Add(noTemplatesToolStripMenuItem);
         }
-        demosMenu.Show(buttonDemos, new Point(buttonDemos.Width, 0));
+        templatesMenu.Show(buttonTemplates, new Point(buttonTemplates.Width, 0));
     }
 
-    private static List<string> FindDemos()
+    /// <summary>Alle Vorlagen, installierte und eigene, nach Namen sortiert.</summary>
+    private static List<string> FindTemplates()
     {
         try
         {
-            return Directory.Exists(SharedDemoFolder)
-                ? [.. Directory.GetFiles(SharedDemoFolder, "*.d4m", SearchOption.AllDirectories).OrderBy(path => path, StringComparer.OrdinalIgnoreCase)]
+            // Mit EnumerationOptions zählt nur die genaue Endung; bei dreibuchstabigen Endungen ließe die alte Windows-Regel sonst auch längere gelten.
+            var options = new EnumerationOptions { RecurseSubdirectories = true, IgnoreInaccessible = true };
+            return Directory.Exists(SharedTemplateFolder)
+                ? [.. Directory.EnumerateFiles(SharedTemplateFolder, "*" + ProjectFiles.TemplateExtension, options).OrderBy(Path.GetFileNameWithoutExtension, StringComparer.OrdinalIgnoreCase)]
                 : [];
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -2056,7 +2124,7 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
     }
 
-    private void DemoItem_Click(object? sender, EventArgs e)
+    private void TemplateItem_Click(object? sender, EventArgs e)
     {
         if (sender is ToolStripItem { Tag: string path } && ConfirmDiscard())
         {
@@ -2064,9 +2132,52 @@ public partial class FrmDrums4me : Form, IMessageFilter
         }
     }
 
-    /// <summary>Demos bleiben unverändert: Speichern fragt bei ihnen immer nach einem eigenen Dateinamen.</summary>
-    private static bool IsDemoFile(string path) =>
-        Path.GetFullPath(path).StartsWith(SharedDemoFolder + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+    /// <summary>
+    /// Legt eine Kopie des Projekts als Vorlage in den gemeinsamen Vorlagenordner, so wie es gerade ist, auch mit noch
+    /// nicht gespeicherten Änderungen. Das offene Projekt behält seine Datei und gilt danach nicht als gespeichert.
+    /// </summary>
+    private void ButtonSaveTemplate_Click(object? sender, EventArgs e)
+    {
+        var suggested = _filePath is null ? Lng.T("Unbenannt") : Path.GetFileNameWithoutExtension(_filePath);
+        using var dialog = new FrmTemplateName(suggested, SharedTemplateFolder);
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        try
+        {
+            Directory.CreateDirectory(SharedTemplateFolder);
+            _project.Save(Path.Combine(SharedTemplateFolder, dialog.TemplateName + ProjectFiles.TemplateExtension));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException)
+        {
+            Dialogs.Error(this, Lng.T("Die Vorlage konnte nicht gespeichert werden."), ex.Message);
+            return;
+        }
+        ShowNotice(string.Format(Lng.T("Vorlage „{0}“ gespeichert. Du findest sie unter „Vorlage öffnen“."), dialog.TemplateName));
+    }
+
+    /// <summary>
+    /// Zeigt den Vorlagenordner in der Projektliste wie einen anderen Ordner. Ein Doppelklick beginnt dort ein neues
+    /// Projekt; Umbenennen, Duplizieren und Löschen gehen bei eigenen Vorlagen. „Standardordner“ führt zurück.
+    /// </summary>
+    private void ButtonOwnTemplates_Click(object? sender, EventArgs e)
+    {
+        try
+        {
+            Directory.CreateDirectory(SharedTemplateFolder);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            Dialogs.Error(this, Lng.T("Der Vorlagenordner ließ sich nicht anlegen."), ex.Message);
+            return;
+        }
+        _otherFolder = SharedTemplateFolder;
+        UpdateDefaultFolderButton();
+        RefreshProjectBrowser();
+        FocusProjectList();
+    }
 
     /// <summary>Ein weiterer Programmstart hat eine Datei übergeben, oder null, wenn nur das Fenster nach vorn soll.</summary>
     internal void HandleExternalOpen(string? path)
@@ -2107,8 +2218,13 @@ public partial class FrmDrums4me : Form, IMessageFilter
     }
 
     /// <summary>Lädt ein Projekt und merkt es sich für den nächsten Start. Bei einem Fehler bleibt das bisherige Projekt erhalten.</summary>
+    /// <remarks>
+    /// Eine Vorlage öffnet sich wie bei Office als neues, unbenanntes Projekt mit ihrem Inhalt. Sie selbst bleibt
+    /// unberührt und wird auch nicht zur „letzten Datei“.
+    /// </remarks>
     private bool LoadProjectFile(string path)
     {
+        var isTemplate = ProjectFiles.IsTemplate(path);
         try
         {
             _project = Project.Load(path);
@@ -2133,10 +2249,13 @@ public partial class FrmDrums4me : Form, IMessageFilter
         // mit Abfolge bei dem Pattern, mit dem sie beginnt, sonst bei Pattern 1.
         _project.ActivePattern = _project.FirstSequencePattern ?? 0;
 
-        _filePath = path;
+        _filePath = isTemplate ? null : path;
         _dirty = false;
-        RememberFile(path);
-        var missingKit = _kits.Count > 0 && !_kits.Exists(IsProjectKit);
+        if (!isTemplate)
+        {
+            RememberFile(path);
+        }
+        var missingKit = _kits.Count > 0 && _project.KitName.Length > 0 && !_kits.Exists(IsProjectKit);
         var wantedKit = _project.KitName;
         ApplyProject();
         _savedProject = _project.Snapshot();   // erst hier, denn eine Abfolge kann beim Anwenden noch Patterns vorbereiten
@@ -2149,6 +2268,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
         if (missingKit)
         {
             Dialogs.Info(this, string.Format(Lng.T("Das Kit „{0}“ wurde nicht gefunden."), wantedKit), string.Format(Lng.T("Stattdessen wird „{0}“ benutzt."), _kit.Name));
+        }
+        if (isTemplate)
+        {
+            ShowNotice(string.Format(Lng.T("Neues Projekt aus der Vorlage „{0}“. Es ist noch nicht gespeichert."), Path.GetFileNameWithoutExtension(path)));
         }
         return true;
     }
@@ -2366,9 +2489,10 @@ public partial class FrmDrums4me : Form, IMessageFilter
         UpdateDefaultFolderButton();
         saveFileDialog.InitialDirectory = _projectFolder;
         textBoxProjectFolder.Text = _projectFolder;
+        toolTip.SetToolTip(textBoxProjectFolder, _projectFolder);   // das Feld ist schmal, ein langer Pfad passt nicht hinein
     }
 
-    private bool SaveProject() => _filePath is null || IsDemoFile(_filePath) ? SaveProjectAs() : WriteProject(_filePath);
+    private bool SaveProject() => _filePath is null ? SaveProjectAs() : WriteProject(_filePath);
 
     private bool SaveProjectAs()
     {

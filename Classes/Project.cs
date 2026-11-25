@@ -37,7 +37,8 @@ internal sealed class Project
     /// <summary>Triolengefühl bei gerader Schreibweise, siehe <see cref="SwingFeel"/>.</summary>
     public SwingFeel Swing { get; set; }
     public int VolumePercent { get; set; } = 80;
-    public string KitName { get; set; } = "Kit 1";
+    /// <summary>Das Kit des Projekts. Leer bei einem neuen Projekt: Es bekommt das erste Kit der Auswahlliste.</summary>
+    public string KitName { get; set; } = string.Empty;
     public int ActivePattern { get; set; }
     public bool SequenceEnabled { get; set; }
 

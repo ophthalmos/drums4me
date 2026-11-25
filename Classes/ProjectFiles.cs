@@ -6,7 +6,14 @@ namespace Drums4me.Classes;
 /// <summary>Was die Übersicht mit einer Projektdatei tun kann: umbenennen, kopieren, löschen, im Ordner zeigen, Eigenschaften.</summary>
 internal static partial class ProjectFiles
 {
-    public const string Extension = ".d4m";
+    /// <summary>Projekte und Vorlagen haben beide vier Buchstaben. Bei drei fände die alte Windows-Suche „*.d4m“ auch die Vorlagen.</summary>
+    public const string Extension = ".d4mx";
+
+    /// <summary>Vorlagen haben wie bei Office eine eigene Endung: t statt x als vierter Buchstabe.</summary>
+    public const string TemplateExtension = ".d4mt";
+
+    /// <summary>Ist die Datei eine Vorlage? Dann beginnt Öffnen ein neues Projekt, statt die Datei selbst zu öffnen.</summary>
+    public static bool IsTemplate(string path) => string.Equals(Path.GetExtension(path), TemplateExtension, StringComparison.OrdinalIgnoreCase);
 
     private const int SwShow = 5;
     private const int SwRestore = 9;
@@ -28,9 +35,10 @@ internal static partial class ProjectFiles
         target = path;
         problem = string.Empty;
         var name = newName.Trim();
-        if (name.EndsWith(Extension, StringComparison.OrdinalIgnoreCase))
+        var extension = Path.GetExtension(path);   // eine Vorlage bleibt eine Vorlage
+        if (name.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
         {
-            name = name[..^Extension.Length].TrimEnd();
+            name = name[..^extension.Length].TrimEnd();
         }
 
         if (name.Length == 0)
@@ -49,7 +57,7 @@ internal static partial class ProjectFiles
             return false;
         }
 
-        target = Path.Combine(Path.GetDirectoryName(path)!, name + Extension);
+        target = Path.Combine(Path.GetDirectoryName(path)!, name + extension);
 
         // Nur die Groß- und Kleinschreibung zu ändern, ist erlaubt.
         if (File.Exists(target) && !string.Equals(target, path, StringComparison.OrdinalIgnoreCase))
@@ -65,10 +73,11 @@ internal static partial class ProjectFiles
     {
         var folder = Path.GetDirectoryName(path)!;
         var name = Path.GetFileNameWithoutExtension(path) + Lng.T(" - Kopie");
-        var target = Path.Combine(folder, name + Extension);
+        var extension = Path.GetExtension(path);
+        var target = Path.Combine(folder, name + extension);
         for (var number = 2; File.Exists(target); number++)
         {
-            target = Path.Combine(folder, $"{name} ({number}){Extension}");
+            target = Path.Combine(folder, $"{name} ({number}){extension}");
         }
         return target;
     }
@@ -157,7 +166,7 @@ internal static partial class ProjectFiles
 
     /// <summary>
     /// Öffnet die Datei in dem Programm, das Windows für Textdateien (.txt) eingestellt hat, etwa Editor oder Notepad++.
-    /// Für .d4m selbst ist drums4me zuständig, deshalb leiht sich der Aufruf die Zuordnung von .txt.
+    /// Für .d4mx und .d4mt selbst ist drums4me zuständig, deshalb leiht sich der Aufruf die Zuordnung von .txt.
     /// </summary>
     /// <exception cref="System.ComponentModel.Win32Exception">Auch der Windows-Editor ließ sich nicht starten.</exception>
     public static void OpenInTextEditor(IWin32Window owner, string path)

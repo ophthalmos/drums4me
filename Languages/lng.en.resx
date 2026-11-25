@@ -167,9 +167,6 @@
   <data name="Beginnt die Abfolge am Ende von vorn. Sonst stoppt die Wiedergabe nach dem letzten Takt." xml:space="preserve">
     <value>Starts the sequence over at its end. Otherwise playback stops after the last bar.</value>
   </data>
-  <data name="Beginnt ein neues Projekt. Strg+N." xml:space="preserve">
-    <value>Starts a new project. Ctrl+N.</value>
-  </data>
   <data name="Beim Schreiben im Abfolge-Feld und in der Suche gehören Leertaste, Plus und Minus dem Text." xml:space="preserve">
     <value>While you type in the sequence field or the search, Space, Plus and Minus belong to the text.</value>
   </data>
@@ -215,8 +212,8 @@
   <data name="Dateipfad kopieren" xml:space="preserve">
     <value>Copy file path</value>
   </data>
-  <data name="Demos öffnen▸" xml:space="preserve">
-    <value>Open demos▸</value>
+  <data name="Vorlage öffnen▸" xml:space="preserve">
+    <value>Open template▸</value>
   </data>
   <data name="Der Dateipfad ließ sich nicht kopieren." xml:space="preserve">
     <value>The file path could not be copied.</value>
@@ -290,8 +287,8 @@
   <data name="Drumkits" xml:space="preserve">
     <value>Drum kits</value>
   </data>
-  <data name="drums4me-Projekte (*.d4m)|*.d4m|Alle Dateien (*.*)|*.*" xml:space="preserve">
-    <value>drums4me projects (*.d4m)|*.d4m|All files (*.*)|*.*</value>
+  <data name="drums4me-Projekte (*.d4mx)|*.d4mx|Alle Dateien (*.*)|*.*" xml:space="preserve">
+    <value>drums4me projects (*.d4mx)|*.d4mx|All files (*.*)|*.*</value>
   </data>
   <data name="AboutTerms" xml:space="preserve">
     <value>You may share and modify the program under its terms.
@@ -435,8 +432,8 @@ It comes without any warranty.</value>
   <data name="Keine" xml:space="preserve">
     <value>None</value>
   </data>
-  <data name="Keine Demos installiert" xml:space="preserve">
-    <value>No demos installed</value>
+  <data name="Keine Vorlagen installiert" xml:space="preserve">
+    <value>No templates installed</value>
   </data>
   <data name="Keine Kits gefunden." xml:space="preserve">
     <value>No kits found.</value>
@@ -521,9 +518,6 @@ It comes without any warranty.</value>
   </data>
   <data name="Öffnet ein Fenster, in dem du das Tempo mit der Leertaste tippst oder aus dem laufenden Song ermitteln lässt. Strg+T." xml:space="preserve">
     <value>Opens a window where you tap the tempo with the Space bar or let it be detected from the playing song. Ctrl+T.</value>
-  </data>
-  <data name="Öffnet eines der installierten Demo-Projekte." xml:space="preserve">
-    <value>Opens one of the installed demo projects.</value>
   </data>
   <data name="Ordner" xml:space="preserve">
     <value>Folder</value>
@@ -635,9 +629,6 @@ It comes without any warranty.</value>
   </data>
   <data name="Spur umbenennen" xml:space="preserve">
     <value>Rename track</value>
-  </data>
-  <data name="Gilt für Dateidialoge. Ändern verschiebt keine Dateien." xml:space="preserve">
-    <value>Used for file dialogs. Changing it moves no files.</value>
   </data>
   <data name="Standardordner" xml:space="preserve">
     <value>Default folder</value>
@@ -1146,6 +1137,78 @@ It comes without any warranty.</value>
   <data name="Verhindert, dass Windows den Bildschirm abschaltet, solange die Wiedergabe läuft. Ein Klick schaltet um." xml:space="preserve">
     <value>Stops Windows from turning off the screen while playback is running. A click toggles it.</value>
   </data>
+  <data name="Als Vorlage speichern…" xml:space="preserve">
+    <value>Save as template…</value>
+  </data>
+  <data name="Als Vorlage speichern" xml:space="preserve">
+    <value>Save as template</value>
+  </data>
+  <data name="Name der Vorlage:" xml:space="preserve">
+    <value>Template name:</value>
+  </data>
+  <data name="Sie erscheint danach unter „Vorlage öffnen“, das Projekt selbst bleibt, wie es ist." xml:space="preserve">
+    <value>It then appears under “Open template”; the project itself stays as it is.</value>
+  </data>
+  <data name="Die Vorlage konnte nicht gespeichert werden." xml:space="preserve">
+    <value>The template could not be saved.</value>
+  </data>
+  <data name="Vorlage „{0}“ gespeichert. Du findest sie unter „Vorlage öffnen“." xml:space="preserve">
+    <value>Template “{0}” saved. You will find it under “Open template”.</value>
+  </data>
+  <data name="Der Ordner für deine Projekte. Hier beginnen die Dateidialoge, und die Projektübersicht zeigt ihn. Ändern verschiebt keine Dateien." xml:space="preserve">
+    <value>The folder for your projects. File dialogs start here, and the project overview shows it. Changing it moves no files.</value>
+  </data>
+  <data name="Womit ein neues Projekt beginnt: mit dem einfachen Metronom oder mit einer Vorlage. Gilt für „Neu“ und für den Programmstart ohne letzte Datei." xml:space="preserve">
+    <value>What a new project starts with: the simple metronome or a template. Applies to “New” and to startup without a last file.</value>
+  </data>
+  <data name="Neu:" xml:space="preserve">
+    <value>New:</value>
+  </data>
+  <data name="Neues Projekt beginnt mit" xml:space="preserve">
+    <value>New project starts with</value>
+  </data>
+  <data name="Metronom (Standard)" xml:space="preserve">
+    <value>Metronome (default)</value>
+  </data>
+  <data name="Letzte Datei wieder öffnen" xml:space="preserve">
+    <value>Reopen last file</value>
+  </data>
+  <data name="Beginnt ein neues Projekt, mit dem Metronom oder mit der Vorlage, die unter „Programmstart“ eingestellt ist. Strg+N." xml:space="preserve">
+    <value>Starts a new project, with the metronome or with the template set under “Startup”. Ctrl+N.</value>
+  </data>
+  <data name="Vorlagenordner" xml:space="preserve">
+    <value>Templates folder</value>
+  </data>
+  <data name="Zeigt alle Vorlagen in der Liste. Ein Doppelklick beginnt ein neues Projekt mit der Vorlage. Eigene Vorlagen lassen sich dort umbenennen, duplizieren und löschen, installierte nicht." xml:space="preserve">
+    <value>Shows all templates in the list. A double-click starts a new project from the template. Your own templates can be renamed, duplicated and deleted there, installed ones cannot.</value>
+  </data>
+  <data name="Speichert eine Kopie des Projekts als Vorlage. Sie erscheint danach unter „Vorlage öffnen“ für alle Benutzer dieses PCs, das Projekt selbst bleibt, wie es ist." xml:space="preserve">
+    <value>Saves a copy of the project as a template. It then appears under “Open template” for all users of this PC; the project itself stays as it is.</value>
+  </data>
+  <data name="Beginnt ein neues Projekt mit einer der Vorlagen. Die Vorlage selbst bleibt unverändert." xml:space="preserve">
+    <value>Starts a new project from one of the templates. The template itself stays unchanged.</value>
+  </data>
+  <data name="Eine Vorlage mit diesem Namen gibt es schon. Speichern ersetzt sie." xml:space="preserve">
+    <value>A template with this name already exists. Saving replaces it.</value>
+  </data>
+  <data name="Diese Vorlage lässt sich nicht ersetzen, etwa weil sie mit einem Paket installiert wurde. Wähle einen anderen Namen." xml:space="preserve">
+    <value>This template cannot be replaced, for example because it was installed with a package. Choose another name.</value>
+  </data>
+  <data name="Der Vorlagenordner ließ sich nicht anlegen." xml:space="preserve">
+    <value>The templates folder could not be created.</value>
+  </data>
+  <data name="Neues Projekt aus der Vorlage „{0}“. Es ist noch nicht gespeichert." xml:space="preserve">
+    <value>New project from the template “{0}”. It has not been saved yet.</value>
+  </data>
+  <data name="1 Vorlage" xml:space="preserve">
+    <value>1 template</value>
+  </data>
+  <data name="{0} Vorlagen" xml:space="preserve">
+    <value>{0} templates</value>
+  </data>
+  <data name="{0} von {1} Vorlagen" xml:space="preserve">
+    <value>{0} of {1} templates</value>
+  </data>
   <data name="KitGuide" xml:space="preserve">
     <value>A kit is a folder with up to eight WAV files, one file per track. Create it in the folder
 for your own kits:
@@ -1207,10 +1270,6 @@ Right-click a track name: more options
 Ctrl + drag Volume or Pitch: all tracks together
 Double-click a control: default value
 Ctrl + double-click Volume or Pitch: default value for all tracks</value>
-  </data>
-  <data name="OpenLast" xml:space="preserve">
-    <value>Reopen
-last file</value>
   </data>
   <data name="KitsHint" xml:space="preserve">
     <value>Only checked kits appear in the list on the Start tab.

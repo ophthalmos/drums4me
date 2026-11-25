@@ -59,7 +59,7 @@ internal static class Program
         Process.Start(start);
     }
 
-    /// <summary>Der Dateipfad aus der Befehlszeile, wie ihn Windows beim Doppelklick auf eine .d4m-Datei übergibt.</summary>
+    /// <summary>Der Dateipfad aus der Befehlszeile, wie ihn Windows beim Doppelklick auf eine .d4mx- oder .d4mt-Datei übergibt.</summary>
     private static string? StartFileFrom(string[] args)
     {
         if (args.Length == 0 || string.IsNullOrWhiteSpace(args[0]))

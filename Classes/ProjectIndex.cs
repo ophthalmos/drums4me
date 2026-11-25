@@ -26,7 +26,7 @@ internal static class ProjectIndex
 
         try
         {
-            foreach (var file in Directory.EnumerateFiles(root, "*.d4m", Options))
+            foreach (var file in Directory.EnumerateFiles(root, "*" + ProjectFiles.Extension, Options).Concat(Directory.EnumerateFiles(root, "*" + ProjectFiles.TemplateExtension, Options)))
             {
                 entries.Add(Read(root, file, known));
             }

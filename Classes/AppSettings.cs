@@ -50,6 +50,9 @@ internal sealed class AppSettings
     /// <summary>Der Ordner, aus dem zuletzt eine MIDI-Datei importiert wurde.</summary>
     public string? MidiFolder { get; set; }
 
+    /// <summary>Mit dieser Vorlage beginnt ein neues Projekt. Null: das einfache Metronom.</summary>
+    public string? NewProjectTemplate { get; set; }
+
     /// <summary>Lässt das Raster zu jedem neuen Takt kurz aufleuchten.</summary>
     public bool FlashOnBar { get; set; }
 

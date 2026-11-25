@@ -45,6 +45,9 @@
             groupStartup = new Panel();
             checkBoxOpenLast = new CheckBox();
             captionStartup = new Label();
+            lineStartup = new Panel();
+            labelNewProject = new Label();
+            comboNewProject = new ComboBox();
             dividerStartup = new Panel();
             tabPageStart = new TabPage();
             flowStart = new FlowLayoutPanel();
@@ -106,7 +109,6 @@
             labelProjectFolder = new Label();
             textBoxProjectFolder = new TextBox();
             buttonProjectFolder = new Button();
-            labelProjectHint = new Label();
             captionProjects = new Label();
             dividerProjects = new Panel();
             groupAppearance = new Panel();
@@ -157,12 +159,14 @@
             buttonNew = new Button();
             buttonSave = new Button();
             buttonSaveAs = new Button();
+            buttonSaveTemplate = new Button();
             buttonExportAudio = new Button();
             buttonCloseProject = new Button();
             lineCommands = new Panel();
             buttonOtherFolder = new Button();
             buttonDefaultFolder = new Button();
-            buttonDemos = new Button();
+            buttonOwnTemplates = new Button();
+            buttonTemplates = new Button();
             buttonImportMidi = new Button();
             lineWindowCommands = new Panel();
             buttonResetLayout = new Button();
@@ -191,8 +195,8 @@
             trackNameMenu = new ContextMenuStrip(components);
             previewTrackToolStripMenuItem = new ToolStripMenuItem();
             renameTrackToolStripMenuItem = new ToolStripMenuItem();
-            demosMenu = new ContextMenuStrip(components);
-            noDemosToolStripMenuItem = new ToolStripMenuItem();
+            templatesMenu = new ContextMenuStrip(components);
+            noTemplatesToolStripMenuItem = new ToolStripMenuItem();
             patternMenu = new ContextMenuStrip(components);
             copyPatternToolStripMenuItem = new ToolStripMenuItem();
             pastePatternToolStripMenuItem = new ToolStripMenuItem();
@@ -240,7 +244,7 @@
             panelFileCommands.SuspendLayout();
             statusStrip.SuspendLayout();
             trackNameMenu.SuspendLayout();
-            demosMenu.SuspendLayout();
+            templatesMenu.SuspendLayout();
             patternMenu.SuspendLayout();
             beatMenu.SuspendLayout();
             SuspendLayout();
@@ -389,11 +393,14 @@
             // groupStartup
             // 
             groupStartup.Controls.Add(checkBoxOpenLast);
+            groupStartup.Controls.Add(lineStartup);
+            groupStartup.Controls.Add(labelNewProject);
+            groupStartup.Controls.Add(comboNewProject);
             groupStartup.Controls.Add(captionStartup);
             groupStartup.Location = new Point(481, 0);
             groupStartup.Margin = new Padding(0);
             groupStartup.Name = "groupStartup";
-            groupStartup.Size = new Size(150, 90);
+            groupStartup.Size = new Size(260, 90);
             groupStartup.TabIndex = 2;
             // 
             // checkBoxOpenLast
@@ -401,14 +408,46 @@
             checkBoxOpenLast.AccessibleDescription = "Lädt beim Programmstart das zuletzt benutzte Projekt. Sonst beginnst du mit einem neuen.";
             checkBoxOpenLast.Appearance = Appearance.ToggleSwitch;
             checkBoxOpenLast.AutoSize = true;
-            checkBoxOpenLast.Location = new Point(10, 14);
+            checkBoxOpenLast.Location = new Point(8, 6);
             checkBoxOpenLast.Name = "checkBoxOpenLast";
-            checkBoxOpenLast.Size = new Size(129, 38);
+            checkBoxOpenLast.Size = new Size(212, 23);
             checkBoxOpenLast.TabIndex = 0;
-            checkBoxOpenLast.Text = "Letzte Datei\r\nwieder öffnen";
+            checkBoxOpenLast.Text = "Letzte Datei wieder öffnen";
             checkBoxOpenLast.UseVisualStyleBackColor = true;
             checkBoxOpenLast.VisualStylesMode = VisualStylesMode.Net11;
             checkBoxOpenLast.CheckedChanged += CheckBoxOpenLast_CheckedChanged;
+            // 
+            // lineStartup
+            // 
+            lineStartup.BackColor = SystemColors.ScrollBar;
+            lineStartup.Location = new Point(8, 31);
+            lineStartup.Name = "lineStartup";
+            lineStartup.Size = new Size(244, 1);
+            lineStartup.TabIndex = 4;
+            // 
+            // labelNewProject
+            // 
+            labelNewProject.AccessibleDescription = "Womit ein neues Projekt beginnt: mit dem einfachen Metronom oder mit einer Vorlage. Gilt für „Neu“ und für den Programmstart ohne letzte Datei.";
+            labelNewProject.AutoSize = true;
+            labelNewProject.Location = new Point(8, 42);
+            labelNewProject.Name = "labelNewProject";
+            labelNewProject.Size = new Size(36, 19);
+            labelNewProject.TabIndex = 1;
+            labelNewProject.Text = "Neu:";
+            // 
+            // comboNewProject
+            // 
+            comboNewProject.AccessibleDescription = "Womit ein neues Projekt beginnt: mit dem einfachen Metronom oder mit einer Vorlage. Gilt für „Neu“ und für den Programmstart ohne letzte Datei.";
+            comboNewProject.AccessibleName = "Neues Projekt beginnt mit";
+            comboNewProject.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboNewProject.DropDownWidth = 260;
+            comboNewProject.Location = new Point(50, 37);
+            comboNewProject.Name = "comboNewProject";
+            comboNewProject.Size = new Size(202, 28);
+            comboNewProject.TabIndex = 2;
+            comboNewProject.VisualStylesMode = VisualStylesMode.Net11;
+            comboNewProject.DropDown += ComboNewProject_DropDown;
+            comboNewProject.SelectedIndexChanged += ComboNewProject_SelectedIndexChanged;
             // 
             // captionStartup
             // 
@@ -416,15 +455,15 @@
             captionStartup.ForeColor = SystemColors.GrayText;
             captionStartup.Location = new Point(0, 72);
             captionStartup.Name = "captionStartup";
-            captionStartup.Size = new Size(150, 18);
-            captionStartup.TabIndex = 1;
+            captionStartup.Size = new Size(260, 18);
+            captionStartup.TabIndex = 3;
             captionStartup.Text = "Programmstart";
             captionStartup.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dividerStartup
             // 
             dividerStartup.BackColor = SystemColors.ControlDark;
-            dividerStartup.Location = new Point(631, 4);
+            dividerStartup.Location = new Point(741, 4);
             dividerStartup.Margin = new Padding(0, 4, 0, 4);
             dividerStartup.Name = "dividerStartup";
             dividerStartup.Size = new Size(1, 82);
@@ -1174,18 +1213,18 @@
             groupProjects.Controls.Add(labelProjectFolder);
             groupProjects.Controls.Add(textBoxProjectFolder);
             groupProjects.Controls.Add(buttonProjectFolder);
-            groupProjects.Controls.Add(labelProjectHint);
             groupProjects.Controls.Add(captionProjects);
-            groupProjects.Location = new Point(632, 0);
+            groupProjects.Location = new Point(742, 0);
             groupProjects.Margin = new Padding(0);
             groupProjects.Name = "groupProjects";
-            groupProjects.Size = new Size(376, 90);
+            groupProjects.Size = new Size(252, 90);
             groupProjects.TabIndex = 4;
             // 
             // labelProjectFolder
             // 
+            labelProjectFolder.AccessibleDescription = "Der Ordner für deine Projekte. Hier beginnen die Dateidialoge, und die Projektübersicht zeigt ihn. Ändern verschiebt keine Dateien.";
             labelProjectFolder.AutoSize = true;
-            labelProjectFolder.Location = new Point(8, 8);
+            labelProjectFolder.Location = new Point(8, 9);
             labelProjectFolder.Name = "labelProjectFolder";
             labelProjectFolder.Size = new Size(78, 19);
             labelProjectFolder.TabIndex = 0;
@@ -1193,10 +1232,11 @@
             // 
             // textBoxProjectFolder
             // 
-            textBoxProjectFolder.Location = new Point(92, 5);
+            textBoxProjectFolder.AccessibleDescription = "Der Ordner für deine Projekte. Hier beginnen die Dateidialoge, und die Projektübersicht zeigt ihn. Ändern verschiebt keine Dateien.";
+            textBoxProjectFolder.Location = new Point(8, 36);
             textBoxProjectFolder.Name = "textBoxProjectFolder";
             textBoxProjectFolder.ReadOnly = true;
-            textBoxProjectFolder.Size = new Size(240, 28);
+            textBoxProjectFolder.Size = new Size(198, 28);
             textBoxProjectFolder.TabIndex = 1;
             textBoxProjectFolder.TabStop = false;
             textBoxProjectFolder.VisualStylesMode = VisualStylesMode.Net11;
@@ -1206,7 +1246,7 @@
             buttonProjectFolder.AccessibleDescription = "Wählt den Ordner für deine Projekte.";
             buttonProjectFolder.AccessibleName = "Speicherort ändern";
             buttonProjectFolder.Image = (Image)resources.GetObject("buttonProjectFolder.Image");
-            buttonProjectFolder.Location = new Point(336, 3);
+            buttonProjectFolder.Location = new Point(210, 35);
             buttonProjectFolder.Name = "buttonProjectFolder";
             buttonProjectFolder.Size = new Size(34, 29);
             buttonProjectFolder.TabIndex = 2;
@@ -1214,31 +1254,21 @@
             buttonProjectFolder.UseVisualStyleBackColor = true;
             buttonProjectFolder.Click += ButtonProjectFolder_Click;
             // 
-            // labelProjectHint
-            // 
-            labelProjectHint.AutoSize = true;
-            labelProjectHint.ForeColor = SystemColors.GrayText;
-            labelProjectHint.Location = new Point(8, 41);
-            labelProjectHint.Name = "labelProjectHint";
-            labelProjectHint.Size = new Size(350, 19);
-            labelProjectHint.TabIndex = 3;
-            labelProjectHint.Text = "Gilt für Dateidialoge. Ändern verschiebt keine Dateien.";
-            // 
             // captionProjects
             // 
             captionProjects.Dock = DockStyle.Bottom;
             captionProjects.ForeColor = SystemColors.GrayText;
             captionProjects.Location = new Point(0, 72);
             captionProjects.Name = "captionProjects";
-            captionProjects.Size = new Size(376, 18);
-            captionProjects.TabIndex = 4;
+            captionProjects.Size = new Size(252, 18);
+            captionProjects.TabIndex = 3;
             captionProjects.Text = "Projekte";
             captionProjects.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // dividerProjects
             // 
             dividerProjects.BackColor = SystemColors.ControlDark;
-            dividerProjects.Location = new Point(1008, 4);
+            dividerProjects.Location = new Point(994, 4);
             dividerProjects.Margin = new Padding(0, 4, 0, 4);
             dividerProjects.Name = "dividerProjects";
             dividerProjects.Size = new Size(1, 82);
@@ -1669,12 +1699,14 @@
             panelFileCommands.Controls.Add(buttonNew);
             panelFileCommands.Controls.Add(buttonSave);
             panelFileCommands.Controls.Add(buttonSaveAs);
+            panelFileCommands.Controls.Add(buttonSaveTemplate);
             panelFileCommands.Controls.Add(buttonExportAudio);
             panelFileCommands.Controls.Add(buttonCloseProject);
             panelFileCommands.Controls.Add(lineCommands);
             panelFileCommands.Controls.Add(buttonOtherFolder);
             panelFileCommands.Controls.Add(buttonDefaultFolder);
-            panelFileCommands.Controls.Add(buttonDemos);
+            panelFileCommands.Controls.Add(buttonOwnTemplates);
+            panelFileCommands.Controls.Add(buttonTemplates);
             panelFileCommands.Controls.Add(buttonImportMidi);
             panelFileCommands.Controls.Add(lineWindowCommands);
             panelFileCommands.Controls.Add(buttonResetLayout);
@@ -1689,7 +1721,7 @@
             // 
             // buttonNew
             // 
-            buttonNew.AccessibleDescription = "Beginnt ein neues Projekt. Strg+N.";
+            buttonNew.AccessibleDescription = "Beginnt ein neues Projekt, mit dem Metronom oder mit der Vorlage, die unter „Programmstart“ eingestellt ist. Strg+N.";
             buttonNew.BackColor = Color.Transparent;
             buttonNew.FlatAppearance.BorderSize = 0;
             buttonNew.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
@@ -1699,7 +1731,7 @@
             buttonNew.Location = new Point(0, 12);
             buttonNew.Name = "buttonNew";
             buttonNew.Padding = new Padding(16, 0, 0, 0);
-            buttonNew.Size = new Size(239, 36);
+            buttonNew.Size = new Size(239, 32);
             buttonNew.TabIndex = 0;
             buttonNew.Text = "Neu";
             buttonNew.TextAlign = ContentAlignment.MiddleLeft;
@@ -1716,10 +1748,10 @@
             buttonSave.FlatStyle = FlatStyle.Flat;
             buttonSave.Image = (Image)resources.GetObject("buttonSave.Image");
             buttonSave.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonSave.Location = new Point(0, 52);
+            buttonSave.Location = new Point(0, 46);
             buttonSave.Name = "buttonSave";
             buttonSave.Padding = new Padding(16, 0, 0, 0);
-            buttonSave.Size = new Size(239, 36);
+            buttonSave.Size = new Size(239, 32);
             buttonSave.TabIndex = 1;
             buttonSave.Text = "Speichern";
             buttonSave.TextAlign = ContentAlignment.MiddleLeft;
@@ -1736,16 +1768,36 @@
             buttonSaveAs.FlatStyle = FlatStyle.Flat;
             buttonSaveAs.Image = (Image)resources.GetObject("buttonSaveAs.Image");
             buttonSaveAs.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonSaveAs.Location = new Point(0, 92);
+            buttonSaveAs.Location = new Point(0, 80);
             buttonSaveAs.Name = "buttonSaveAs";
             buttonSaveAs.Padding = new Padding(16, 0, 0, 0);
-            buttonSaveAs.Size = new Size(239, 36);
+            buttonSaveAs.Size = new Size(239, 32);
             buttonSaveAs.TabIndex = 2;
             buttonSaveAs.Text = "Speichern unter…";
             buttonSaveAs.TextAlign = ContentAlignment.MiddleLeft;
             buttonSaveAs.TextImageRelation = TextImageRelation.ImageBeforeText;
             buttonSaveAs.UseVisualStyleBackColor = false;
             buttonSaveAs.Click += ButtonSaveAs_Click;
+            // 
+            // buttonSaveTemplate
+            // 
+            buttonSaveTemplate.AccessibleDescription = "Speichert eine Kopie des Projekts als Vorlage. Sie erscheint danach unter „Vorlage öffnen“ für alle Benutzer dieses PCs, das Projekt selbst bleibt, wie es ist.";
+            buttonSaveTemplate.BackColor = Color.Transparent;
+            buttonSaveTemplate.FlatAppearance.BorderSize = 0;
+            buttonSaveTemplate.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonSaveTemplate.FlatStyle = FlatStyle.Flat;
+            buttonSaveTemplate.Image = (Image)resources.GetObject("buttonSaveTemplate.Image");
+            buttonSaveTemplate.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonSaveTemplate.Location = new Point(0, 114);
+            buttonSaveTemplate.Name = "buttonSaveTemplate";
+            buttonSaveTemplate.Padding = new Padding(16, 0, 0, 0);
+            buttonSaveTemplate.Size = new Size(239, 32);
+            buttonSaveTemplate.TabIndex = 3;
+            buttonSaveTemplate.Text = "Als Vorlage speichern…";
+            buttonSaveTemplate.TextAlign = ContentAlignment.MiddleLeft;
+            buttonSaveTemplate.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonSaveTemplate.UseVisualStyleBackColor = false;
+            buttonSaveTemplate.Click += ButtonSaveTemplate_Click;
             // 
             // buttonExportAudio
             // 
@@ -1756,11 +1808,11 @@
             buttonExportAudio.FlatStyle = FlatStyle.Flat;
             buttonExportAudio.Image = (Image)resources.GetObject("buttonExportAudio.Image");
             buttonExportAudio.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonExportAudio.Location = new Point(0, 132);
+            buttonExportAudio.Location = new Point(0, 148);
             buttonExportAudio.Name = "buttonExportAudio";
             buttonExportAudio.Padding = new Padding(16, 0, 0, 0);
-            buttonExportAudio.Size = new Size(239, 36);
-            buttonExportAudio.TabIndex = 3;
+            buttonExportAudio.Size = new Size(239, 32);
+            buttonExportAudio.TabIndex = 4;
             buttonExportAudio.Text = "Als Audiodatei speichern…";
             buttonExportAudio.TextAlign = ContentAlignment.MiddleLeft;
             buttonExportAudio.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1776,11 +1828,11 @@
             buttonCloseProject.FlatStyle = FlatStyle.Flat;
             buttonCloseProject.Image = (Image)resources.GetObject("buttonCloseProject.Image");
             buttonCloseProject.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonCloseProject.Location = new Point(0, 172);
+            buttonCloseProject.Location = new Point(0, 182);
             buttonCloseProject.Name = "buttonCloseProject";
             buttonCloseProject.Padding = new Padding(16, 0, 0, 0);
-            buttonCloseProject.Size = new Size(239, 36);
-            buttonCloseProject.TabIndex = 4;
+            buttonCloseProject.Size = new Size(239, 32);
+            buttonCloseProject.TabIndex = 5;
             buttonCloseProject.Text = "Schließen";
             buttonCloseProject.TextAlign = ContentAlignment.MiddleLeft;
             buttonCloseProject.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1790,10 +1842,10 @@
             // lineCommands
             // 
             lineCommands.BackColor = SystemColors.ScrollBar;
-            lineCommands.Location = new Point(16, 216);
+            lineCommands.Location = new Point(16, 220);
             lineCommands.Name = "lineCommands";
             lineCommands.Size = new Size(208, 1);
-            lineCommands.TabIndex = 5;
+            lineCommands.TabIndex = 6;
             // 
             // buttonOtherFolder
             // 
@@ -1804,11 +1856,11 @@
             buttonOtherFolder.FlatStyle = FlatStyle.Flat;
             buttonOtherFolder.Image = (Image)resources.GetObject("buttonOtherFolder.Image");
             buttonOtherFolder.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonOtherFolder.Location = new Point(0, 225);
+            buttonOtherFolder.Location = new Point(0, 227);
             buttonOtherFolder.Name = "buttonOtherFolder";
             buttonOtherFolder.Padding = new Padding(16, 0, 0, 0);
-            buttonOtherFolder.Size = new Size(239, 36);
-            buttonOtherFolder.TabIndex = 6;
+            buttonOtherFolder.Size = new Size(239, 32);
+            buttonOtherFolder.TabIndex = 7;
             buttonOtherFolder.Text = "Anderen Ordner…";
             buttonOtherFolder.TextAlign = ContentAlignment.MiddleLeft;
             buttonOtherFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1824,36 +1876,56 @@
             buttonDefaultFolder.FlatStyle = FlatStyle.Flat;
             buttonDefaultFolder.Image = (Image)resources.GetObject("buttonDefaultFolder.Image");
             buttonDefaultFolder.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonDefaultFolder.Location = new Point(0, 265);
+            buttonDefaultFolder.Location = new Point(0, 261);
             buttonDefaultFolder.Name = "buttonDefaultFolder";
             buttonDefaultFolder.Padding = new Padding(16, 0, 0, 0);
-            buttonDefaultFolder.Size = new Size(239, 36);
-            buttonDefaultFolder.TabIndex = 7;
+            buttonDefaultFolder.Size = new Size(239, 32);
+            buttonDefaultFolder.TabIndex = 8;
             buttonDefaultFolder.Text = "Standardordner";
             buttonDefaultFolder.TextAlign = ContentAlignment.MiddleLeft;
             buttonDefaultFolder.TextImageRelation = TextImageRelation.ImageBeforeText;
             buttonDefaultFolder.UseVisualStyleBackColor = false;
             buttonDefaultFolder.Click += ButtonDefaultFolder_Click;
             // 
-            // buttonDemos
+            // buttonOwnTemplates
             // 
-            buttonDemos.AccessibleDescription = "Öffnet eines der installierten Demo-Projekte.";
-            buttonDemos.BackColor = Color.Transparent;
-            buttonDemos.FlatAppearance.BorderSize = 0;
-            buttonDemos.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
-            buttonDemos.FlatStyle = FlatStyle.Flat;
-            buttonDemos.Image = (Image)resources.GetObject("buttonDemos.Image");
-            buttonDemos.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonDemos.Location = new Point(0, 305);
-            buttonDemos.Name = "buttonDemos";
-            buttonDemos.Padding = new Padding(16, 0, 0, 0);
-            buttonDemos.Size = new Size(239, 36);
-            buttonDemos.TabIndex = 8;
-            buttonDemos.Text = "Demos öffnen▸";
-            buttonDemos.TextAlign = ContentAlignment.MiddleLeft;
-            buttonDemos.TextImageRelation = TextImageRelation.ImageBeforeText;
-            buttonDemos.UseVisualStyleBackColor = false;
-            buttonDemos.Click += ButtonDemos_Click;
+            buttonOwnTemplates.AccessibleDescription = "Zeigt alle Vorlagen in der Liste. Ein Doppelklick beginnt ein neues Projekt mit der Vorlage. Eigene Vorlagen lassen sich dort umbenennen, duplizieren und löschen, installierte nicht.";
+            buttonOwnTemplates.BackColor = Color.Transparent;
+            buttonOwnTemplates.FlatAppearance.BorderSize = 0;
+            buttonOwnTemplates.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonOwnTemplates.FlatStyle = FlatStyle.Flat;
+            buttonOwnTemplates.Image = (Image)resources.GetObject("buttonOwnTemplates.Image");
+            buttonOwnTemplates.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonOwnTemplates.Location = new Point(0, 295);
+            buttonOwnTemplates.Name = "buttonOwnTemplates";
+            buttonOwnTemplates.Padding = new Padding(16, 0, 0, 0);
+            buttonOwnTemplates.Size = new Size(239, 32);
+            buttonOwnTemplates.TabIndex = 9;
+            buttonOwnTemplates.Text = "Vorlagenordner";
+            buttonOwnTemplates.TextAlign = ContentAlignment.MiddleLeft;
+            buttonOwnTemplates.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonOwnTemplates.UseVisualStyleBackColor = false;
+            buttonOwnTemplates.Click += ButtonOwnTemplates_Click;
+            // 
+            // buttonTemplates
+            // 
+            buttonTemplates.AccessibleDescription = "Beginnt ein neues Projekt mit einer der Vorlagen. Die Vorlage selbst bleibt unverändert.";
+            buttonTemplates.BackColor = Color.Transparent;
+            buttonTemplates.FlatAppearance.BorderSize = 0;
+            buttonTemplates.FlatAppearance.MouseOverBackColor = SystemColors.ControlLight;
+            buttonTemplates.FlatStyle = FlatStyle.Flat;
+            buttonTemplates.Image = (Image)resources.GetObject("buttonTemplates.Image");
+            buttonTemplates.ImageAlign = ContentAlignment.MiddleLeft;
+            buttonTemplates.Location = new Point(0, 329);
+            buttonTemplates.Name = "buttonTemplates";
+            buttonTemplates.Padding = new Padding(16, 0, 0, 0);
+            buttonTemplates.Size = new Size(239, 32);
+            buttonTemplates.TabIndex = 10;
+            buttonTemplates.Text = "Vorlage öffnen▸";
+            buttonTemplates.TextAlign = ContentAlignment.MiddleLeft;
+            buttonTemplates.TextImageRelation = TextImageRelation.ImageBeforeText;
+            buttonTemplates.UseVisualStyleBackColor = false;
+            buttonTemplates.Click += ButtonTemplates_Click;
             // 
             // buttonImportMidi
             // 
@@ -1864,11 +1936,11 @@
             buttonImportMidi.FlatStyle = FlatStyle.Flat;
             buttonImportMidi.Image = (Image)resources.GetObject("buttonImportMidi.Image");
             buttonImportMidi.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonImportMidi.Location = new Point(0, 345);
+            buttonImportMidi.Location = new Point(0, 363);
             buttonImportMidi.Name = "buttonImportMidi";
             buttonImportMidi.Padding = new Padding(16, 0, 0, 0);
-            buttonImportMidi.Size = new Size(239, 36);
-            buttonImportMidi.TabIndex = 9;
+            buttonImportMidi.Size = new Size(239, 32);
+            buttonImportMidi.TabIndex = 11;
             buttonImportMidi.Text = "MIDI importieren…";
             buttonImportMidi.TextAlign = ContentAlignment.MiddleLeft;
             buttonImportMidi.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1878,10 +1950,10 @@
             // lineWindowCommands
             // 
             lineWindowCommands.BackColor = SystemColors.ScrollBar;
-            lineWindowCommands.Location = new Point(16, 389);
+            lineWindowCommands.Location = new Point(16, 401);
             lineWindowCommands.Name = "lineWindowCommands";
             lineWindowCommands.Size = new Size(208, 1);
-            lineWindowCommands.TabIndex = 10;
+            lineWindowCommands.TabIndex = 12;
             // 
             // buttonResetLayout
             // 
@@ -1892,11 +1964,11 @@
             buttonResetLayout.FlatStyle = FlatStyle.Flat;
             buttonResetLayout.Image = (Image)resources.GetObject("buttonResetLayout.Image");
             buttonResetLayout.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonResetLayout.Location = new Point(0, 398);
+            buttonResetLayout.Location = new Point(0, 408);
             buttonResetLayout.Name = "buttonResetLayout";
             buttonResetLayout.Padding = new Padding(16, 0, 0, 0);
-            buttonResetLayout.Size = new Size(239, 36);
-            buttonResetLayout.TabIndex = 11;
+            buttonResetLayout.Size = new Size(239, 32);
+            buttonResetLayout.TabIndex = 13;
             buttonResetLayout.Text = "Fensterlayout zurücksetzen";
             buttonResetLayout.TextAlign = ContentAlignment.MiddleLeft;
             buttonResetLayout.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1912,11 +1984,11 @@
             buttonFileAbout.FlatStyle = FlatStyle.Flat;
             buttonFileAbout.Image = (Image)resources.GetObject("buttonFileAbout.Image");
             buttonFileAbout.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonFileAbout.Location = new Point(0, 438);
+            buttonFileAbout.Location = new Point(0, 442);
             buttonFileAbout.Name = "buttonFileAbout";
             buttonFileAbout.Padding = new Padding(16, 0, 0, 0);
-            buttonFileAbout.Size = new Size(239, 36);
-            buttonFileAbout.TabIndex = 12;
+            buttonFileAbout.Size = new Size(239, 32);
+            buttonFileAbout.TabIndex = 14;
             buttonFileAbout.Text = "Über";
             buttonFileAbout.TextAlign = ContentAlignment.MiddleLeft;
             buttonFileAbout.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1932,11 +2004,11 @@
             buttonExit.FlatStyle = FlatStyle.Flat;
             buttonExit.Image = (Image)resources.GetObject("buttonExit.Image");
             buttonExit.ImageAlign = ContentAlignment.MiddleLeft;
-            buttonExit.Location = new Point(0, 478);
+            buttonExit.Location = new Point(0, 476);
             buttonExit.Name = "buttonExit";
             buttonExit.Padding = new Padding(16, 0, 0, 0);
-            buttonExit.Size = new Size(239, 36);
-            buttonExit.TabIndex = 13;
+            buttonExit.Size = new Size(239, 32);
+            buttonExit.TabIndex = 15;
             buttonExit.Text = "Beenden";
             buttonExit.TextAlign = ContentAlignment.MiddleLeft;
             buttonExit.TextImageRelation = TextImageRelation.ImageBeforeText;
@@ -1950,7 +2022,7 @@
             lineFileCommands.Location = new Point(239, 0);
             lineFileCommands.Name = "lineFileCommands";
             lineFileCommands.Size = new Size(1, 605);
-            lineFileCommands.TabIndex = 14;
+            lineFileCommands.TabIndex = 16;
             // 
             // tabMarker
             // 
@@ -2243,19 +2315,19 @@
             clearBeatToolStripMenuItem.Text = "&Leeren";
             clearBeatToolStripMenuItem.Click += ClearBeatToolStripMenuItem_Click;
             // 
-            // demosMenu
+            // templatesMenu
             // 
-            demosMenu.Font = new Font("Segoe UI", 10F);
-            demosMenu.Items.AddRange(new ToolStripItem[] { noDemosToolStripMenuItem });
-            demosMenu.Name = "demosMenu";
-            demosMenu.Size = new Size(218, 28);
+            templatesMenu.Font = new Font("Segoe UI", 10F);
+            templatesMenu.Items.AddRange(new ToolStripItem[] { noTemplatesToolStripMenuItem });
+            templatesMenu.Name = "templatesMenu";
+            templatesMenu.Size = new Size(218, 28);
             // 
-            // noDemosToolStripMenuItem
+            // noTemplatesToolStripMenuItem
             // 
-            noDemosToolStripMenuItem.Enabled = false;
-            noDemosToolStripMenuItem.Name = "noDemosToolStripMenuItem";
-            noDemosToolStripMenuItem.Size = new Size(217, 24);
-            noDemosToolStripMenuItem.Text = "Keine Demos installiert";
+            noTemplatesToolStripMenuItem.Enabled = false;
+            noTemplatesToolStripMenuItem.Name = "noTemplatesToolStripMenuItem";
+            noTemplatesToolStripMenuItem.Size = new Size(217, 24);
+            noTemplatesToolStripMenuItem.Text = "Keine Vorlagen installiert";
             // 
             // pendingOpenTimer
             // 
@@ -2275,8 +2347,8 @@
             // 
             // saveFileDialog
             // 
-            saveFileDialog.DefaultExt = "d4m";
-            saveFileDialog.Filter = "drums4me-Projekte (*.d4m)|*.d4m|Alle Dateien (*.*)|*.*";
+            saveFileDialog.DefaultExt = "d4mx";
+            saveFileDialog.Filter = "drums4me-Projekte (*.d4mx)|*.d4mx|Alle Dateien (*.*)|*.*";
             saveFileDialog.Title = "Projekt speichern";
             // 
             // midiFileDialog
@@ -2358,7 +2430,7 @@
             statusStrip.ResumeLayout(false);
             statusStrip.PerformLayout();
             trackNameMenu.ResumeLayout(false);
-            demosMenu.ResumeLayout(false);
+            templatesMenu.ResumeLayout(false);
             patternMenu.ResumeLayout(false);
             beatMenu.ResumeLayout(false);
             ResumeLayout(false);
@@ -2377,6 +2449,7 @@
         private Button buttonNew;
         private Button buttonSave;
         private Button buttonSaveAs;
+        private Button buttonSaveTemplate;
         private Panel groupFind;
         private Label labelSearch;
         private TextBox textBoxSearch;
@@ -2396,7 +2469,8 @@
         private Button buttonExit;
         private Button buttonOtherFolder;
         private Button buttonDefaultFolder;
-        private Button buttonDemos;
+        private Button buttonOwnTemplates;
+        private Button buttonTemplates;
         private Button buttonImportMidi;
         private TabPage tabPageStart;
         private FlowLayoutPanel flowStart;
@@ -2457,10 +2531,12 @@
         private Label labelProjectFolder;
         private TextBox textBoxProjectFolder;
         private Button buttonProjectFolder;
-        private Label labelProjectHint;
         private Panel groupStartup;
         private CheckBox checkBoxOpenLast;
         private Label captionStartup;
+        private Panel lineStartup;
+        private Label labelNewProject;
+        private ComboBox comboNewProject;
         private Label captionProjects;
         private Panel dividerProjects;
         private Panel groupAppearance;
@@ -2525,8 +2601,8 @@
         private ContextMenuStrip trackNameMenu;
         private ToolStripMenuItem previewTrackToolStripMenuItem;
         private ToolStripMenuItem renameTrackToolStripMenuItem;
-        private ContextMenuStrip demosMenu;
-        private ToolStripMenuItem noDemosToolStripMenuItem;
+        private ContextMenuStrip templatesMenu;
+        private ToolStripMenuItem noTemplatesToolStripMenuItem;
         private ContextMenuStrip patternMenu;
         private ToolStripMenuItem copyPatternToolStripMenuItem;
         private ToolStripMenuItem pastePatternToolStripMenuItem;
